@@ -21,6 +21,8 @@
 
 package cream.scene;
 
+import haxe.ds.Option;
+
 import cream.display.Sprite;
 import cream.util.Disposable;
 import cream.input.Mouse;
@@ -36,12 +38,18 @@ import cream.display.Graphics;
     public var keyboard (get, null):Keyboard;
     public var isActive (get, null):Bool;
 
-    public function new(model :Model, init :Msg, fnUpdate : Msg -> Scene<Msg, Model> -> Model -> Void)  :Void
+    public var next :Option<Scene<Msg, Model>>;
+    public var prev :Option<Scene<Msg, Model>>;
+
+    public function new(model :Model, origin :Origin<Msg, Model>, init :Msg, fnUpdate : Msg -> Origin<Msg, Model> -> Scene<Msg, Model> -> Model -> Void)  :Void
     {
-        _fnUpdate = fnUpdate;
         _model = model;
+        _origin = origin;
+        _fnUpdate = fnUpdate;
         _runningMsgs = new Set();
         _isActive = false;
+        next = None;
+        prev = None;
 
         root = new Sprite();
         fireMsg(init);
@@ -56,13 +64,13 @@ import cream.display.Graphics;
 
     public function fireMsg(msg :Msg) : Void
     {
-        _fnUpdate(msg, this, _model);
+        _fnUpdate(msg, _origin, this, _model);
     }
 
     public function runMsgs() : Void
     {
         for(msg in _runningMsgs) {
-            _fnUpdate(msg, this, _model);
+            _fnUpdate(msg, _origin, this, _model);
         }
     }
 
@@ -128,7 +136,8 @@ import cream.display.Graphics;
     }
 
     private var _model :Model;
-    private var _fnUpdate :Msg -> Scene<Msg, Model> -> Model -> Void;
+    private var _origin :Origin<Msg, Model>;
+    private var _fnUpdate :Msg -> Origin<Msg, Model> -> Scene<Msg, Model> -> Model -> Void;
     private var _runningMsgs :Set<Msg>;
 
     private var _mouse :Mouse;

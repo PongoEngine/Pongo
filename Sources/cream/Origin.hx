@@ -29,9 +29,9 @@ import cream.scene.Scene;
 {
     public var scene (default, null):Scene<Msg, Model>;
 
-    public function new(scene :Scene<Msg, Model>)  :Void
+    public function new(model :Model, init :Msg, fnUpdate : Msg -> Origin<Msg, Model> -> Scene<Msg, Model> -> Model -> Void)  :Void
     {
-        this.scene = scene;
+        this.scene = new Scene(model, this, init, fnUpdate);
         
         kha.System.notifyOnRender(renderSprites);
         _schedulerID = kha.Scheduler.addTimeTask(runScene, 0, 1/60);
