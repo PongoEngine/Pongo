@@ -32,9 +32,6 @@ import cream.scene.Scene;
 
 class Origin<Msg:EnumValue, Model> implements Disposable
 {
-
-    public var scene :Scene;
-
     public var root (default, null):Sprite;
     public var mouse (default, null):Mouse;
     public var keyboard (default, null):Keyboard;
@@ -86,6 +83,10 @@ class Origin<Msg:EnumValue, Model> implements Disposable
         mouse.dispose();
         keyboard.dispose();
         kha.Scheduler.removeTimeTask(_schedulerID);
+
+        _graphics = null;
+        _model = null;
+        _fnUpdate = null;
     }
 
     private function impl_getGroup(componentNameGroup :Array<String>, sprite :Sprite, group :Array<Sprite>): Void 
