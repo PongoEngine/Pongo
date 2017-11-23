@@ -31,16 +31,17 @@ import cream.scene.Scene;
 
     public function new(model :Model, init :Msg, fnUpdate : Msg -> Origin<Msg, Model> -> Scene<Msg, Model> -> Model -> Void)  :Void
     {
-        this.scene = new Scene(model, this, init, fnUpdate);
+        _model = model;
+        this.scene = new Scene(_model, this, init, fnUpdate);
         
         kha.System.notifyOnRender(renderSprites);
         _schedulerID = kha.Scheduler.addTimeTask(runScene, 0, 1/60);
     }
 
-    public function changeScene(init :Msg, model :Model, fnUpdate : Msg -> Origin<Msg, Model> -> Scene<Msg, Model> -> Model -> Void) : Void
+    public function changeScene(init :Msg, fnUpdate : Msg -> Origin<Msg, Model> -> Scene<Msg, Model> -> Model -> Void) : Void
     {
         var oldScene = this.scene;
-        this.scene = new Scene(model, this, init, fnUpdate);
+        this.scene = new Scene(_model, this, init, fnUpdate);
         oldScene.dispose();
     }
 
@@ -66,6 +67,7 @@ import cream.scene.Scene;
         _graphics.end();
     }
 
+    private var _model :Model;
     private var _graphics :Graphics;
     private var _schedulerID :Int;
 }
