@@ -19,38 +19,33 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package cream;
+package cream.scene;
 
 import cream.display.Sprite;
-import cream.display.Graphics;
 import cream.util.Disposable;
 import cream.input.Mouse;
 import cream.input.Keyboard;
 import cream.util.Set;
 import cream.util.ComponentArray;
-import cream.scene.Scene;
+import cream.display.Graphics;
 
-class Origin<Msg:EnumValue, Model> implements Disposable
+@:final class Scene<Msg:EnumValue, Model> implements Disposable
 {
-
-    public var scene :Scene;
-
     public var root (default, null):Sprite;
-    public var mouse (default, null):Mouse;
-    public var keyboard (default, null):Keyboard;
+    public var mouse (get, null):Mouse;
+    public var keyboard (get, null):Keyboard;
+    public var isActive (get, null):Bool;
 
-    public function new(model :Model, fnUpdate : Msg -> Origin<Msg, Model> -> Model -> Void)  :Void
+    public function new(model :Model, initialMsg :Msg, fnUpdate : Msg -> Scene<Msg, Model> -> Model -> Void)  :Void
     {
         _fnUpdate = fnUpdate;
         _model = model;
         _runningMsgs = new Set();
+        _isActive = false;
 
         root = new Sprite();
-        mouse = new Mouse();
-        keyboard = new Keyboard();
         
-        kha.System.notifyOnRender(renderSprites);
-        _schedulerID = kha.Scheduler.addTimeTask(runScheduledMsgs, 0, 1/60);
+        fireMsg(initialMsg);
     }
 
     public function getGroup(componentNameGroup :Array<String>) : ComponentArray<Sprite>
@@ -83,9 +78,13 @@ class Origin<Msg:EnumValue, Model> implements Disposable
     public function dispose() : Void
     {
         root.dispose();
-        mouse.dispose();
-        keyboard.dispose();
-        kha.Scheduler.removeTimeTask(_schedulerID);
+        if(mouse != null) mouse.dispose();
+        if(keyboard != null) keyboard.dispose();
+    }
+
+    public function render(graphics: Graphics) : Void
+    {
+        root._render(graphics);
     }
 
     private function impl_getGroup(componentNameGroup :Array<String>, sprite :Sprite, group :Array<Sprite>): Void 
@@ -101,27 +100,34 @@ class Origin<Msg:EnumValue, Model> implements Disposable
         }
     }
 
-    private function runScheduledMsgs() : Void
+    private function get_mouse() : Mouse
     {
-        for(msg in _runningMsgs) {
-            _fnUpdate(msg, this, _model);
+        if(_mouse == null) {
+            _mouse = new Mouse();
         }
+        return _mouse;
     }
 
-    private function renderSprites(framebuffer: kha.Framebuffer) : Void 
+    private function get_keyboard() : Keyboard
     {
-        if(_graphics == null) {
-            _graphics = new Graphics(framebuffer);
+        if(_keyboard == null) {
+            _keyboard = new Keyboard();
         }
-
-        _graphics.begin();
-        root._render(_graphics);
-        _graphics.end();
+        return _keyboard;
     }
 
-    private var _graphics :Graphics;
+    private function get_isActive() : Bool
+    {
+        return _isActive;
+    }
+
     private var _model :Model;
-    private var _fnUpdate :Msg -> Origin<Msg, Model> -> Model -> Void;
+    private var _fnUpdate :Msg -> Scene<Msg, Model> -> Model -> Void;
+    @:allow(cream.Origin)
     private var _runningMsgs :Set<Msg>;
-    private var _schedulerID :Int;
+
+    private var _mouse :Mouse;
+    private var _keyboard :Keyboard;
+
+    private var _isActive :Bool;
 }

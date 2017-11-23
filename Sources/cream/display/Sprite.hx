@@ -184,6 +184,7 @@ class Sprite implements Disposable
     }
 
     @:allow(cream.Origin)
+    @:allow(cream.scene.Scene)
     @:final private function _render(graphics: Graphics): Void 
     {
         graphics.save();
