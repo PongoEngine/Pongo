@@ -41,6 +41,8 @@ class Sprite implements Disposable
     public var visible :Bool = true;
     public var active :Bool = true;
 
+    public var name :String = "";
+
     public var parent (default, null):Sprite = null;
     public var firstChild (default, null):Sprite = null;
     public var next (default, null):Sprite = null;
@@ -50,32 +52,62 @@ class Sprite implements Disposable
         _components = new Map<String, Component>();
     }
 
+    /**
+     *  [Description]
+     *  @param graphics - 
+     */
     public function draw(graphics: Graphics) : Void
     {
     }
 
+    /**
+     *  [Description]
+     *  @param component - 
+     *  @return Sprite
+     */
     public function addComponent(component :Component) : Sprite
     {
         _components.set(component.componentName, component);
         return this;
     }
 
+    /**
+     *  [Description]
+     *  @param componentName - 
+     *  @return Sprite
+     */
     public function removeComponent(componentName :String) : Sprite
     {
         _components.remove(componentName);
         return this;
     }
 
+    /**
+     *  [Description]
+     *  @param className - 
+     *  @param componentName - 
+     *  @return T
+     */
     public function get<T:Component>(className :Class<T>, componentName :String) :T
     {
         return cast _components.get(componentName);
     }
 
+    /**
+     *  [Description]
+     *  @param componentName - 
+     *  @return Bool
+     */
     public function has(componentName :String) :Bool
     {
         return _components.exists(componentName);
     }
 
+    /**
+     *  [Description]
+     *  @param componentNameGroup - 
+     *  @return Bool
+     */
     public function hasGroup(componentNameGroup :Array<String>) :Bool
     {
         for(name in componentNameGroup) {
@@ -86,6 +118,11 @@ class Sprite implements Disposable
         return true;
     }
 
+    /**
+     *  [Description]
+     *  @param child - 
+     *  @return Sprite
+     */
     @:final public function addSprite(child :Sprite) : Sprite
     {
         if (child.parent != null)
@@ -105,6 +142,10 @@ class Sprite implements Disposable
         return this;
     }	
 
+    /**
+     *  [Description]
+     *  @param child - 
+     */
     @:final public function removeSprite(child :Sprite) : Void
     {
         var prev :Sprite = null, p = firstChild;
@@ -125,16 +166,27 @@ class Sprite implements Disposable
         }
     }
 
+    /**
+     *  [Description]
+     *  @return Float
+     */
     public function getNaturalWidth() : Float
     {
         return 0;
     }
 
+    /**
+     *  [Description]
+     *  @return Float
+     */
     public function getNaturalHeight() : Float
     {
         return 0;
     }
 
+    /**
+     *  [Description]
+     */
     public function dispose() : Void
     {
         if(this.parent != null) {
@@ -147,12 +199,17 @@ class Sprite implements Disposable
             p = next;
         }
         
-        // for(c in )
         for(comp in _components) {
             comp.dispose();
         }
     }
 
+    /**
+     *  [Description]
+     *  @param viewX - 
+     *  @param viewY - 
+     *  @return Bool
+     */
     public function contains(viewX :Float, viewY :Float) :Bool
     {
         var matrix = getMatrix();
@@ -165,12 +222,22 @@ class Sprite implements Disposable
         return containsLocal(nFVec.x, nFVec.y);
     }
 
+    /**
+     *  [Description]
+     *  @param localX - 
+     *  @param localY - 
+     *  @return Bool
+     */
     public function containsLocal (localX :Float, localY :Float) :Bool
     {
         return localX >= 0 && localX < getNaturalWidth()
             && localY >= 0 && localY < getNaturalHeight();
     }
 
+    /**
+     *  [Description]
+     *  @return FastMatrix3
+     */
     @:extern private inline function getMatrix() : FastMatrix3
     {
         var sin = Math.sin(rotation.toRadians());
@@ -183,6 +250,10 @@ class Sprite implements Disposable
         ).multmat(FastMatrix3.translation(-anchorX, -anchorY));
     }
 
+    /**
+     *  [Description]
+     *  @param graphics - 
+     */
     @:allow(cream.Origin)
     @:allow(cream.scene.Scene)
     @:final private function _render(graphics: Graphics): Void 

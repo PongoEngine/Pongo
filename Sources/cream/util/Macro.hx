@@ -24,8 +24,8 @@ package cream.util;
 import haxe.macro.Context;
 import haxe.macro.Expr;
 
-class Macro {
-
+class Macro 
+{
     public static function build() :Array<Field> 
     {
         var fields = Context.getBuildFields();

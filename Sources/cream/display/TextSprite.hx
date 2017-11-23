@@ -19,65 +19,39 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package cream.util;
+package cream.display;
 
-import haxe.ds.Option;
+import kha.Font;
+import kha.Color;
 
-@:forward(push, concat, length, iterator)
-abstract ComponentArray<T>(Array<T>) from Array<T>
+class TextSprite extends Sprite
 {
+    public var text :String;
+    public var font :Font;
+    public var color :Color;
+    public var fontSize :Int;
 
-    /**
-     *  [Description]
-     *  @return Option<T>
-     */
-    public inline function first() : Option<T>
+    public function new(text :String, font :Font, color :Color, fontSize :Int) : Void
     {
-        return get(0);
+        super();
+        this.text = text;
+        this.font = font;
+        this.color = color;
+        this.fontSize = fontSize;
     }
 
-    /**
-     *  [Description]
-     *  @return Option<T>
-     */
-    public inline function last() : Option<T>
+    override public function draw(graphics :Graphics) : Void
     {
-        return get(this.length-1);
+        graphics.drawString(text, font, color, fontSize, 0, 0);
     }
 
-    /**
-     *  [Description]
-     *  @param index - 
-     *  @return Option<T>
-     */
-    public function get(index :Int) : Option<T>
+    override public function getNaturalWidth() : Float
     {
-        var val = this[index];
-        return (val == null) ? None : Some(val);
+        return font.width(this.fontSize, this.text);
     }
 
-    /**
-     *  [Description]
-     *  @param index - 
-     *  @param val - 
-     *  @return Bool
-     */
-    public function set(index :Int, val :T) : Bool
+    override public function getNaturalHeight() : Float
     {
-        if(index < 0 || index >= this.length)
-            return false
-        else {
-            this[index] = val;
-            return true;
-        }
-    }
-
-    /**
-     *  [Description]
-     *  @return Bool
-     */
-    public inline function empty() : Bool
-    {
-        return this.length == 0;
+        return font.height(this.fontSize);
     }
 }

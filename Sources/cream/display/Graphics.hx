@@ -25,6 +25,7 @@ import kha.math.FastMatrix3;
 import kha.Framebuffer;
 import kha.Color;
 import kha.Image;
+import kha.Font;
 
 using kha.graphics2.GraphicsExtension;
 
@@ -78,6 +79,18 @@ class Graphics
         setColor(color);
         prepareGraphics2D();
         _framebuffer.g2.drawCircle(cx, cy, radius, strength, segments);
+    }
+
+    public function drawString(text :String, font :Font, color :Color, fontSize :Int, x :Float, y :Float) : Void
+    {
+        setColor(color);
+
+        prepareGraphics2D();
+
+        _framebuffer.g2.font = font;
+        _framebuffer.g2.fontSize = fontSize;
+
+        _framebuffer.g2.drawString(text, x, y);
     }
 
     public function drawImage(img: Image, x: Float, y: Float) : Void
