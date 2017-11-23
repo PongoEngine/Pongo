@@ -37,10 +37,10 @@ import cream.scene.Scene;
         _schedulerID = kha.Scheduler.addTimeTask(runScene, 0, 1/60);
     }
 
-    public function changeScene(newScene :Scene<Msg, Model>) : Void
+    public function changeScene(init :Msg, model :Model, fnUpdate : Msg -> Origin<Msg, Model> -> Scene<Msg, Model> -> Model -> Void) : Void
     {
         var oldScene = this.scene;
-        this.scene = newScene;
+        this.scene = new Scene(model, this, init, fnUpdate);
         oldScene.dispose();
     }
 
