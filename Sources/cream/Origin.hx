@@ -56,22 +56,22 @@ class Origin<Msg:EnumValue, Model> implements Disposable
         return group;
     }
 
-    public function message(msg :Msg) : Void
+    public function fireMsg(msg :Msg) : Void
     {
         _fnUpdate(msg, this, _model);
     }
 
-    public function addScheduledMsg(msg :Msg) : Bool
+    public function addMsg(msg :Msg) : Bool
     {
         return _runningMsgs.set(msg);
     }
 
-    public function removeScheduledMsg(msg :Msg) : Bool
+    public function removeMsg(msg :Msg) : Bool
     {
         return _runningMsgs.unset(msg);
     }
 
-    public function hasScheduledMsg(msg :Msg) : Bool
+    public function hasMsg(msg :Msg) : Bool
     {
         return _runningMsgs.has(msg);
     }
