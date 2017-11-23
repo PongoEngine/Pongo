@@ -21,92 +21,31 @@
 
 package cream;
 
-import cream.display.Sprite;
 import cream.display.Graphics;
 import cream.util.Disposable;
-import cream.input.Mouse;
-import cream.input.Keyboard;
-import cream.util.Set;
-import cream.util.ComponentArray;
 import cream.scene.Scene;
 
-class Origin<Msg:EnumValue, Model> implements Disposable
+@:final class Origin<Msg:EnumValue, Model> implements Disposable
 {
-    public var root (default, null):Sprite;
-    public var mouse (default, null):Mouse;
-    public var keyboard (default, null):Keyboard;
+    public var scene (default, null):Scene<Msg, Model>;
 
-    public function new(model :Model, fnUpdate : Msg -> Origin<Msg, Model> -> Model -> Void)  :Void
+    public function new(scene :Scene<Msg, Model>)  :Void
     {
-        _fnUpdate = fnUpdate;
-        _model = model;
-        _runningMsgs = new Set();
-
-        root = new Sprite();
-        mouse = new Mouse();
-        keyboard = new Keyboard();
+        this.scene = scene;
         
         kha.System.notifyOnRender(renderSprites);
-        _schedulerID = kha.Scheduler.addTimeTask(runScheduledMsgs, 0, 1/60);
-    }
-
-    public function getGroup(componentNameGroup :Array<String>) : ComponentArray<Sprite>
-    {
-        var group = [];
-        impl_getGroup(componentNameGroup, root, group);
-        return group;
-    }
-
-    public function fireMsg(msg :Msg) : Void
-    {
-        _fnUpdate(msg, this, _model);
-    }
-
-    public function addMsg(msg :Msg) : Bool
-    {
-        return _runningMsgs.set(msg);
-    }
-
-    public function removeMsg(msg :Msg) : Bool
-    {
-        return _runningMsgs.unset(msg);
-    }
-
-    public function hasMsg(msg :Msg) : Bool
-    {
-        return _runningMsgs.has(msg);
+        _schedulerID = kha.Scheduler.addTimeTask(runScene, 0, 1/60);
     }
 
     public function dispose() : Void
     {
-        root.dispose();
-        mouse.dispose();
-        keyboard.dispose();
+        scene.dispose();
         kha.Scheduler.removeTimeTask(_schedulerID);
-
-        _graphics = null;
-        _model = null;
-        _fnUpdate = null;
     }
 
-    private function impl_getGroup(componentNameGroup :Array<String>, sprite :Sprite, group :Array<Sprite>): Void 
+    private function runScene() : Void
     {
-        var p = sprite.firstChild;
-        while (p != null) {
-            var next = p.next;
-            if(p.hasGroup(componentNameGroup)) {
-                group.push(p);
-            }
-            impl_getGroup(componentNameGroup, p, group);
-            p = next;
-        }
-    }
-
-    private function runScheduledMsgs() : Void
-    {
-        for(msg in _runningMsgs) {
-            _fnUpdate(msg, this, _model);
-        }
+        scene.runMsgs();
     }
 
     private function renderSprites(framebuffer: kha.Framebuffer) : Void 
@@ -116,13 +55,10 @@ class Origin<Msg:EnumValue, Model> implements Disposable
         }
 
         _graphics.begin();
-        root._render(_graphics);
+        scene.render(_graphics);
         _graphics.end();
     }
 
     private var _graphics :Graphics;
-    private var _model :Model;
-    private var _fnUpdate :Msg -> Origin<Msg, Model> -> Model -> Void;
-    private var _runningMsgs :Set<Msg>;
     private var _schedulerID :Int;
 }

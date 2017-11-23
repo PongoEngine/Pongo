@@ -36,7 +36,7 @@ import cream.display.Graphics;
     public var keyboard (get, null):Keyboard;
     public var isActive (get, null):Bool;
 
-    public function new(model :Model, initialMsg :Msg, fnUpdate : Msg -> Scene<Msg, Model> -> Model -> Void)  :Void
+    public function new(model :Model, init :Msg, fnUpdate : Msg -> Scene<Msg, Model> -> Model -> Void)  :Void
     {
         _fnUpdate = fnUpdate;
         _model = model;
@@ -44,8 +44,7 @@ import cream.display.Graphics;
         _isActive = false;
 
         root = new Sprite();
-        
-        fireMsg(initialMsg);
+        fireMsg(init);
     }
 
     public function getGroup(componentNameGroup :Array<String>) : ComponentArray<Sprite>
@@ -58,6 +57,13 @@ import cream.display.Graphics;
     public function fireMsg(msg :Msg) : Void
     {
         _fnUpdate(msg, this, _model);
+    }
+
+    public function runMsgs() : Void
+    {
+        for(msg in _runningMsgs) {
+            _fnUpdate(msg, this, _model);
+        }
     }
 
     public function addMsg(msg :Msg) : Bool
@@ -123,7 +129,6 @@ import cream.display.Graphics;
 
     private var _model :Model;
     private var _fnUpdate :Msg -> Scene<Msg, Model> -> Model -> Void;
-    @:allow(cream.Origin)
     private var _runningMsgs :Set<Msg>;
 
     private var _mouse :Mouse;
