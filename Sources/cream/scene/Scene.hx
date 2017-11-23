@@ -21,8 +21,6 @@
 
 package cream.scene;
 
-import haxe.ds.Option;
-
 import cream.display.Sprite;
 import cream.util.Disposable;
 import cream.input.Mouse;
@@ -36,10 +34,6 @@ import cream.display.Graphics;
     public var root (default, null):Sprite;
     public var mouse (get, null):Mouse;
     public var keyboard (get, null):Keyboard;
-    public var isActive (get, null):Bool;
-
-    public var next :Option<Scene<Msg, Model>>;
-    public var prev :Option<Scene<Msg, Model>>;
 
     public function new(model :Model, origin :Origin<Msg, Model>, init :Msg, fnUpdate : Msg -> Origin<Msg, Model> -> Scene<Msg, Model> -> Model -> Void)  :Void
     {
@@ -47,9 +41,6 @@ import cream.display.Graphics;
         _origin = origin;
         _fnUpdate = fnUpdate;
         _runningMsgs = new Set();
-        _isActive = false;
-        next = None;
-        prev = None;
 
         root = new Sprite();
         fireMsg(init);
@@ -130,11 +121,6 @@ import cream.display.Graphics;
         return _keyboard;
     }
 
-    private function get_isActive() : Bool
-    {
-        return _isActive;
-    }
-
     private var _model :Model;
     private var _origin :Origin<Msg, Model>;
     private var _fnUpdate :Msg -> Origin<Msg, Model> -> Scene<Msg, Model> -> Model -> Void;
@@ -142,6 +128,4 @@ import cream.display.Graphics;
 
     private var _mouse :Mouse;
     private var _keyboard :Keyboard;
-
-    private var _isActive :Bool;
 }
