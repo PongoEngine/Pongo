@@ -54,14 +54,6 @@ class Sprite implements Disposable
 
     /**
      *  [Description]
-     *  @param graphics - 
-     */
-    public function draw(graphics: Graphics) : Void
-    {
-    }
-
-    /**
-     *  [Description]
      *  @param component - 
      *  @return Sprite
      */
@@ -91,6 +83,14 @@ class Sprite implements Disposable
     public function get<T:Component>(className :Class<T>, componentName :String) :T
     {
         return cast _components.get(componentName);
+    }
+
+    /**
+     *  [Description]
+     *  @param graphics - 
+     */
+    public function draw(graphics: Graphics) : Void
+    {
     }
 
     /**

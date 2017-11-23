@@ -21,7 +21,6 @@
 
 package cream.display;
 
-
 class SpriteUtil
 {
     public static inline function setXY(sprite :Sprite, x :Float, y :Float) : Sprite
