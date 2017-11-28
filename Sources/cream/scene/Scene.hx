@@ -21,13 +21,14 @@
 
 package cream.scene;
 
-import cream.display.Sprite;
+import cream.Entity;
 import cream.util.Disposable;
 import cream.input.Mouse;
 import cream.input.Keyboard;
 import cream.util.Set;
 import cream.util.ComponentArray;
 import cream.display.Graphics;
+import cream.display.Sprite;
 
 @:final class Scene<Msg:EnumValue, Model> implements Disposable
 {
@@ -46,7 +47,7 @@ import cream.display.Graphics;
         fireMsg(init);
     }
 
-    public function getGroup(componentNameGroup :Array<String>) : ComponentArray<Sprite>
+    public function getGroup(componentNameGroup :Array<String>) : ComponentArray<Entity>
     {
         var group = [];
         impl_getGroup(componentNameGroup, root, group);
@@ -92,7 +93,7 @@ import cream.display.Graphics;
         root._render(graphics);
     }
 
-    private function impl_getGroup(componentNameGroup :Array<String>, sprite :Sprite, group :Array<Sprite>): Void 
+    private function impl_getGroup(componentNameGroup :Array<String>, sprite :Entity, group :Array<Entity>): Void 
     {
         var p = sprite.firstChild;
         while (p != null) {

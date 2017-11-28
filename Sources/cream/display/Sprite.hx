@@ -21,14 +21,14 @@
 
 package cream.display;
 
+import cream.Entity;
 import kha.math.FastMatrix3;
 import kha.math.FastVector2;
-import cream.Component;
-import cream.util.Disposable;
+import cream.display.Graphics;
 
 using cream.math.CMath;
 
-class Sprite implements Disposable
+class Sprite extends Entity
 {
     public var x :Float = 0;
     public var y :Float = 0;
@@ -39,131 +39,51 @@ class Sprite implements Disposable
     public var rotation :Float = 0;
     public var opacity :Float = 1;
     public var visible :Bool = true;
-    public var active :Bool = true;
-
-    public var name :String = "";
-
-    public var parent (default, null):Sprite = null;
-    public var firstChild (default, null):Sprite = null;
-    public var next (default, null):Sprite = null;
 
     public function new() : Void
     {
-        _components = new Map<String, Component>();
+        super();
+        this.kind = SPRITE(this);
     }
 
-    /**
-     *  [Description]
-     *  @param component - 
-     *  @return Sprite
-     */
-    public function addComponent(component :Component) : Sprite
+    public inline function setXY(x :Float, y :Float) : Sprite
     {
-        _components.set(component.componentName, component);
+        this.x = x;
+        this.y = y;
         return this;
     }
 
-    /**
-     *  [Description]
-     *  @param componentName - 
-     *  @return Sprite
-     */
-    public function removeComponent(componentName :String) : Sprite
+    public inline function setAnchorXY(x :Float, y :Float) : Sprite
     {
-        _components.remove(componentName);
+        this.anchorX = x;
+        this.anchorY = y;
         return this;
     }
 
-    /**
-     *  [Description]
-     *  @param className - 
-     *  @param componentName - 
-     *  @return T
-     */
-    public function get<T:Component>(className :Class<T>, componentName :String) :T
+    public inline function setRotation(degrees :Float) : Sprite
     {
-        return cast _components.get(componentName);
-    }
-
-    /**
-     *  [Description]
-     *  @param graphics - 
-     */
-    public function draw(graphics: Graphics) : Void
-    {
-    }
-
-    /**
-     *  [Description]
-     *  @param componentName - 
-     *  @return Bool
-     */
-    public function has(componentName :String) :Bool
-    {
-        return _components.exists(componentName);
-    }
-
-    /**
-     *  [Description]
-     *  @param componentNameGroup - 
-     *  @return Bool
-     */
-    public function hasGroup(componentNameGroup :Array<String>) :Bool
-    {
-        for(name in componentNameGroup) {
-            if(!_components.exists(name)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     *  [Description]
-     *  @param child - 
-     *  @return Sprite
-     */
-    @:final public function addSprite(child :Sprite) : Sprite
-    {
-        if (child.parent != null)
-            child.parent.removeSprite(child);
-        child.parent = this;
-
-        var tail = null, p = firstChild;
-        while (p != null) {
-            tail = p;
-            p = p.next;
-        }
-        if (tail != null)
-            tail.next = child;
-        else
-            firstChild = child;
-
+        this.rotation = degrees;
         return this;
-    }	
+    }
 
-    /**
-     *  [Description]
-     *  @param child - 
-     */
-    @:final public function removeSprite(child :Sprite) : Void
+    public inline function setOpacity(opacity :Float) : Sprite
     {
-        var prev :Sprite = null, p = firstChild;
-        while (p != null) {
-            var next = p.next;
-            if (p == child) {
-                if (prev == null) {
-                    firstChild = next;
-                } else {
-                    prev.next = next;
-                }
-                p.parent = null;
-                p.next = null;
-                return;
-            }
-            prev = p;
-            p = next;
-        }
+        this.opacity = opacity;
+        return this;
+    }
+
+    public inline function setScaleXY(scaleX :Float, scaleY :Float) : Sprite
+    {
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        return this;
+    }
+
+    public inline function centerAnchor() : Sprite
+    {
+        this.anchorX = this.getNaturalWidth() / 2;
+        this.anchorY = this.getNaturalHeight() / 2;
+        return this;
     }
 
     /**
@@ -186,26 +106,6 @@ class Sprite implements Disposable
 
     /**
      *  [Description]
-     */
-    public function dispose() : Void
-    {
-        if(this.parent != null) {
-            this.parent.removeSprite(this);
-        }
-        var p = this.firstChild;
-        while(p != null) {
-            var next = p.next;
-            p.dispose();
-            p = next;
-        }
-        
-        for(comp in _components) {
-            comp.dispose();
-        }
-    }
-
-    /**
-     *  [Description]
      *  @param viewX - 
      *  @param viewY - 
      *  @return Bool
@@ -215,11 +115,23 @@ class Sprite implements Disposable
         var matrix = getMatrix();
         var p = this.parent;
         while(p != null) {
-            matrix.setFrom(p.getMatrix().multmat(matrix));
+            switch p.kind {
+                case CORE:
+                case SPRITE(val):
+                    matrix.setFrom(val.getMatrix().multmat(matrix));
+            }
             p = p.parent;
         }
         var nFVec = matrix.inverse().multvec(new FastVector2(viewX,viewY));
         return containsLocal(nFVec.x, nFVec.y);
+    }
+
+    /**
+     *  [Description]
+     *  @param graphics - 
+     */
+    public function draw(graphics: Graphics) : Void
+    {
     }
 
     /**
@@ -268,13 +180,15 @@ class Sprite implements Disposable
             draw(graphics);
             var p = firstChild;
             while(p != null) {
-                p._render(graphics);
+                switch p.kind {
+                    case CORE:
+                    case SPRITE(val):
+                        val._render(graphics);
+                }
                 p = p.next;
             }
         }
 
         graphics.restore();
     }
-
-    private var _components (default, null): Map<String, Component>;
 }
