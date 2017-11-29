@@ -21,6 +21,9 @@
 
 package cream.logic;
 
+/**
+ *  
+ */
 typedef Func<T> = T -> Void;
 
 /**
