@@ -21,4 +21,71 @@
 
 package cream.logic;
 
-typedef Logic = Void -> Void;
+typedef Func<T> = T -> Void;
+
+/**
+ *  
+ */
+class Logic
+{
+    /**
+     *  [Description]
+     *  @param fnCondition - 
+     *  @param fnTrue - 
+     *  @param fnFalse - 
+     *  @param data - 
+     */
+    public static function ifElse<T>(fnCondition : T -> Bool, fnTrue :Func<T>, fnFalse :Func<T>, data :T) : Void
+    {
+        fnCondition(data) ? fnTrue(data) : fnFalse(data);
+    }
+
+    /**
+     *  [Description]
+     *  @param fnCondition - 
+     *  @param fnNext - 
+     *  @param data - 
+     */
+    public static function condition<T>(fnCondition : T -> Bool, fnNext :Func<T>, data :T) : Void
+    {
+        if(fnCondition(data)) {
+            fnNext(data);
+        }
+    }
+
+    /**
+     *  [Description]
+     *  @param functions - 
+     *  @param fnNext - 
+     *  @param data - 
+     */
+    public static function firstOf<T>(functions :Array<T -> Bool>, fnNext :Func<T>, data :T) : Void
+    {
+        for(fn in functions) {
+            var isComplete = fn(data);
+            if(isComplete) {
+                fnNext(data);
+            }
+        }
+    }
+
+    /**
+     *  [Description]
+     *  @param functions - 
+     *  @param fnNext - 
+     *  @param data - 
+     */
+    public static function parallel<T>(functions :Array<T -> Bool>, fnNext :Func<T>, data :T) : Void
+    {
+        var isAllComplete = true;
+        for(fn in functions) {
+            if(!fn(data)) {
+                isAllComplete = false;
+            }
+        }
+
+        if(isAllComplete) {
+            fnNext(data);
+        }
+    }
+}

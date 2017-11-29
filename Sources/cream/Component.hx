@@ -22,7 +22,7 @@
 package cream;
 
 @:autoBuild(cream.util.Macro.build())
-interface Component// extends Disposable
+interface Component
 {
     var componentName (default, null):String;
 }
