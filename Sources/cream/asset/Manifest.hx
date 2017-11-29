@@ -23,10 +23,10 @@ package cream.asset;
 
 import kha.Assets;
 import kha.Image;
-import kha.Sound;
 import kha.Blob;
 import kha.Font;
 import kha.Video;
+import cream.sound.Sound;
 
 class Manifest
 {
@@ -76,10 +76,10 @@ class Manifest
                     }
                 });
 
-                case SOUND(name): Assets.loadSound(name, function(sound :Sound) {
-                    sound.uncompress(function() {
+                case SOUND(name): Assets.loadSound(name, function(nativeSound :kha.Sound) {
+                    nativeSound.uncompress(function() {
                         loadedCount++;
-                        assetPack._sounds.set(name, sound);
+                        assetPack._sounds.set(name, new Sound(nativeSound));
                         if(loadedCount == targetCount) {
                             cb(assetPack);
                         }

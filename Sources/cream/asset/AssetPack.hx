@@ -22,10 +22,11 @@
 package cream.asset;
 
 import kha.Image;
-import kha.Sound;
 import kha.Blob;
 import kha.Font;
 import kha.Video;
+import cream.sound.Sound;
+
 import cream.util.Disposable;
 
 @:allow(cream.asset.Manifest)
@@ -69,23 +70,18 @@ class AssetPack implements Disposable
     {
         for(image in _images)
             image.unload();
-        _images = null;
 
         for(sound in _sounds)
-            sound.unload();
-        _sounds = null;
+            sound.dispose();
 
         for(blob in _blobs)
             blob.unload();
-        _blobs = null;
 
         for(font in _fonts)
             font.unload();
-        _fonts = null;
 
         for(video in _videos)
             video.unload();
-        _videos = null;
     }
 
 

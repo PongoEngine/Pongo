@@ -28,6 +28,8 @@ import cream.scene.Scene;
 @:final class Origin<Msg:EnumValue, Model> implements Disposable
 {
     public var scene (default, null):Scene<Msg, Model>;
+    public var width (get, null) :Int;
+    public var height (get, null) :Int;
 
     public function new(model :Model, init :Msg, fnUpdate : Msg -> Origin<Msg, Model> -> Scene<Msg, Model> -> Model -> Void)  :Void
     {
@@ -66,6 +68,16 @@ import cream.scene.Scene;
         _graphics.begin();
         scene.render(_graphics);
         _graphics.end();
+    }
+
+    private function get_width() : Int
+    {
+        return kha.System.windowWidth();
+    }
+
+    private function get_height() : Int
+    {
+        return kha.System.windowHeight();
     }
 
     private var _model :Model;
