@@ -49,7 +49,7 @@ class Logic
      *  @param fnNext - 
      *  @param data - 
      */
-    public static function condition<T>(fnCondition : T -> Bool, fnNext :Func<T>, data :T) : Void
+    public static function onlyIf<T>(fnCondition : T -> Bool, fnNext :Func<T>, data :T) : Void
     {
         if(fnCondition(data)) {
             fnNext(data);
