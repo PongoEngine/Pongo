@@ -19,10 +19,6 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package cream;
+package cream.logic;
 
-@:autoBuild(cream.util.Macro.build())
-interface Component// extends Disposable
-{
-    var componentName (default, null):String;
-}
+typedef Logic = Void -> Void;

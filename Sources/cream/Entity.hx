@@ -156,10 +156,6 @@ class Entity implements Disposable
             p.dispose();
             p = next;
         }
-        
-        for(comp in _components) {
-            comp.dispose();
-        }
     }
 
     private var _components (default, null): Map<String, Component>;

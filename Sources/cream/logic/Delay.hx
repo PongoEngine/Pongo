@@ -19,10 +19,16 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package cream;
+package cream.logic;
 
-@:autoBuild(cream.util.Macro.build())
-interface Component// extends Disposable
+import cream.Component;
+
+class Delay extends Component
 {
-    var componentName (default, null):String;
+    public static function delay(duration :Float, elapsed :Float, next :Logic) : Void
+    {
+        if(elapsed >= duration) {
+            next();
+        }
+    }
 }
