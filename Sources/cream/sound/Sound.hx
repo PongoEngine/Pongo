@@ -12,12 +12,7 @@ class Sound implements Disposable
 
     public function play(volume :Float = 1.0) : Void
     {
-        kha.audio1.Audio.play(_nativeSound);
-    }
-
-    public function loop(volume :Float = 1.0) : Void
-    {
-        kha.audio1.Audio.play(_nativeSound, true);
+        kha.audio2.Audio1.play(_nativeSound, false);
     }
 
     public function dispose() : Void
