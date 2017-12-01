@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Cream Engine
+ * Copyright (c) 2017 Jeremy Meltingtallow
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
