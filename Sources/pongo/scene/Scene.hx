@@ -49,7 +49,11 @@ import pongo.display.Sprite;
 
     public function getGroup(componentNameGroup :Array<String>) : ComponentArray<Entity>
     {
-        var group = [];
+        var group :Array<Entity> = [];
+        if(root.hasGroup(componentNameGroup)) {
+            group.push(root);
+        }
+
         impl_getGroup(componentNameGroup, root, group);
         return group;
     }
