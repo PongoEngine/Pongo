@@ -32,4 +32,11 @@ class CMath
     {
         return radians * (180/Math.PI);
     }
+
+    public static inline function clamp<T:Float> (value :T, min :T, max :T) :T
+    {
+        return if (value < min) min
+            else if (value > max) max
+            else value;
+    }
 }
