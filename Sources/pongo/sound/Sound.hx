@@ -24,6 +24,7 @@ package pongo.sound;
 import pongo.util.Disposable;
 
 
+
 class Sound implements Disposable
 {
     public function new(s :kha.Sound) : Void
@@ -31,9 +32,18 @@ class Sound implements Disposable
         _nativeSound = s;
     }
 
-    public function play(volume :Float = 1.0) : Void
+    public function play(volume :Float = 1.0) : kha.audio1.AudioChannel
     {
-        kha.audio2.Audio1.play(_nativeSound, false);
+        var playback = kha.audio2.Audio1.play(_nativeSound, false);
+        playback.volume = volume;
+        return playback;
+    }
+
+    public function loop(volume :Float = 1.0) : kha.audio1.AudioChannel
+    {
+        var playback = kha.audio2.Audio1.play(_nativeSound, true);
+        playback.volume = volume;
+        return playback;
     }
 
     public function dispose() : Void
