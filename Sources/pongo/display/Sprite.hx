@@ -156,14 +156,11 @@ class Sprite extends Entity
      */
     @:extern private inline function getMatrix() : FastMatrix3
     {
-        var sin = Math.sin(rotation.toRadians());
-        var cos = Math.cos(rotation.toRadians());
-
-        return new FastMatrix3(
-            cos*scaleX, -sin*scaleY, x,
-            sin*scaleX, cos*scaleY, y,
-            0, 0, 1
-        ).multmat(FastMatrix3.translation(-anchorX, -anchorY));
+        return FastMatrix3.identity()
+            .multmat(FastMatrix3.scale(scaleX, scaleY))
+            .multmat(FastMatrix3.translation(x,y))
+            .multmat(FastMatrix3.rotation(rotation.toRadians()))
+            .multmat(FastMatrix3.translation(-anchorX, -anchorY));
     }
 
     /**
