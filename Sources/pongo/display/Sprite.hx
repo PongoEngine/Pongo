@@ -157,9 +157,9 @@ class Sprite extends Entity
     @:extern private inline function getMatrix() : FastMatrix3
     {
         return FastMatrix3.identity()
-            .multmat(FastMatrix3.scale(scaleX, scaleY))
             .multmat(FastMatrix3.translation(x,y))
             .multmat(FastMatrix3.rotation(rotation.toRadians()))
+            .multmat(FastMatrix3.scale(scaleX, scaleY))
             .multmat(FastMatrix3.translation(-anchorX, -anchorY));
     }
 
