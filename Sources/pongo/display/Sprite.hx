@@ -25,14 +25,13 @@
 
 package pongo.display;
 
-import pongo.Entity;
 import kha.math.FastMatrix3;
-import kha.math.FastVector2;
 import pongo.display.Graphics;
+import pongo.pecs.Entity;
 
 using pongo.math.CMath;
 
-class Sprite extends Entity
+class Sprite
 {
     public var x :Float = 0;
     public var y :Float = 0;
@@ -46,8 +45,6 @@ class Sprite extends Entity
 
     public function new() : Void
     {
-        super();
-        this.kind = SPRITE(this);
     }
 
     public inline function setXY(x :Float, y :Float) : Sprite
@@ -110,28 +107,6 @@ class Sprite extends Entity
 
     /**
      *  [Description]
-     *  @param viewX - 
-     *  @param viewY - 
-     *  @return Bool
-     */
-    public function contains(viewX :Float, viewY :Float) :Bool
-    {
-        var matrix = getMatrix();
-        var p = this.parent;
-        while(p != null) {
-            switch p.kind {
-                case CORE:
-                case SPRITE(val):
-                    matrix.setFrom(val.getMatrix().multmat(matrix));
-            }
-            p = p.parent;
-        }
-        var nFVec = matrix.inverse().multvec(new FastVector2(viewX,viewY));
-        return containsLocal(nFVec.x, nFVec.y);
-    }
-
-    /**
-     *  [Description]
      *  @param graphics - 
      */
     public function draw(graphics: Graphics) : Void
@@ -163,33 +138,26 @@ class Sprite extends Entity
             .multmat(FastMatrix3.translation(-anchorX, -anchorY));
     }
 
-    /**
-     *  [Description]
-     *  @param graphics - 
-     */
-    @:allow(pongo.Origin)
-    @:allow(pongo.scene.Scene)
-    @:final private function _render(graphics: Graphics): Void 
+    public static function render(entity :Entity, g :Graphics)
     {
-        graphics.save();
+        if (entity.sprite != null) {
+            g.save();
+            g.transform(entity.sprite.getMatrix());
+            if(entity.sprite.opacity < 1)
+                g.multiplyOpacity(entity.sprite.opacity);
 
-        graphics.transform(getMatrix());
-        if(opacity < 1)
-            graphics.multiplyOpacity(this.opacity);
-
-        if(visible && opacity > 0) {
-            draw(graphics);
-            var p = firstChild;
-            while(p != null) {
-                switch p.kind {
-                    case CORE:
-                    case SPRITE(val):
-                        val._render(graphics);
-                }
-                p = p.next;
+            if(entity.sprite.visible && entity.sprite.opacity > 0) {
+                entity.sprite.draw(g);
             }
         }
 
-        graphics.restore();
+        for(child in entity._children) {
+            render(child, g);
+        }
+
+        // If save() was called, unwind it
+        if (entity.sprite != null) {
+            g.restore();
+        }
     }
 }

@@ -23,50 +23,63 @@ package pongo;
 
 import pongo.display.Graphics;
 import pongo.util.Disposable;
-import pongo.scene.Scene;
+import pongo.pecs.Engine;
+import pongo.input.Keyboard;
 
-@:final class Origin<Msg:EnumValue, Model> implements Disposable
+@:final class Origin implements Disposable
 {
-    public var scene (default, null):Scene<Msg, Model>;
     public var width (get, null) :Int;
     public var height (get, null) :Int;
+    public var engine (default, null) :Engine;
+    public var keyboard (default, null) :Keyboard;
 
-    public function new(model :Model, init :Msg, fnUpdate : Msg -> Origin<Msg, Model> -> Scene<Msg, Model> -> Model -> Void)  :Void
+    public function new()  :Void
     {
-        _model = model;
-        _fnUpdate = fnUpdate;
-        this.scene = new Scene(_model, this, init, _fnUpdate);
-        
-        kha.System.notifyOnRender(renderSprites);
-        _schedulerID = kha.Scheduler.addTimeTask(runScene, 0, 1/60);
-    }
-
-    public function changeScene(init :Msg) : Void
-    {
-        var oldScene = this.scene;
-        this.scene = new Scene(_model, this, init, _fnUpdate);
-        oldScene.dispose();
+        kha.System.notifyOnFrames(renderSprites);
+        this.engine = new Engine();
+        this.keyboard = new Keyboard();
+        _schedulerID = kha.Scheduler.addTimeTask(update, 0, 1/60);
+        _systems = new Map<String, Origin -> Float -> Void>();
     }
 
     public function dispose() : Void
     {
-        scene.dispose();
         kha.Scheduler.removeTimeTask(_schedulerID);
     }
 
-    private function runScene() : Void
+    public function addSystem(name :String, fn :Origin -> Float -> Void) : Void
     {
-        scene.runMsgs();
+        _systems.set(name, fn);
     }
 
-    private function renderSprites(framebuffer: kha.Framebuffer) : Void 
+    public function removeSystem(name :String) : Void
+    {
+        _systems.remove(name);
+    }
+
+    private function update() : Void
+    {
+        var dt = 0.016666666666666667;
+        var time = kha.Scheduler.time();
+        if(_lastTime != -1) {
+            dt = time - _lastTime;
+        }
+        _lastTime = time;
+
+        for(system in _systems) {
+            system(this, dt);
+        }
+        this.engine.update();
+    }
+
+    private function renderSprites(framebuffer: Array<kha.Framebuffer>) : Void 
     {
         if(_graphics == null) {
-            _graphics = new Graphics(framebuffer);
+            _graphics = new Graphics(framebuffer[0]);
         }
 
         _graphics.begin();
-        scene.render(_graphics);
+        this.engine.render(_graphics);
         _graphics.end();
     }
 
@@ -80,8 +93,8 @@ import pongo.scene.Scene;
         return kha.System.windowHeight();
     }
 
-    private var _model :Model;
-    private var _fnUpdate :Msg -> Origin<Msg, Model> -> Scene<Msg, Model> -> Model -> Void;
     private var _graphics :Graphics;
     private var _schedulerID :Int;
+    private var _systems :Map<String, Origin -> Float -> Void>;
+    private var _lastTime :Float = -1;
 }

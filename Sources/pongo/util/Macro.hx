@@ -26,7 +26,7 @@ import haxe.macro.Expr;
 
 class Macro 
 {
-    public static function build() :Array<Field> 
+    macro public static function build() :Array<Field> 
     {
         var fields = Context.getBuildFields();
         
@@ -55,7 +55,7 @@ class Macro
         return addComponentNames(fields);
     }
 
-    public static function addComponentNames(fields :Array<Field>):Array<Field> 
+    macro public static function addComponentNames(fields :Array<Field>):Array<Field> 
     {
         fields.push({
             name:  "COMPONENT_NAME",
