@@ -46,6 +46,11 @@ import pongo.util.Disposable;
         _manager = manager;
     }
 
+    /**
+     * [Description]
+     * @param component 
+     * @return Entity
+     */
     @:extern public inline function addComponent(component :Component) : Entity
     {
         if(_manager._entityMap.exists(this, component.componentName)) {
@@ -55,21 +60,31 @@ import pongo.util.Disposable;
         return this;
     }
 
+    /**
+     * [Description]
+     * @param component 
+     */
     @:extern public inline function removeComponent(component :Component) : Void
     {
         _manager.notifyRemoveComponent(this, component.componentName);
     }
 
+    /**
+     * [Description]
+     * @param self 
+     * @param componentClass 
+     * @return ExprOf<T>
+     */
     macro public function getComponent<T:Component>(self:Expr, componentClass :ExprOf<Class<T>>) :ExprOf<T>
     {
         return macro cast $self.getComponentFromName($componentClass.COMPONENT_NAME);
     }
 
-    @:extern public inline function getComponentFromName(name :String) : Component
-    {
-        return _manager._entityMap.getComponent(this, name);
-    }
-
+    /**
+     * [Description]
+     * @param name 
+     * @return Bool
+     */
     @:extern public inline function hasComponent(name :String) : Bool
     {
         return _manager._entityMap.hasComponent(this, name);
@@ -78,6 +93,12 @@ import pongo.util.Disposable;
     //
     // Flambe - Rapid game development
     // https://github.com/aduros/flambe/blob/master/LICENSE.txt
+    /**
+     * [Description]
+     * @param entity 
+     * @param append 
+     * @return Entity
+     */
     public function addEntity(entity :Entity, append :Bool=true) : Entity
     {
         if (entity.parent != null) {
@@ -111,6 +132,10 @@ import pongo.util.Disposable;
     //
     // Flambe - Rapid game development
     // https://github.com/aduros/flambe/blob/master/LICENSE.txt
+    /**
+     * [Description]
+     * @param entity 
+     */
     public function removeEntity(entity :Entity) : Void
     {
         var prev :Entity = null, p = firstChild;
@@ -133,12 +158,20 @@ import pongo.util.Disposable;
         _manager.notifyRemoveEntity(entity);
     }
 
+    /**
+     * [Description]
+     * @param sprite 
+     * @return Entity
+     */
     public function setSprite(sprite :pongo.display.Sprite) : Entity
     {
         this.sprite = sprite;
         return this;
     }
 
+    /**
+     * [Description]
+     */
     public function disposeChildren ()
     {
         while (firstChild != null) {
@@ -146,6 +179,9 @@ import pongo.util.Disposable;
         }
     }
 
+    /**
+     * [Description]
+     */
     public function dispose ()
     {
         if (parent != null) {
@@ -154,6 +190,11 @@ import pongo.util.Disposable;
         disposeChildren();
         _manager._entityMap.removeEntity(this);
         _manager = null;
+    }
+
+    @:extern public inline function getComponentFromName(name :String) : Component
+    {
+        return _manager._entityMap.getComponent(this, name);
     }
 
     public var sprite (default, null):pongo.display.Sprite = null;

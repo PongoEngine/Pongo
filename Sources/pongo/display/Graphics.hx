@@ -57,7 +57,7 @@ class Graphics
         setColor(color);
         prepareGraphics2D();
         #if !macro
-        SafeGraphicsExtension.fillCircle(_framebuffer.g2, cx, cy, radius, segments);
+        kha.graphics2.GraphicsExtension.fillCircle(_framebuffer.g2, cx, cy, radius, segments);
         #end
     }
 
@@ -80,7 +80,7 @@ class Graphics
         setColor(color);
         prepareGraphics2D();
         #if !macro
-        SafeGraphicsExtension.drawCircle(_framebuffer.g2, cx, cy, radius, strength, segments);
+        kha.graphics2.GraphicsExtension.drawCircle(_framebuffer.g2, cx, cy, radius, strength, segments);
         #end
     }
 
@@ -202,4 +202,3 @@ private class DrawingState
 typedef SafeFont = #if macro Dynamic; #else kha.Font; #end
 typedef SafeFramebuffer = #if macro Dynamic; #else kha.Framebuffer; #end
 typedef SafeImage = #if macro Dynamic; #else kha.Image; #end
-typedef SafeGraphicsExtension = #if macro Dynamic; #else kha.graphics2.GraphicsExtension; #end

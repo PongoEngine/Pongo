@@ -32,6 +32,9 @@ import haxe.macro.Expr;
 
 @:final class Engine implements Disposable
 {
+    /**
+     * 
+     */
     public var root (default, null):Entity;
 
     public function new() : Void
@@ -40,12 +43,13 @@ import haxe.macro.Expr;
         this.root = this.createEntity();
     }
 
-    public function registerGroupWithClassNames(name :String, classNames :Array<String>) : EntityGroup
-    {
-        return _manager.createGroup(name, classNames);
-    }
-
-    macro public function registerGroup<T:Component>(self:Expr, name :ExprOf<String>, componentClass :ExprOf<Array<Class<T>>>)
+    /**
+     * [Description]
+     * @param self 
+     * @param name 
+     * @param componentClass 
+     */
+    macro public function registerGroup(self:Expr, name :ExprOf<String>, componentClass :ExprOf<Array<Class<Component>>>)
     {
         var cNames = [];
         switch (componentClass.expr) {
@@ -59,16 +63,46 @@ import haxe.macro.Expr;
         return macro $self.registerGroupWithClassNames($name, $a{cNames});
     }
 
+    /**
+     * [Description]
+     * @param name 
+     */
     public function unregisterGroup(name :String) : Void
     {
         _manager.destroyGroup(name);
     }
 
+    /**
+     * [Description]
+     * @param name 
+     * @return EntityGroup
+     */
     public inline function getGroup(name :String) : EntityGroup
     {
         return _manager.getGroup(name);
     }
 
+    /**
+     * [Description]
+     * @param graphics 
+     */
+    public function render(graphics: pongo.display.Graphics) : Void
+    {
+        pongo.display.Sprite.render(this.root, graphics);
+    }
+
+    /**
+     * [Description]
+     * @return Entity
+     */
+    public inline function createEntity() : Entity
+    {
+        return _manager.createEntity();
+    }
+
+    /**
+     * [Description]
+     */
     public function dispose() : Void
     {
         _manager.dispose();
@@ -76,14 +110,9 @@ import haxe.macro.Expr;
         this.root = null;
     }
 
-    public function render(graphics: pongo.display.Graphics) : Void
+    public function registerGroupWithClassNames(name :String, classNames :Array<String>) : EntityGroup
     {
-        pongo.display.Sprite.render(this.root, graphics);
-    }
-
-    public inline function createEntity() : Entity
-    {
-        return _manager.createEntity();
+        return _manager.createGroup(name, classNames);
     }
 
     private var _manager :Manager;

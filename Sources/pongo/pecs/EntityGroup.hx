@@ -29,17 +29,29 @@ import pongo.pecs.ds.RuleSet;
     public var entities (get, null):Iterator<Entity>;
     public var rules (default, null):RuleSet;
 
+    /**
+     * [Description]
+     * @param rules 
+     */
     public function new(rules :RuleSet) : Void
     {
         this.rules = rules;
         _entityMap = new Map<Int,Entity>();
     }
 
+    /**
+     * [Description]
+     */
     public function dispose() : Void
     {
         _entityMap = new Map<Int,Entity>();
     }
 
+    /**
+     * [Description]
+     * @param entity 
+     * @return Bool
+     */
     public function exists(entity :Entity) : Bool
     {
         return _entityMap.exists(entity.index);

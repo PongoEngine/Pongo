@@ -28,6 +28,9 @@ import pongo.pecs.ds.EntityMap;
 
 @:final class Manager implements Disposable
 {
+    /**
+     * [Description]
+     */
     @:allow(pongo.pecs.Engine)
     private function new() : Void
     {
@@ -36,11 +39,18 @@ import pongo.pecs.ds.EntityMap;
         _entityMap = new EntityMap();
     }
 
+    /**
+     * [Description]
+     * @return Entity
+     */
     public function createEntity() : Entity
     {
         return new Entity(this);
     }
 
+    /**
+     * [Description]
+     */
     public function dispose() : Void
     {
         while(_keys.length > 0) {
