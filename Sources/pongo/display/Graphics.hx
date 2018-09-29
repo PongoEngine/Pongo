@@ -61,7 +61,7 @@ class Graphics
     {
         setColor(color);
         prepareGraphics2D();
-        _framebuffer.g2.fillCircle( cx, cy, radius, segments);
+        _framebuffer.g2.fillCircle(cx, cy, radius, segments);
     }
 
     public function drawRect(color :Int, x: Float, y: Float, width: Float, height: Float, strength: Float = 1.0) : Void 

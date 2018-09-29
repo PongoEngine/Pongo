@@ -15,7 +15,7 @@ import pongo.display.Graphics;
     public function new() : Void
     {
         _manager = new Manager();
-        this.root = _manager.createEntity();
+        this.root = this.createEntity();
     }
 
     public function registerGroup(name :String, classNames :Array<String>) : EntityGroup
@@ -39,9 +39,9 @@ import pongo.display.Graphics;
         Sprite.render(this.root, graphics);
     }
 
-    public function update() : Void
+    public inline function createEntity() : Entity
     {
-        _manager.update();
+        return _manager.createEntity();
     }
 
     private var _manager :Manager;

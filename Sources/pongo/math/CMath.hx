@@ -33,10 +33,33 @@ class CMath
         return radians * (180/Math.PI);
     }
 
+    public static inline function angle(x1 :Float, y1 :Float, x2 :Float, y2 :Float) : Float
+    {
+        return Math.atan2(y2 - y1, x2 - x1);
+    }
+
+    public static inline function distance(x1 :Float, y1 :Float, x2 :Float, y2 :Float) : Float
+    {
+        var a = x1 - x2;
+        var b = y1 - y2;
+        return Math.sqrt( a*a + b*b );
+    }
+
     public static inline function clamp<T:Float> (value :T, min :T, max :T) :T
     {
         return if (value < min) min
             else if (value > max) max
             else value;
+    }
+
+    public static inline function intersects(circleX :Float, circleY :Float, circleRadius :Float, rectLeft :Float, rectRight :Float, rectTop :Float, rectBottom :Float) : Bool
+    {
+        var closestX :Float = clamp(circleX, rectLeft, rectRight);
+        var closestY :Float = clamp(circleY, rectTop, rectBottom);
+
+        var distX :Float = circleX - closestX;
+        var distY :Float = circleY - closestY;
+
+        return (distX * distX) + (distY * distY) < (circleRadius * circleRadius);
     }
 }

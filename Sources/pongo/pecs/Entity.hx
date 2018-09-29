@@ -7,12 +7,15 @@ import pongo.display.Sprite;
 
 @:final class Entity implements Disposable
 {
-    public var sprite :Sprite;
+    public var sprite (default, null):Sprite;
+    public var index (default, null):Int;
 
     @:allow(pongo.pecs.Manager)
     private function new(manager :Manager) : Void
     {
         this.sprite = null;
+        this.index = ++Entity.ENTITY_INDEX;
+        
         _manager = manager;
         _parent = null;
         _children = [];
@@ -53,8 +56,7 @@ import pongo.display.Sprite;
         }
         e._parent = this;
         _children.push(e);
-
-        _manager.notifyAddEntity(this);
+        _manager.notifyAddEntity(e);
 
         return this;
     }
@@ -63,14 +65,13 @@ import pongo.display.Sprite;
     {
         _children.remove(e);
         e._parent = null;
-        _manager.notifyRemoveEntity(this);
+        _manager.notifyRemoveEntity(e);
     }
 
-    public function createChild() : Entity
+    public function setSprite(sprite :Sprite) : Entity
     {
-        var e = _manager.createEntity();
-        this.addEntity(e);
-        return e;
+        this.sprite = sprite;
+        return this;
     }
 
     public function dispose() : Void
@@ -84,11 +85,12 @@ import pongo.display.Sprite;
         for(c in _components) {
             _components.remove(c.name);
         }
-        _manager.returnEntity(this);
     }
 
     private var _manager :Manager;
     private var _parent :Entity;
     public var _children :Array<Entity>;
     private var _components :Map<String, Component>;
+    
+    private static var ENTITY_INDEX :Int = -1;
 }

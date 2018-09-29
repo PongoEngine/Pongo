@@ -69,7 +69,6 @@ import pongo.input.Keyboard;
         for(system in _systems) {
             system(this, dt);
         }
-        this.engine.update();
     }
 
     private function renderSprites(framebuffer: Array<kha.Framebuffer>) : Void 

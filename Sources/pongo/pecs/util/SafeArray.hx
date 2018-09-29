@@ -8,6 +8,11 @@ abstract SafeArray<T>(Array<T>)
         this = [];
     }
 
+    inline public function first() : T
+    {
+        return this[0];
+    }
+
     inline public static function fromArray<T>(array :Array<T>) : SafeArray<T>
     {
         return cast array;

@@ -1,54 +1,34 @@
 package pongo.pecs;
 
 import pongo.pecs.util.SafeArray;
+import pongo.pecs.util.EntitySet;
 import pongo.util.Disposable;
 
 @:final class EntityGroup implements Disposable
 {
-    public var justRemoved (default, null):SafeArray<Entity>;
-    public var justAdded (default, null):SafeArray<Entity>;
-    public var entities (default, null):SafeArray<Entity>;
+    public var entities (default, null):EntitySet;
+    public var rules (default, null):SafeArray<String>;
 
-    public function new() : Void
+    public function new(rules :SafeArray<String>) : Void
     {
-        this.justRemoved = new SafeArray();
-        this.justAdded = new SafeArray();
-        this.entities = new SafeArray();
+        this.entities = new EntitySet();
+        this.rules = rules;
     }
 
     @:allow(pongo.pecs.Manager)
     private function addEntity(entity :Entity) : Void
     {
-        justAdded.push(entity);
+        entities.add(entity);
     }
 
     @:allow(pongo.pecs.Manager)
     private function removeEntity(entity :Entity) : Void
     {
-        if(entities.remove(entity)) {
-            justRemoved.push(entity);
-        }
-        else if(justAdded.remove(entity)) {
-            justRemoved.push(entity);
-        }
-    }
-
-    @:allow(pongo.pecs.Manager)
-    private function update() : Void
-    {
-        while (justAdded.length > 0) {
-            var e = justAdded.pop();
-            entities.push(e);
-        }
-        while (justRemoved.length > 0) justRemoved.pop();
+        entities.remove(entity);
     }
 
     public function dispose() : Void
     {
-        while (justRemoved.length > 0) justRemoved.pop();
-        while (justAdded.length > 0) justAdded.pop();
-        while (entities.length > 0) entities.pop();
+        entities.clear();
     }
-
-
 }
