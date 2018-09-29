@@ -19,7 +19,7 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.pecs.util;
+package pongo.pecs.ds;
 
 @:forward(iterator, exists)
 abstract RuleSet(Map<String,String>)

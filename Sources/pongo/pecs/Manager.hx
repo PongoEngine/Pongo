@@ -23,8 +23,8 @@ package pongo.pecs;
 
 import pongo.pecs.Entity;
 import pongo.util.Disposable;
-import pongo.pecs.util.RuleSet;
-import pongo.pecs.util.EntityMap;
+import pongo.pecs.ds.RuleSet;
+import pongo.pecs.ds.EntityMap;
 
 @:final class Manager implements Disposable
 {

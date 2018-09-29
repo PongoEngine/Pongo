@@ -22,7 +22,7 @@
 package pongo.pecs;
 
 import pongo.util.Disposable;
-import pongo.pecs.util.RuleSet;
+import pongo.pecs.ds.RuleSet;
 
 @:final class EntityGroup implements Disposable
 {
