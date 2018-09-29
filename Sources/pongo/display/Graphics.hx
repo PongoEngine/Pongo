@@ -56,7 +56,9 @@ class Graphics
     {
         setColor(color);
         prepareGraphics2D();
-        // _framebuffer.g2.fillCircle(cx, cy, radius, segments);
+        #if !macro
+        SafeGraphicsExtension.fillCircle(_framebuffer.g2, cx, cy, radius, segments);
+        #end
     }
 
     public function drawRect(color :Int, x: Float, y: Float, width: Float, height: Float, strength: Float = 1.0) : Void 
@@ -77,7 +79,9 @@ class Graphics
     {
         setColor(color);
         prepareGraphics2D();
-        // _framebuffer.g2.drawCircle(cx, cy, radius, strength, segments);
+        #if !macro
+        SafeGraphicsExtension.drawCircle(_framebuffer.g2, cx, cy, radius, strength, segments);
+        #end
     }
 
     public function drawString(text :String, font :SafeFont, color :Color, fontSize :Int, x :Float, y :Float) : Void
