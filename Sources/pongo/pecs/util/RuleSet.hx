@@ -19,48 +19,22 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.pecs;
+package pongo.pecs.util;
 
-import pongo.util.Disposable;
-import pongo.pecs.util.RuleSet;
-
-@:final class EntityGroup implements Disposable
+@:forward(iterator)
+abstract RuleSet(Map<String,String>)
 {
-    public var entities (get, null):Iterator<Entity>;
-    public var rules (default, null):RuleSet;
-
-    public function new(rules :RuleSet) : Void
+    inline public function new() : Void
     {
-        this.rules = rules;
-        _entityMap = new Map<Int,Entity>();
+        this = new Map<String,String>();
     }
 
-    public function dispose() : Void
+    inline public static function fromArray(arra :Array<String>) : RuleSet
     {
-        _entityMap = new Map<Int,Entity>();
+        var m = new Map<String, String>();
+        for(v in arra) {
+            m.set(v,v);
+        }
+        return cast m;
     }
-
-    public function exists(entity :Entity) : Bool
-    {
-        return _entityMap.exists(entity._index);
-    }
-
-    @:allow(pongo.pecs.Manager)
-    private function addEntity(entity :Entity) : Void
-    {
-        _entityMap.set(entity._index, entity);
-    }
-
-    @:allow(pongo.pecs.Manager)
-    private function removeEntity(entity :Entity) : Void
-    {
-        _entityMap.remove(entity._index);
-    }
-
-    private function get_entities() : Iterator<Entity>
-    {
-        return _entityMap.iterator();
-    }
-
-    private var _entityMap:Map<Int,Entity>;
 }

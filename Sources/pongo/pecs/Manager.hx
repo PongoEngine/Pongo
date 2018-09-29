@@ -23,6 +23,8 @@ package pongo.pecs;
 
 import pongo.pecs.Entity;
 import pongo.util.Disposable;
+import pongo.pecs.util.RuleSet;
+import pongo.pecs.util.EntityMap;
 
 @:final class Manager implements Disposable
 {
@@ -31,7 +33,7 @@ import pongo.util.Disposable;
     {
         _keys = new Array();
         _groups = new Map<String, EntityGroup>();
-        _entityComponents = new Map<Int, Map<String, Component>>();
+        _entityMap = new EntityMap();
     }
 
     public function createEntity() : Entity
@@ -51,7 +53,7 @@ import pongo.util.Disposable;
     private function notifyAddComponent(entity :Entity) : Void
     {
         for(key in _keys) {
-            var rules = _groups.get(key)._rules;
+            var rules = _groups.get(key).rules;
             var group = _groups.get(key);
             if(!group.exists(entity) && hasRules(entity, rules)) {
                 group.addEntity(entity);
@@ -63,7 +65,7 @@ import pongo.util.Disposable;
     private function notifyRemoveComponent(entity :Entity) : Void
     {
         for(key in _keys) {
-            var rules = _groups.get(key)._rules;
+            var rules = _groups.get(key).rules;
             var group = _groups.get(key);
             if(group.exists(entity) && hasRules(entity, rules)) {
                 group.removeEntity(entity);
@@ -87,7 +89,7 @@ import pongo.util.Disposable;
     private function createGroup(name :String, classNames :Array<String>) : EntityGroup
     {
         if(!_groups.exists(name)) {
-            _groups.set(name, new EntityGroup(classNames));
+            _groups.set(name, new EntityGroup(RuleSet.fromArray(classNames)));
             _keys.push(name);
         }
         return _groups.get(name);
@@ -104,7 +106,7 @@ import pongo.util.Disposable;
         }
     }
 
-    private function hasRules(entity :Entity, rules :Array<String>) : Bool
+    private function hasRules(entity :Entity, rules :RuleSet) : Bool
     {
         for(rule in rules) {
             if(!entity.hasComponent(rule)) {
@@ -116,5 +118,5 @@ import pongo.util.Disposable;
 
     private var _keys :Array<String>;
     private var _groups :Map<String, EntityGroup>;
-    private var _entityComponents :Map<Int, Map<String, Component>>;
+    private var _entityMap :EntityMap;
 }
