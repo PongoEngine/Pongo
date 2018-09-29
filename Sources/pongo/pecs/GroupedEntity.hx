@@ -24,9 +24,9 @@ package pongo.pecs;
 import pongo.util.Disposable;
 import pongo.pecs.ds.RuleSet;
 
-@:final class EntityGroup implements Disposable
+@:final class GroupedEntity implements Disposable
 {
-    public var entities (get, null):Iterator<Entity>;
+    public var entities (get, null):Iterable<Entity>;
     public var rules (default, null):RuleSet;
 
     /**
@@ -69,9 +69,9 @@ import pongo.pecs.ds.RuleSet;
         _entityMap.remove(entity.index);
     }
 
-    private function get_entities() : Iterator<Entity>
+    private function get_entities() : Iterable<Entity>
     {
-        return _entityMap.iterator();
+        return _entityMap;
     }
 
     private var _entityMap:Map<Int,Entity>;

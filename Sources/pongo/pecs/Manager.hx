@@ -35,7 +35,7 @@ import pongo.pecs.ds.EntityMap;
     private function new() : Void
     {
         _keys = new Array();
-        _groups = new Map<String, EntityGroup>();
+        _groups = new Map<String, GroupedEntity>();
         _entityMap = new EntityMap();
     }
 
@@ -114,17 +114,17 @@ import pongo.pecs.ds.EntityMap;
     }
 
     @:allow(pongo.pecs.Engine)
-    private function createGroup(name :String, classNames :Array<String>) : EntityGroup
+    private function createGroup(name :String, classNames :Array<String>) : GroupedEntity
     {
         if(!_groups.exists(name)) {
-            _groups.set(name, new EntityGroup(RuleSet.fromArray(classNames)));
+            _groups.set(name, new GroupedEntity(RuleSet.fromArray(classNames)));
             _keys.push(name);
         }
         return _groups.get(name);
     }
 
     @:allow(pongo.pecs.Engine)
-    private inline function getGroup(name :String) : EntityGroup
+    private inline function getGroup(name :String) : GroupedEntity
     {
         return _groups.get(name);
     }
@@ -133,8 +133,6 @@ import pongo.pecs.ds.EntityMap;
     private function destroyGroup(name :String) : Void
     {
         if(_groups.exists(name)) {
-            var entities = _groups.get(name);
-            entities.dispose();
             _groups.remove(name);
             _keys.remove(name);
         }
@@ -151,7 +149,6 @@ import pongo.pecs.ds.EntityMap;
     }
 
     private var _keys :Array<String>;
-    private var _groups :Map<String, EntityGroup>;
-    @:allow(pongo.pecs.Entity)
-    public var _entityMap :EntityMap;
+    private var _groups :Map<String, GroupedEntity>;
+    @:allow(pongo.pecs.Entity) private var _entityMap :EntityMap;
 }

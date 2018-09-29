@@ -24,7 +24,7 @@ package pongo.pecs;
 import pongo.pecs.Manager;
 import pongo.pecs.Entity;
 import pongo.util.Disposable;
-import pongo.pecs.EntityGroup;
+import pongo.pecs.GroupedEntity;
 
 #if macro
 import haxe.macro.Expr;
@@ -75,9 +75,9 @@ import haxe.macro.Expr;
     /**
      * [Description]
      * @param name 
-     * @return EntityGroup
+     * @return GroupedEntity
      */
-    public inline function getGroup(name :String) : EntityGroup
+    public inline function getGroup(name :String) : GroupedEntity
     {
         return _manager.getGroup(name);
     }
@@ -110,9 +110,9 @@ import haxe.macro.Expr;
         this.root = null;
     }
 
-    public function registerGroupWithClassNames(name :String, classNames :Array<String>) : EntityGroup
+    public function registerGroupWithClassNames(name :String, classNames :Array<String>) : Iterable<Entity>
     {
-        return _manager.createGroup(name, classNames);
+        return _manager.createGroup(name, classNames).entities;
     }
 
     private var _manager :Manager;
