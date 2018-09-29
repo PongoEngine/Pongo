@@ -110,9 +110,9 @@ import haxe.macro.Expr;
         this.root = null;
     }
 
-    public function registerGroupWithClassNames(name :String, classNames :Array<String>) : Iterable<Entity>
+    public function registerGroupWithClassNames(name :String, classNames :Array<String>) : GroupedEntity
     {
-        return _manager.createGroup(name, classNames).entities;
+        return _manager.createGroup(name, classNames);
     }
 
     private var _manager :Manager;
