@@ -27,7 +27,10 @@ import pongo.util.Disposable;
 import pongo.pecs.GroupedEntity;
 
 #if macro
+import haxe.macro.ExprTools;
+import haxe.macro.TypeTools;
 import haxe.macro.Expr;
+import haxe.macro.Context;
 #end
 
 @:final class Engine implements Disposable
@@ -51,7 +54,7 @@ import haxe.macro.Expr;
      */
     macro public function registerGroup(self:Expr, name :ExprOf<String>, componentClass :ExprOf<Array<Class<Component>>>)
     {
-        var cNames = [];
+        var cNames :Array<Expr> = [];
         switch (componentClass.expr) {
             case EArrayDecl(vals): {
                 for(val in vals) {
@@ -60,6 +63,7 @@ import haxe.macro.Expr;
             }
             case _:
         }
+
         return macro $self.registerGroupWithClassNames($name, $a{cNames});
     }
 
@@ -113,6 +117,11 @@ import haxe.macro.Expr;
     public function registerGroupWithClassNames(name :String, classNames :Array<String>) : GroupedEntity
     {
         return _manager.createGroup(name, classNames);
+    }
+
+    @:extern inline public function sortClassNames(classNames :Array<String>) : Array<String>
+    {
+        return classNames;
     }
 
     private var _manager :Manager;
