@@ -43,34 +43,30 @@ import pongo.display.Sprite;
     {
         this.index = ++Entity.ENTITY_INDEX;
         _manager = manager;
-        _components = new Map<String, Component>();
     }
 
-    public function addComponent(component :Component) : Entity
+    @:extern public inline function addComponent(component :Component) : Entity
     {
-        if(_components.exists(component.name)) {
+        if(_manager._entityMap.exists(this, component.name)) {
             this.removeComponent(component.name);
         }
-        _components.set(component.name, component);
-        _manager.notifyAddComponent(this);
+        _manager.notifyAddComponent(this, component);
         return this;
     }
 
-    public function removeComponent(name :String) : Void
+    @:extern public inline function removeComponent(name :String) : Void
     {
-        var comp = _components.get(name);
-        _manager.notifyRemoveComponent(this);
-        _components.remove(name);
+        _manager.notifyRemoveComponent(this, name);
     }
 
-    public function getComponent(name :String) : Component
+    @:extern public inline function getComponent(name :String) : Component
     {
-        return _components.get(name);
+        return _manager._entityMap.getComponent(this, name);
     }
 
-    public function hasComponent(name :String) : Bool
+    @:extern public inline function hasComponent(name :String) : Bool
     {
-        return _components.get(name) != null;
+        return _manager._entityMap.hasComponent(this, name);
     }
 
     public function addEntity(entity :Entity, append :Bool=true) : Entity
@@ -145,13 +141,13 @@ import pongo.display.Sprite;
         }
         disposeChildren();
         _manager = null;
-        for(c in _components) {
-            _components.remove(c.name);
-        }
+        // for(c in _components) {
+        //     _components.remove(c.name);
+        // }
     }
 
     private var _manager :Manager;
     private var _parent :Entity;
-    private var _components :Map<String, Component>;
+    // private var _components :Map<String, Component>;
     private static var ENTITY_INDEX :Int = -1;
 }

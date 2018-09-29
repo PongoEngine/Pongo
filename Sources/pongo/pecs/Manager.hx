@@ -50,39 +50,57 @@ import pongo.pecs.util.EntityMap;
     }
 
     @:allow(pongo.pecs.Entity)
-    private function notifyAddComponent(entity :Entity) : Void
+    private function notifyAddComponent(entity :Entity, component :Component) : Void
+    {
+        for(key in _keys) {
+            var rules = _groups.get(key).rules;
+            if(rules.exists(component.name)) {
+                var group = _groups.get(key);
+                if(!group.exists(entity) && hasAllRules(entity, rules)) {
+                    group.addEntity(entity);
+                }
+            }
+        }
+        _entityMap.addComponent(entity, component);
+    }
+
+    @:allow(pongo.pecs.Entity)
+    private function notifyRemoveComponent(entity :Entity, name :String) : Void
+    {
+        for(key in _keys) {
+            var rules = _groups.get(key).rules;
+            if(rules.exists(name)) {
+                var group = _groups.get(key);
+                if(group.exists(entity) && hasAllRules(entity, rules)) {
+                    group.removeEntity(entity);
+                }
+            }
+        }
+        _entityMap.removeComponent(entity, name);
+    }
+
+    @:allow(pongo.pecs.Entity)
+    private function notifyAddEntity(entity :Entity) : Void
     {
         for(key in _keys) {
             var rules = _groups.get(key).rules;
             var group = _groups.get(key);
-            if(!group.exists(entity) && hasRules(entity, rules)) {
+            if(!group.exists(entity) && hasAllRules(entity, rules)) {
                 group.addEntity(entity);
             }
         }
     }
 
     @:allow(pongo.pecs.Entity)
-    private function notifyRemoveComponent(entity :Entity) : Void
+    private function notifyRemoveEntity(entity :Entity) : Void
     {
         for(key in _keys) {
             var rules = _groups.get(key).rules;
             var group = _groups.get(key);
-            if(group.exists(entity) && hasRules(entity, rules)) {
+            if(group.exists(entity) && hasAllRules(entity, rules)) {
                 group.removeEntity(entity);
             }
         }
-    }
-
-    @:allow(pongo.pecs.Entity)
-    private function notifyAddEntity(entity :Entity) : Void
-    {
-        this.notifyAddComponent(entity);
-    }
-
-    @:allow(pongo.pecs.Entity)
-    private function notifyRemoveEntity(entity :Entity) : Void
-    {
-        this.notifyRemoveComponent(entity);
     }
 
     @:allow(pongo.pecs.Engine)
@@ -106,7 +124,7 @@ import pongo.pecs.util.EntityMap;
         }
     }
 
-    private function hasRules(entity :Entity, rules :RuleSet) : Bool
+    private function hasAllRules(entity :Entity, rules :RuleSet) : Bool
     {
         for(rule in rules) {
             if(!entity.hasComponent(rule)) {

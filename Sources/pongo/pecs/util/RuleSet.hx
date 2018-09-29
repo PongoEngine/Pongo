@@ -21,7 +21,7 @@
 
 package pongo.pecs.util;
 
-@:forward(iterator)
+@:forward(iterator, exists)
 abstract RuleSet(Map<String,String>)
 {
     inline public function new() : Void

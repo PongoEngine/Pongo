@@ -41,12 +41,17 @@ abstract EntityMap(Map<Int, Map<String, Component>>)
         }
     }
 
+    @:extern inline public function exists(entity :Entity, name :String) : Bool
+    {
+        return this.exists(entity.index) && this.get(entity.index).exists(name);
+    }
+
     @:extern inline public function hasComponent(entity :Entity, name :String) : Bool
     {
         return getComponent(entity, name) != null;
     }
 
-    @:extern inline public function setComponent(entity :Entity, component :Component) : Void
+    @:extern inline public function addComponent(entity :Entity, component :Component) : Void
     {
         if(!this.exists(entity.index)) {
             this.set(entity.index, new Map<String, Component>());
