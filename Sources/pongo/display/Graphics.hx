@@ -26,16 +26,11 @@
 package pongo.display;
 
 import kha.math.FastMatrix3;
-import kha.Framebuffer;
 import kha.Color;
-import kha.Image;
-import kha.Font;
-
-using kha.graphics2.GraphicsExtension;
 
 class Graphics
 {
-    public function new(framebuffer :Framebuffer) : Void
+    public function new(framebuffer :SafeFramebuffer) : Void
     {
         _framebuffer = framebuffer;
     }
@@ -61,7 +56,7 @@ class Graphics
     {
         setColor(color);
         prepareGraphics2D();
-        _framebuffer.g2.fillCircle(cx, cy, radius, segments);
+        // _framebuffer.g2.fillCircle(cx, cy, radius, segments);
     }
 
     public function drawRect(color :Int, x: Float, y: Float, width: Float, height: Float, strength: Float = 1.0) : Void 
@@ -82,10 +77,10 @@ class Graphics
     {
         setColor(color);
         prepareGraphics2D();
-        _framebuffer.g2.drawCircle(cx, cy, radius, strength, segments);
+        // _framebuffer.g2.drawCircle(cx, cy, radius, strength, segments);
     }
 
-    public function drawString(text :String, font :Font, color :Color, fontSize :Int, x :Float, y :Float) : Void
+    public function drawString(text :String, font :SafeFont, color :Color, fontSize :Int, x :Float, y :Float) : Void
     {
         setColor(color);
 
@@ -97,14 +92,14 @@ class Graphics
         _framebuffer.g2.drawString(text, x, y);
     }
 
-    public function drawImage(img: Image, x: Float, y: Float) : Void
+    public function drawImage(img: SafeImage, x: Float, y: Float) : Void
     {
         setColor(0xffffffff);
         prepareGraphics2D();
         _framebuffer.g2.drawImage(img, x, y);
     }
 
-    public function drawSubImage(img: Image, x: Float, y: Float, sx: Float, sy: Float, sw: Float, sh: Float) : Void
+    public function drawSubImage(img: SafeImage, x: Float, y: Float, sx: Float, sy: Float, sw: Float, sh: Float) : Void
     {
         setColor(0xffffffff);
         prepareGraphics2D();
@@ -180,7 +175,7 @@ class Graphics
     }
 
     private var _stateList :DrawingState = new DrawingState();
-    private var _framebuffer :Framebuffer;
+    private var _framebuffer :SafeFramebuffer;
 }
 
 private class DrawingState
@@ -199,3 +194,8 @@ private class DrawingState
         color = Color.Black;
     }
 }
+
+typedef SafeFont = #if macro Dynamic; #else kha.Font; #end
+typedef SafeFramebuffer = #if macro Dynamic; #else kha.Framebuffer; #end
+typedef SafeImage = #if macro Dynamic; #else kha.Image; #end
+typedef SafeGraphicsExtension = #if macro Dynamic; #else kha.graphics2.GraphicsExtension; #end

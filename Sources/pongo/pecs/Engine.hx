@@ -26,6 +26,10 @@ import pongo.pecs.Entity;
 import pongo.util.Disposable;
 import pongo.pecs.EntityGroup;
 
+#if macro
+import haxe.macro.Expr;
+#end
+
 @:final class Engine implements Disposable
 {
     public var root (default, null):Entity;
@@ -36,14 +40,33 @@ import pongo.pecs.EntityGroup;
         this.root = this.createEntity();
     }
 
-    public function registerGroup(name :String, classNames :Array<String>) : EntityGroup
+    public function registerGroupWithClassNames(name :String, classNames :Array<String>) : EntityGroup
     {
         return _manager.createGroup(name, classNames);
+    }
+
+    macro public function registerGroup<T:Component>(self:Expr, name :ExprOf<String>, componentClass :ExprOf<Array<Class<T>>>)
+    {
+        var cNames = [];
+        switch (componentClass.expr) {
+            case EArrayDecl(vals): {
+                for(val in vals) {
+                    cNames.push(macro $val.COMPONENT_NAME);
+                }
+            }
+            case _:
+        }
+        return macro $self.registerGroupWithClassNames($name, $a{cNames});
     }
 
     public function unregisterGroup(name :String) : Void
     {
         _manager.destroyGroup(name);
+    }
+
+    public inline function getGroup(name :String) : EntityGroup
+    {
+        return _manager.getGroup(name);
     }
 
     public function dispose() : Void

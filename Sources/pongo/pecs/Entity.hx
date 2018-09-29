@@ -60,7 +60,12 @@ import pongo.util.Disposable;
         _manager.notifyRemoveComponent(this, component.componentName);
     }
 
-    @:extern public inline function getComponent(name :String) : Component
+    macro public function getComponent<T:Component>(self:Expr, componentClass :ExprOf<Class<T>>) :ExprOf<T>
+    {
+        return macro cast $self.getComponentFromName($componentClass.COMPONENT_NAME);
+    }
+
+    @:extern public inline function getComponentFromName(name :String) : Component
     {
         return _manager._entityMap.getComponent(this, name);
     }

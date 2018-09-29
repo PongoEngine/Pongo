@@ -114,6 +114,12 @@ import pongo.pecs.ds.EntityMap;
     }
 
     @:allow(pongo.pecs.Engine)
+    private inline function getGroup(name :String) : EntityGroup
+    {
+        return _groups.get(name);
+    }
+
+    @:allow(pongo.pecs.Engine)
     private function destroyGroup(name :String) : Void
     {
         if(_groups.exists(name)) {
