@@ -25,8 +25,6 @@ import pongo.pecs.Manager;
 import pongo.pecs.Entity;
 import pongo.util.Disposable;
 import pongo.pecs.EntityGroup;
-import pongo.display.Sprite;
-import pongo.display.Graphics;
 
 @:final class Engine implements Disposable
 {
@@ -55,9 +53,9 @@ import pongo.display.Graphics;
         this.root = null;
     }
 
-    public function render(graphics: Graphics) : Void
+    public function render(graphics: pongo.display.Graphics) : Void
     {
-        Sprite.render(this.root, graphics);
+        pongo.display.Sprite.render(this.root, graphics);
     }
 
     public inline function createEntity() : Entity

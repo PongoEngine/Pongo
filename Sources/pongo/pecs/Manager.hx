@@ -137,5 +137,5 @@ import pongo.pecs.ds.EntityMap;
     private var _keys :Array<String>;
     private var _groups :Map<String, EntityGroup>;
     @:allow(pongo.pecs.Entity)
-    private var _entityMap :EntityMap;
+    public var _entityMap :EntityMap;
 }

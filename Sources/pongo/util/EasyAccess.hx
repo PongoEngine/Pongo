@@ -22,16 +22,21 @@
 package pongo.util;
 
 import haxe.macro.Expr;
+import pongo.pecs.Component;
 
 class EasyAccess
 {
-    macro public static function getComponent<T:Component>(e:Expr, componentClass :ExprOf<Class<T>>) 
+    macro public static function get<T:Component>(e:Expr, componentClass :ExprOf<Class<T>>) :ExprOf<T>
     {
-        var componentName = macro $componentClass.COMPONENT_NAME;
-        return macro $e.get($componentClass, $componentName);
+        return macro cast $e.getComponent($componentClass.COMPONENT_NAME);
     }
 
-    macro public static function getGroupEasy(e:Expr, componentClass :ExprOf<Array<Class<Dynamic>>>)
+    macro public static function has<T:Component>(e:Expr, componentClass :ExprOf<Class<T>>) :ExprOf<Bool>
+    {
+        return macro $e.get($componentClass) != null;
+    }
+
+    macro public static function group<T:Component>(e:Expr, componentClass :ExprOf<Array<Class<T>>>)
     {
         var cNames = [];
         switch (componentClass.expr) {
@@ -43,9 +48,6 @@ class EasyAccess
             case _:
         }
 
-        var xNames = macro $a{cNames};
-        var x = macro $e.getGroup($xNames);
-
-        return macro $x;
+        return macro $a{cNames};
     }
 }

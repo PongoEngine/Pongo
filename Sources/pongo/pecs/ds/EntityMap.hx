@@ -61,7 +61,6 @@ abstract EntityMap(Map<Int, Map<String, Component>>)
 
     @:extern inline public function addComponent(entity :Entity, component :Component) : Void
     {
-        trace(component);
         if(!this.exists(entity.index)) {
             this.set(entity.index, new Map<String, Component>());
         }

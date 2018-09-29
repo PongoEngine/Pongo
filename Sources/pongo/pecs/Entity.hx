@@ -31,11 +31,9 @@ using haxe.macro.ExprTools;
 import pongo.pecs.Component;
 import pongo.pecs.Manager;
 import pongo.util.Disposable;
-import pongo.display.Sprite;
 
 @:final class Entity implements Disposable
 {
-    public var sprite (default, null):Sprite = null;
     public var parent (default, null) :Entity = null;
     public var firstChild (default, null) :Entity = null;
     public var next (default, null) :Entity = null;
@@ -51,15 +49,15 @@ import pongo.display.Sprite;
     @:extern public inline function addComponent(component :Component) : Entity
     {
         if(_manager._entityMap.exists(this, component.componentName)) {
-            this.removeComponent(component.componentName);
+            this.removeComponent(component);
         }
         _manager.notifyAddComponent(this, component);
         return this;
     }
 
-    @:extern public inline function removeComponent(name :String) : Void
+    @:extern public inline function removeComponent(component :Component) : Void
     {
-        _manager.notifyRemoveComponent(this, name);
+        _manager.notifyRemoveComponent(this, component.componentName);
     }
 
     @:extern public inline function getComponent(name :String) : Component
@@ -130,7 +128,7 @@ import pongo.display.Sprite;
         _manager.notifyRemoveEntity(entity);
     }
 
-    public function setSprite(sprite :Sprite) : Entity
+    public function setSprite(sprite :pongo.display.Sprite) : Entity
     {
         this.sprite = sprite;
         return this;
@@ -153,6 +151,7 @@ import pongo.display.Sprite;
         _manager = null;
     }
 
+    public var sprite (default, null):pongo.display.Sprite = null;
     private var _manager :Manager;
     private static var ENTITY_INDEX :Int = -1;
 }
