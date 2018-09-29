@@ -46,6 +46,14 @@ abstract EntityMap(Map<Int, Map<String, Component>>)
         return this.exists(entity.index) && this.get(entity.index).exists(name);
     }
 
+    @:extern inline public function removeEntity(entity :Entity) : Bool
+    {
+        if(this.exists(entity.index)) {
+            return this.remove(entity.index);
+        }
+        return false;
+    }
+
     @:extern inline public function hasComponent(entity :Entity, name :String) : Bool
     {
         return getComponent(entity, name) != null;

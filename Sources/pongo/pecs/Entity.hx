@@ -19,10 +19,6 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-//
-// Flambe - Rapid game development
-// https://github.com/aduros/flambe/blob/master/LICENSE.txt
-
 package pongo.pecs;
 
 import pongo.pecs.Component;
@@ -69,6 +65,9 @@ import pongo.display.Sprite;
         return _manager._entityMap.hasComponent(this, name);
     }
 
+    //
+    // Flambe - Rapid game development
+    // https://github.com/aduros/flambe/blob/master/LICENSE.txt
     public function addEntity(entity :Entity, append :Bool=true) : Entity
     {
         if (entity.parent != null) {
@@ -99,6 +98,9 @@ import pongo.display.Sprite;
         return this;
     }
 
+    //
+    // Flambe - Rapid game development
+    // https://github.com/aduros/flambe/blob/master/LICENSE.txt
     public function removeEntity(entity :Entity) : Void
     {
         var prev :Entity = null, p = firstChild;
@@ -140,14 +142,10 @@ import pongo.display.Sprite;
             parent.removeEntity(this);
         }
         disposeChildren();
+        _manager._entityMap.removeEntity(this);
         _manager = null;
-        // for(c in _components) {
-        //     _components.remove(c.name);
-        // }
     }
 
     private var _manager :Manager;
-    private var _parent :Entity;
-    // private var _components :Map<String, Component>;
     private static var ENTITY_INDEX :Int = -1;
 }
