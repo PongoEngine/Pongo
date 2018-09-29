@@ -1,3 +1,24 @@
+/*
+ * Copyright (c) 2018 Jeremy Meltingtallow
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to use,
+ * copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the
+ * Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+ * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+ * AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+ * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
 package pongo.pecs;
 
 import pongo.pecs.Entity;
@@ -9,7 +30,8 @@ import pongo.util.Disposable;
     private function new() : Void
     {
         _keys = new Array();
-        _groupEntities = new Map<String, EntityGroup>();
+        _groups = new Map<String, EntityGroup>();
+        _entityComponents = new Map<Int, Map<String, Component>>();
     }
 
     public function createEntity() : Entity
@@ -17,12 +39,20 @@ import pongo.util.Disposable;
         return new Entity(this);
     }
 
+    public function dispose() : Void
+    {
+        while(_keys.length > 0) {
+            var key = _keys.pop();
+            destroyGroup(key);
+        }
+    }
+
     @:allow(pongo.pecs.Entity)
     private function notifyAddComponent(entity :Entity) : Void
     {
         for(key in _keys) {
-            var rules = _groupEntities.get(key)._rules;
-            var group = _groupEntities.get(key);
+            var rules = _groups.get(key)._rules;
+            var group = _groups.get(key);
             if(!group.exists(entity) && hasRules(entity, rules)) {
                 group.addEntity(entity);
             }
@@ -33,8 +63,8 @@ import pongo.util.Disposable;
     private function notifyRemoveComponent(entity :Entity) : Void
     {
         for(key in _keys) {
-            var rules = _groupEntities.get(key)._rules;
-            var group = _groupEntities.get(key);
+            var rules = _groups.get(key)._rules;
+            var group = _groups.get(key);
             if(group.exists(entity) && hasRules(entity, rules)) {
                 group.removeEntity(entity);
             }
@@ -56,20 +86,20 @@ import pongo.util.Disposable;
     @:allow(pongo.pecs.Engine)
     private function createGroup(name :String, classNames :Array<String>) : EntityGroup
     {
-        if(!_groupEntities.exists(name)) {
-            _groupEntities.set(name, new EntityGroup(classNames));
+        if(!_groups.exists(name)) {
+            _groups.set(name, new EntityGroup(classNames));
             _keys.push(name);
         }
-        return _groupEntities.get(name);
+        return _groups.get(name);
     }
 
     @:allow(pongo.pecs.Engine)
     private function destroyGroup(name :String) : Void
     {
-        if(_groupEntities.exists(name)) {
-            var entities = _groupEntities.get(name);
+        if(_groups.exists(name)) {
+            var entities = _groups.get(name);
             entities.dispose();
-            _groupEntities.remove(name);
+            _groups.remove(name);
             _keys.remove(name);
         }
     }
@@ -84,13 +114,7 @@ import pongo.util.Disposable;
         return true;
     }
 
-    public function dispose() : Void
-    {
-        for(key in _keys) {
-            destroyGroup(key);
-        }
-    }
-
     private var _keys :Array<String>;
-    private var _groupEntities :Map<String, EntityGroup>;
+    private var _groups :Map<String, EntityGroup>;
+    private var _entityComponents :Map<Int, Map<String, Component>>;
 }
