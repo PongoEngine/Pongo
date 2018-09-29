@@ -54,7 +54,7 @@ import pongo.pecs.ds.EntityMap;
     {
         for(key in _keys) {
             var rules = _groups.get(key).rules;
-            if(rules.exists(component.name)) {
+            if(rules.exists(component.componentName)) {
                 var group = _groups.get(key);
                 if(!group.exists(entity) && hasAllRules(entity, rules)) {
                     group.addEntity(entity);

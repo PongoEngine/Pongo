@@ -55,7 +55,7 @@ class Macro
         return addComponentNames(fields);
     }
 
-    macro public static function addComponentNames(fields :Array<Field>):Array<Field> 
+    public static function addComponentNames(fields :Array<Field>):Array<Field> 
     {
         fields.push({
             name:  "COMPONENT_NAME",

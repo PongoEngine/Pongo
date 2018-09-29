@@ -21,6 +21,13 @@
 
 package pongo.pecs;
 
+#if macro
+import haxe.macro.Context;
+import haxe.macro.Expr;
+import haxe.macro.Type;
+using haxe.macro.ExprTools;
+#end
+
 import pongo.pecs.Component;
 import pongo.pecs.Manager;
 import pongo.util.Disposable;
@@ -43,8 +50,8 @@ import pongo.display.Sprite;
 
     @:extern public inline function addComponent(component :Component) : Entity
     {
-        if(_manager._entityMap.exists(this, component.name)) {
-            this.removeComponent(component.name);
+        if(_manager._entityMap.exists(this, component.componentName)) {
+            this.removeComponent(component.componentName);
         }
         _manager.notifyAddComponent(this, component);
         return this;

@@ -21,14 +21,8 @@
 
 package pongo.pecs;
 
-import pongo.pecs.Entity;
-
-class Component
+@:autoBuild(pongo.util.Macro.build())
+interface Component
 {
-    public var name (default, null) : String;
-
-    public function new(name :String) : Void
-    {
-        this.name = name;
-    }
+    var componentName (default, null):String;
 }
