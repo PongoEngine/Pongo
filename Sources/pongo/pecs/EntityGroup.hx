@@ -42,19 +42,19 @@ import pongo.pecs.util.RuleSet;
 
     public function exists(entity :Entity) : Bool
     {
-        return _entityMap.exists(entity._index);
+        return _entityMap.exists(entity.index);
     }
 
     @:allow(pongo.pecs.Manager)
     private function addEntity(entity :Entity) : Void
     {
-        _entityMap.set(entity._index, entity);
+        _entityMap.set(entity.index, entity);
     }
 
     @:allow(pongo.pecs.Manager)
     private function removeEntity(entity :Entity) : Void
     {
-        _entityMap.remove(entity._index);
+        _entityMap.remove(entity.index);
     }
 
     private function get_entities() : Iterator<Entity>

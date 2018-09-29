@@ -118,5 +118,6 @@ import pongo.pecs.util.EntityMap;
 
     private var _keys :Array<String>;
     private var _groups :Map<String, EntityGroup>;
+    @:allow(pongo.pecs.Entity)
     private var _entityMap :EntityMap;
 }

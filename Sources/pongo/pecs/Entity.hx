@@ -36,11 +36,12 @@ import pongo.display.Sprite;
     public var parent (default, null) :Entity = null;
     public var firstChild (default, null) :Entity = null;
     public var next (default, null) :Entity = null;
+    public var index (default, null):Int;
 
     @:allow(pongo.pecs.Manager)
     private function new(manager :Manager) : Void
     {
-        _index = ++Entity.ENTITY_INDEX;
+        this.index = ++Entity.ENTITY_INDEX;
         _manager = manager;
         _components = new Map<String, Component>();
     }
@@ -152,8 +153,5 @@ import pongo.display.Sprite;
     private var _manager :Manager;
     private var _parent :Entity;
     private var _components :Map<String, Component>;
-    @:allow(pongo.pecs.EntityGroup)
-    private var _index :Int;
-    
     private static var ENTITY_INDEX :Int = -1;
 }

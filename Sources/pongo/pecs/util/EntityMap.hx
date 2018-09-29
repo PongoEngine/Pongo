@@ -21,10 +21,47 @@
 
 package pongo.pecs.util;
 
+import pongo.pecs.Entity;
+import pongo.pecs.Component;
+
 abstract EntityMap(Map<Int, Map<String, Component>>)
 {
-    inline public function new() : Void
+    @:extern inline public function new() : Void
     {
         this = new Map<Int, Map<String, Component>>();
     }
+
+    @:extern inline public function getComponent(entity :Entity, name :String) : Component
+    {
+        if(this.exists(entity.index)) {
+            return this.get(entity.index).get(name);
+        }
+        else {
+            return null;
+        }
+    }
+
+    @:extern inline public function hasComponent(entity :Entity, name :String) : Bool
+    {
+        return getComponent(entity, name) != null;
+    }
+
+    @:extern inline public function setComponent(entity :Entity, component :Component) : Void
+    {
+        if(!this.exists(entity.index)) {
+            this.set(entity.index, new Map<String, Component>());
+        }
+        this.get(entity.index).set(component.name, component);
+    }
+
+    @:extern inline public function removeComponent(entity :Entity, name :String) : Bool
+    {
+        if(this.exists(entity.index)) {
+            return this.get(entity.index).remove(name);
+        }
+        else {
+            return false;
+        }
+    }
+    
 }
