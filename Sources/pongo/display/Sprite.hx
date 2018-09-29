@@ -151,8 +151,11 @@ class Sprite
             }
         }
 
-        for(child in entity._children) {
-            render(child, g);
+        var p = entity.firstChild;
+        while (p != null) {
+            var next = p.next;
+            render(p, g);
+            p = next;
         }
 
         // If save() was called, unwind it

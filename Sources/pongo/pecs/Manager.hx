@@ -2,14 +2,13 @@ package pongo.pecs;
 
 import pongo.pecs.Entity;
 import pongo.util.Disposable;
-import pongo.pecs.util.SafeArray;
 
 @:final class Manager implements Disposable
 {
     @:allow(pongo.pecs.Engine)
     private function new() : Void
     {
-        _keys = new SafeArray();
+        _keys = new Array();
         _groupEntities = new Map<String, EntityGroup>();
     }
 
@@ -22,9 +21,9 @@ import pongo.pecs.util.SafeArray;
     private function notifyAddComponent(entity :Entity) : Void
     {
         for(key in _keys) {
-            var rules = _groupEntities.get(key).rules;
+            var rules = _groupEntities.get(key)._rules;
             var group = _groupEntities.get(key);
-            if(!group.entities.exists(entity) && hasRules(entity, rules)) {
+            if(!group.exists(entity) && hasRules(entity, rules)) {
                 group.addEntity(entity);
             }
         }
@@ -34,9 +33,9 @@ import pongo.pecs.util.SafeArray;
     private function notifyRemoveComponent(entity :Entity) : Void
     {
         for(key in _keys) {
-            var rules = _groupEntities.get(key).rules;
+            var rules = _groupEntities.get(key)._rules;
             var group = _groupEntities.get(key);
-            if(group.entities.exists(entity) && hasRules(entity, rules)) {
+            if(group.exists(entity) && hasRules(entity, rules)) {
                 group.removeEntity(entity);
             }
         }
@@ -55,7 +54,7 @@ import pongo.pecs.util.SafeArray;
     }
 
     @:allow(pongo.pecs.Engine)
-    private function createGroup(name :String, classNames :SafeArray<String>) : EntityGroup
+    private function createGroup(name :String, classNames :Array<String>) : EntityGroup
     {
         if(!_groupEntities.exists(name)) {
             _groupEntities.set(name, new EntityGroup(classNames));
@@ -75,7 +74,7 @@ import pongo.pecs.util.SafeArray;
         }
     }
 
-    private function hasRules(entity :Entity, rules :SafeArray<String>) : Bool
+    private function hasRules(entity :Entity, rules :Array<String>) : Bool
     {
         for(rule in rules) {
             if(!entity.hasComponent(rule)) {
@@ -92,6 +91,6 @@ import pongo.pecs.util.SafeArray;
         }
     }
 
-    private var _keys :SafeArray<String>;
+    private var _keys :Array<String>;
     private var _groupEntities :Map<String, EntityGroup>;
 }

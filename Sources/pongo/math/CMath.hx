@@ -56,7 +56,6 @@ class CMath
     {
         var closestX :Float = clamp(circleX, rectLeft, rectRight);
         var closestY :Float = clamp(circleY, rectTop, rectBottom);
-
         var distX :Float = circleX - closestX;
         var distY :Float = circleY - closestY;
 

@@ -4,7 +4,6 @@ import pongo.pecs.Manager;
 import pongo.pecs.Entity;
 import pongo.util.Disposable;
 import pongo.pecs.EntityGroup;
-import pongo.pecs.util.SafeArray;
 import pongo.display.Sprite;
 import pongo.display.Graphics;
 
@@ -20,8 +19,7 @@ import pongo.display.Graphics;
 
     public function registerGroup(name :String, classNames :Array<String>) : EntityGroup
     {
-        var arra = SafeArray.fromArray(classNames);
-        return _manager.createGroup(name, arra);
+        return _manager.createGroup(name, classNames);
     }
 
     public function unregisterGroup(name :String) : Void

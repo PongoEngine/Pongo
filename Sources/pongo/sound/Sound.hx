@@ -23,8 +23,6 @@ package pongo.sound;
 
 import pongo.util.Disposable;
 
-
-
 class Sound implements Disposable
 {
     public function new(s :kha.Sound) : Void
