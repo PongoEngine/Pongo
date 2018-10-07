@@ -35,9 +35,6 @@ import haxe.macro.Context;
 
 @:final class Engine implements Disposable
 {
-    /**
-     * 
-     */
     public var root (default, null):Entity;
 
     public function new() : Void
@@ -46,12 +43,6 @@ import haxe.macro.Context;
         this.root = this.createEntity();
     }
 
-    /**
-     * [Description]
-     * @param self 
-     * @param name 
-     * @param componentClass 
-     */
     macro public function registerGroup(self:Expr, name :ExprOf<String>, componentClass :ExprOf<Array<Class<Component>>>)
     {
         var cNames :Array<Expr> = [];
@@ -67,46 +58,26 @@ import haxe.macro.Context;
         return macro $self.registerGroupWithClassNames($name, $a{cNames});
     }
 
-    /**
-     * [Description]
-     * @param name 
-     */
     public function unregisterGroup(name :String) : Void
     {
         _manager.destroyGroup(name);
     }
 
-    /**
-     * [Description]
-     * @param name 
-     * @return GroupedEntity
-     */
     public inline function getGroup(name :String) : GroupedEntity
     {
         return _manager.getGroup(name);
     }
 
-    /**
-     * [Description]
-     * @param graphics 
-     */
     public function render(graphics: pongo.display.Graphics) : Void
     {
         pongo.display.Sprite.render(this.root, graphics);
     }
 
-    /**
-     * [Description]
-     * @return Entity
-     */
     public inline function createEntity() : Entity
     {
         return _manager.createEntity();
     }
 
-    /**
-     * [Description]
-     */
     public function dispose() : Void
     {
         _manager.dispose();

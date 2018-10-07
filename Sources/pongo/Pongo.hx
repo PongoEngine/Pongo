@@ -60,7 +60,7 @@ import pongo.input.Keyboard;
     private function update() : Void
     {
         var dt :Float = 0;
-        var time = kha.System.time;
+        var time = kha.Scheduler.time();
         if(_lastTime != -1) {
             dt = time - _lastTime;
         }
