@@ -32,14 +32,16 @@ class Keyboard implements Disposable
 
     public function new() : Void
     {
-        kha.input.Keyboard.get().notify(keyDown, keyUp);
+        _keyboard = kha.input.Keyboard.get(0);
+        _keyboard.notify(keyDown, keyUp);
         down = new Signal1<KeyCode>();
         up = new Signal1<KeyCode>();
     }
 
     public function dispose() : Void
     {
-        untyped kha.input.Keyboard.get().remove(keyDown, keyUp, null);
+        _keyboard.remove(keyDown, keyUp, null);
+        _keyboard = null;
     }
 
     private function keyDown(key: KeyCode): Void
@@ -52,4 +54,6 @@ class Keyboard implements Disposable
         up.emit(key);
 
     }
+
+    private var _keyboard :kha.input.Keyboard;
 }

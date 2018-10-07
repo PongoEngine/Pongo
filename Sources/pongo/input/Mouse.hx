@@ -22,87 +22,54 @@
 package pongo.input;
 
 import pongo.util.Disposable;
-import pongo.util.RefVal;
+import pongo.util.Signal1;
+import pongo.util.Signal3;
+import pongo.util.Signal4;
 
 class Mouse implements Disposable
 {
-    public var down (null, set) : Int -> Int -> Int -> Void;
-    public var up (null, set) : Int -> Int -> Int -> Void;
-    public var move (null, set) : Int -> Int -> Int -> Int -> Void;
-    public var wheel (null, set) : Float -> Void;
+
+    public var wheel (default, null) : Signal1<Float>;
+    public var down (default, null) : Signal3<Int, Int, Int>;
+    public var up (default, null) : Signal3<Int, Int, Int>;
+    public var move (default, null) : Signal4<Int, Int, Int, Int>;
 
     public function new() : Void
     {
-        kha.input.Mouse.get().notify(downListener, upListener, moveListener, wheelListener);
-        _downListener = {val:null};
-        _upListener = {val:null};
-        _moveListener = {val:null};
-        _wheelListener = {val:null};
+        _mouse = kha.input.Mouse.get(0);
+        _mouse.notify(downListener, upListener, moveListener, wheelListener);
+
+        wheel = new Signal1<Float>();
+        down = new Signal3<Int, Int, Int>();
+        up = new Signal3<Int, Int, Int>();
+        move = new Signal4<Int, Int, Int, Int>();
     }
 
     public function dispose() : Void
     {
-        kha.input.Mouse.get().remove(downListener, upListener, moveListener, wheelListener);
-        _downListener = null;
-        _upListener = null;
-        _moveListener = null;
-        _wheelListener = null;
+        _mouse.remove(downListener, upListener, moveListener, wheelListener);
+        _mouse = null;
     }
 
     private function downListener(button :Int, x :Int, y :Int) : Void
     {
-        if(_downListener.val != null) {
-            _downListener.val(button,x,y);
-        }
+        down.emit(button,x, y);
     }
     
     private function upListener(button :Int, x :Int, y :Int) : Void
     {
-        if(_upListener.val != null) {
-            _upListener.val(button,x,y);
-        }
+        down.emit(button,x, y);
     }
     
     private function moveListener(a :Int, b :Int, c :Int, d :Int) : Void
     {
-        if(_moveListener.val != null) {
-            _moveListener.val(a,b,c,d);
-        }
+        move.emit(a,b,c,d);
     }
     
     private function wheelListener(val :Float) : Void
     {
-        if(_wheelListener.val != null) {
-            _wheelListener.val(val);
-        }
+        wheel.emit(val);
     }
 
-    private function set_down(down :Int -> Int -> Int -> Void) : Int -> Int -> Int -> Void
-    {
-        _downListener.val = down;
-        return down;
-    }
-
-    private function set_up(up :Int -> Int -> Int -> Void) : Int -> Int -> Int -> Void
-    {
-        _upListener.val = up;
-        return up;
-    }
-
-    private function set_move(move :Int -> Int -> Int -> Int -> Void) : Int -> Int -> Int -> Int -> Void
-    {
-        _moveListener.val = move;
-        return move;
-    }
-
-    private function set_wheel(wheel :Float -> Void) : Float -> Void
-    {
-        _wheelListener.val = wheel;
-        return wheel;
-    }
-
-    private var _downListener :RefVal<Int -> Int -> Int -> Void>;
-    private var _upListener :RefVal<Int -> Int -> Int -> Void>;
-    private var _moveListener :RefVal<Int -> Int -> Int -> Int -> Void>;
-    private var _wheelListener :RefVal<Float -> Void>;
+    private var _mouse :kha.input.Mouse;
 }
