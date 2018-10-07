@@ -51,7 +51,7 @@ class Main {
 
     private static function updateLogic(group :GroupedEntity, pongo :Pongo, dt :Float) : Void
     {
-        for(entity in group.entities) {
+        group.manipulate(function(entity) {
             var hero :Hero = entity.getComponent(Hero);
             var pos :Position = entity.getComponent(Position);
             var sprite :FillSprite = cast entity.sprite;
@@ -82,7 +82,7 @@ class Main {
 
             sprite.y = pos.y;
             sprite.x = pos.x;
-        }
+        });
     }
 }
 
