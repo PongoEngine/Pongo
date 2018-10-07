@@ -19,7 +19,7 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.ecs;
+package pongo;
 
 #if macro
 import haxe.macro.Context;
@@ -28,8 +28,8 @@ import haxe.macro.Type;
 using haxe.macro.ExprTools;
 #end
 
-import pongo.ecs.Component;
-import pongo.ecs.Manager;
+import pongo.Component;
+import pongo.util.ecs.Manager;
 import pongo.util.Disposable;
 
 @:final class Entity implements Disposable
@@ -40,7 +40,7 @@ import pongo.util.Disposable;
     public var index (default, null):Int;
     public var isDisposed (default, null):Bool;
 
-    @:allow(pongo.ecs.Manager)
+    @:allow(pongo.util.ecs.Manager)
     private function new(manager :Manager) : Void
     {
         this.index = ++Entity.ENTITY_INDEX;

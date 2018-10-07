@@ -19,23 +19,24 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.ecs;
+package pongo.util.ecs;
 
-import pongo.ecs.Entity;
+import pongo.Entity;
+import pongo.Group;
 import pongo.util.Disposable;
-import pongo.ecs.ds.RuleSet;
-import pongo.ecs.ds.EntityMap;
+import pongo.util.ecs.ds.RuleSet;
+import pongo.util.ecs.ds.EntityMap;
 
 @:final class Manager implements Disposable
 {
     /**
      * [Description]
      */
-    @:allow(pongo.ecs.Engine)
+    @:allow(pongo.util.ecs.Engine)
     private function new() : Void
     {
         _keys = new Array();
-        _groups = new Map<String, GroupedEntity>();
+        _groups = new Map<String, Group>();
         _entityMap = new EntityMap();
     }
 
@@ -59,7 +60,7 @@ import pongo.ecs.ds.EntityMap;
         }
     }
 
-    @:allow(pongo.ecs.Entity)
+    @:allow(pongo.Entity)
     private function notifyAddComponent(entity :Entity, component :Component) : Void
     {
         for(key in _keys) {
@@ -74,7 +75,7 @@ import pongo.ecs.ds.EntityMap;
         _entityMap.addComponent(entity, component);
     }
 
-    @:allow(pongo.ecs.Entity)
+    @:allow(pongo.Entity)
     private function notifyRemoveComponent(entity :Entity, name :String) : Void
     {
         for(key in _keys) {
@@ -89,7 +90,7 @@ import pongo.ecs.ds.EntityMap;
         _entityMap.removeComponent(entity, name);
     }
 
-    @:allow(pongo.ecs.Entity)
+    @:allow(pongo.Entity)
     private function notifyAddEntity(entity :Entity) : Void
     {
         for(key in _keys) {
@@ -101,7 +102,7 @@ import pongo.ecs.ds.EntityMap;
         }
     }
 
-    @:allow(pongo.ecs.Entity)
+    @:allow(pongo.Entity)
     private function notifyRemoveEntity(entity :Entity) : Void
     {
         for(key in _keys) {
@@ -113,23 +114,23 @@ import pongo.ecs.ds.EntityMap;
         }
     }
 
-    @:allow(pongo.ecs.Engine)
-    private function createGroup(name :String, classNames :Array<String>) : GroupedEntity
+    @:allow(pongo.util.ecs.Engine)
+    private function createGroup(name :String, classNames :Array<String>) : Group
     {
         if(!_groups.exists(name)) {
-            _groups.set(name, new GroupedEntity(RuleSet.fromArray(classNames)));
+            _groups.set(name, new Group(RuleSet.fromArray(classNames)));
             _keys.push(name);
         }
         return _groups.get(name);
     }
 
-    @:allow(pongo.ecs.Engine)
-    private inline function getGroup(name :String) : GroupedEntity
+    @:allow(pongo.util.ecs.Engine)
+    private inline function getGroup(name :String) : Group
     {
         return _groups.get(name);
     }
 
-    @:allow(pongo.ecs.Engine)
+    @:allow(pongo.util.ecs.Engine)
     private function destroyGroup(name :String) : Void
     {
         if(_groups.exists(name)) {
@@ -149,6 +150,6 @@ import pongo.ecs.ds.EntityMap;
     }
 
     private var _keys :Array<String>;
-    private var _groups :Map<String, GroupedEntity>;
-    @:allow(pongo.ecs.Entity) private var _entityMap :EntityMap;
+    private var _groups :Map<String, Group>;
+    @:allow(pongo.Entity) private var _entityMap :EntityMap;
 }

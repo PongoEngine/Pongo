@@ -19,12 +19,12 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.ecs;
+package pongo.util.ecs;
 
-import pongo.ecs.Manager;
-import pongo.ecs.Entity;
+import pongo.util.ecs.Manager;
+import pongo.Entity;
 import pongo.util.Disposable;
-import pongo.ecs.GroupedEntity;
+import pongo.Group;
 
 #if macro
 import haxe.macro.ExprTools;
@@ -63,7 +63,7 @@ import haxe.macro.Context;
         _manager.destroyGroup(name);
     }
 
-    public inline function getGroup(name :String) : GroupedEntity
+    public inline function getGroup(name :String) : Group
     {
         return _manager.getGroup(name);
     }
@@ -85,7 +85,7 @@ import haxe.macro.Context;
         this.root = null;
     }
 
-    public function registerGroupWithClassNames(name :String, classNames :Array<String>) : GroupedEntity
+    public function registerGroupWithClassNames(name :String, classNames :Array<String>) : Group
     {
         return _manager.createGroup(name, classNames);
     }

@@ -19,12 +19,11 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.ecs;
+package pongo;
 
-import pongo.util.Disposable;
-import pongo.ecs.ds.RuleSet;
+import pongo.util.ecs.ds.RuleSet;
 
-@:final class GroupedEntity
+@:final class Group
 {
     public var rules (default, null):RuleSet;
 
@@ -64,7 +63,7 @@ import pongo.ecs.ds.RuleSet;
         }
     }
 
-    @:allow(pongo.ecs.Manager)
+    @:allow(pongo.util.ecs.Manager)
     private function addEntity(entity :Entity) : Void
     {
         var node = new EntityNode(entity);
@@ -72,7 +71,7 @@ import pongo.ecs.ds.RuleSet;
         _entityMap.set(entity.index, node);
     }
 
-    @:allow(pongo.ecs.Manager)
+    @:allow(pongo.util.ecs.Manager)
     private function removeEntity(entity :Entity) : Void
     {
         var node = _entityMap.get(entity.index);

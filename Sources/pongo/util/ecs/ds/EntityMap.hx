@@ -19,10 +19,10 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.ecs.ds;
+package pongo.util.ecs.ds;
 
-import pongo.ecs.Entity;
-import pongo.ecs.Component;
+import pongo.Entity;
+import pongo.Component;
 
 abstract EntityMap(Map<Int, Map<String, Component>>)
 {
