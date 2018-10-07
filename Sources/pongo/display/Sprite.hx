@@ -27,7 +27,7 @@ package pongo.display;
 
 import kha.math.FastMatrix3;
 import pongo.display.Graphics;
-import pongo.pecs.Entity;
+import pongo.ecs.Entity;
 
 using pongo.math.CMath;
 

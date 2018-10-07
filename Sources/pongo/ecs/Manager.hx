@@ -19,19 +19,19 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.pecs;
+package pongo.ecs;
 
-import pongo.pecs.Entity;
+import pongo.ecs.Entity;
 import pongo.util.Disposable;
-import pongo.pecs.ds.RuleSet;
-import pongo.pecs.ds.EntityMap;
+import pongo.ecs.ds.RuleSet;
+import pongo.ecs.ds.EntityMap;
 
 @:final class Manager implements Disposable
 {
     /**
      * [Description]
      */
-    @:allow(pongo.pecs.Engine)
+    @:allow(pongo.ecs.Engine)
     private function new() : Void
     {
         _keys = new Array();
@@ -59,14 +59,14 @@ import pongo.pecs.ds.EntityMap;
         }
     }
 
-    @:allow(pongo.pecs.Entity)
-    private function notifyAddComponent(entity :Entity, component :Component) : Void
+    @:allow(pongo.ecs.Entity)
+    private function notifyAddComponent(entity :Entity, component :Component) : Void //refactor
     {
         for(key in _keys) {
             var rules = _groups.get(key).rules;
             if(rules.exists(component.componentName)) {
                 var group = _groups.get(key);
-                if(!group.exists(entity) && hasAllRules(entity, rules)) {
+                if(!hasAllRules(entity, rules)) {
                     group.addEntity(entity);
                 }
             }
@@ -74,7 +74,7 @@ import pongo.pecs.ds.EntityMap;
         _entityMap.addComponent(entity, component);
     }
 
-    @:allow(pongo.pecs.Entity)
+    @:allow(pongo.ecs.Entity)
     private function notifyRemoveComponent(entity :Entity, name :String) : Void
     {
         for(key in _keys) {
@@ -89,7 +89,7 @@ import pongo.pecs.ds.EntityMap;
         _entityMap.removeComponent(entity, name);
     }
 
-    @:allow(pongo.pecs.Entity)
+    @:allow(pongo.ecs.Entity)
     private function notifyAddEntity(entity :Entity) : Void
     {
         for(key in _keys) {
@@ -101,7 +101,7 @@ import pongo.pecs.ds.EntityMap;
         }
     }
 
-    @:allow(pongo.pecs.Entity)
+    @:allow(pongo.ecs.Entity)
     private function notifyRemoveEntity(entity :Entity) : Void
     {
         for(key in _keys) {
@@ -113,7 +113,7 @@ import pongo.pecs.ds.EntityMap;
         }
     }
 
-    @:allow(pongo.pecs.Engine)
+    @:allow(pongo.ecs.Engine)
     private function createGroup(name :String, classNames :Array<String>) : GroupedEntity
     {
         if(!_groups.exists(name)) {
@@ -123,13 +123,13 @@ import pongo.pecs.ds.EntityMap;
         return _groups.get(name);
     }
 
-    @:allow(pongo.pecs.Engine)
+    @:allow(pongo.ecs.Engine)
     private inline function getGroup(name :String) : GroupedEntity
     {
         return _groups.get(name);
     }
 
-    @:allow(pongo.pecs.Engine)
+    @:allow(pongo.ecs.Engine)
     private function destroyGroup(name :String) : Void
     {
         if(_groups.exists(name)) {
@@ -150,5 +150,5 @@ import pongo.pecs.ds.EntityMap;
 
     private var _keys :Array<String>;
     private var _groups :Map<String, GroupedEntity>;
-    @:allow(pongo.pecs.Entity) private var _entityMap :EntityMap;
+    @:allow(pongo.ecs.Entity) private var _entityMap :EntityMap;
 }

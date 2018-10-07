@@ -19,10 +19,10 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.pecs;
+package pongo.ecs;
 
 import pongo.util.Disposable;
-import pongo.pecs.ds.RuleSet;
+import pongo.ecs.ds.RuleSet;
 
 @:final class GroupedEntity implements Disposable
 {
@@ -57,13 +57,13 @@ import pongo.pecs.ds.RuleSet;
         return _entityMap.exists(entity.index);
     }
 
-    @:allow(pongo.pecs.Manager)
+    @:allow(pongo.ecs.Manager)
     private function addEntity(entity :Entity) : Void
     {
         _entityMap.set(entity.index, entity);
     }
 
-    @:allow(pongo.pecs.Manager)
+    @:allow(pongo.ecs.Manager)
     private function removeEntity(entity :Entity) : Void
     {
         _entityMap.remove(entity.index);

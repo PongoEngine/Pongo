@@ -23,10 +23,10 @@ package pongo;
 
 import pongo.display.Graphics;
 import pongo.util.Disposable;
-import pongo.pecs.Engine;
+import pongo.ecs.Engine;
 import pongo.input.Keyboard;
 
-@:final class Origin implements Disposable
+@:final class Pongo implements Disposable
 {
     public var width (get, null) :Int;
     public var height (get, null) :Int;
@@ -39,7 +39,7 @@ import pongo.input.Keyboard;
         this.engine = new Engine();
         this.keyboard = new Keyboard();
         _schedulerID = kha.Scheduler.addTimeTask(update, 0, 1/60);
-        _systems = new Map<String, Origin -> Float -> Void>();
+        _systems = new Map<String, Pongo -> Float -> Void>();
     }
 
     public function dispose() : Void
@@ -47,7 +47,7 @@ import pongo.input.Keyboard;
         kha.Scheduler.removeTimeTask(_schedulerID);
     }
 
-    public function addSystem(name :String, fn :Origin -> Float -> Void) : Void
+    public function addSystem(name :String, fn :Pongo -> Float -> Void) : Void
     {
         _systems.set(name, fn);
     }
@@ -94,6 +94,6 @@ import pongo.input.Keyboard;
 
     private var _graphics :Graphics;
     private var _schedulerID :Int;
-    private var _systems :Map<String, Origin -> Float -> Void>;
+    private var _systems :Map<String, Pongo -> Float -> Void>;
     private var _lastTime :Float = -1;
 }

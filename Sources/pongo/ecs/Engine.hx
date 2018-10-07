@@ -19,12 +19,12 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.pecs;
+package pongo.ecs;
 
-import pongo.pecs.Manager;
-import pongo.pecs.Entity;
+import pongo.ecs.Manager;
+import pongo.ecs.Entity;
 import pongo.util.Disposable;
-import pongo.pecs.GroupedEntity;
+import pongo.ecs.GroupedEntity;
 
 #if macro
 import haxe.macro.ExprTools;
