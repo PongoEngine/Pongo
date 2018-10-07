@@ -26,6 +26,7 @@ import haxe.macro.Expr;
 
 class Macro 
 {
+#if macro
     macro public static function build() :Array<Field> 
     {
         var fields = Context.getBuildFields();
@@ -73,4 +74,5 @@ class Macro
 
         return fields;
     }
+#end
 }

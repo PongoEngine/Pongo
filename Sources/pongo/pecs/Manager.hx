@@ -141,7 +141,7 @@ import pongo.pecs.ds.EntityMap;
     private function hasAllRules(entity :Entity, rules :RuleSet) : Bool
     {
         for(rule in rules) {
-            if(!entity.hasComponent(rule)) {
+            if(!_entityMap.hasComponent(entity, rule)) {
                 return false;
             }
         }

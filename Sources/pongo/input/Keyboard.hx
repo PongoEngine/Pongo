@@ -22,53 +22,34 @@
 package pongo.input;
 
 import pongo.util.Disposable;
-import pongo.util.RefVal;
 import kha.input.KeyCode;
+import pongo.util.Signal1;
 
 class Keyboard implements Disposable
 {
-
-    public var down (null, set) : KeyCode -> Void;
-    public var up (null, set) : KeyCode -> Void;
+    public var down (default, null) : Signal1<KeyCode>;
+    public var up (default, null) : Signal1<KeyCode>;
 
     public function new() : Void
     {
         kha.input.Keyboard.get().notify(keyDown, keyUp);
-        _downListener = {val:null};
-        _upListener = {val:null};
+        down = new Signal1<KeyCode>();
+        up = new Signal1<KeyCode>();
     }
 
     public function dispose() : Void
     {
-        kha.input.Keyboard.get().remove(keyDown, keyUp, null);
+        untyped kha.input.Keyboard.get().remove(keyDown, keyUp, null);
     }
 
     private function keyDown(key: KeyCode): Void
     {
-        if(_downListener.val != null) {
-            _downListener.val(key);
-        }
+        down.emit(key);
     }
 
     private function keyUp(key: KeyCode): Void 
     {
-        if(_upListener.val != null) {
-            _upListener.val(key);
-        }
-    }
+        up.emit(key);
 
-    private function set_down(down :KeyCode -> Void) : KeyCode -> Void
-    {
-        _downListener.val = down;
-        return down;
     }
-
-    private function set_up(up :KeyCode -> Void) : KeyCode -> Void
-    {
-        _upListener.val = up;
-        return up;
-    }
-
-    private var _downListener :RefVal<KeyCode -> Void>;
-    private var _upListener :RefVal<KeyCode -> Void>;
 }
