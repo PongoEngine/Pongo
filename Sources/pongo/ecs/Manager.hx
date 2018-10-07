@@ -60,13 +60,13 @@ import pongo.ecs.ds.EntityMap;
     }
 
     @:allow(pongo.ecs.Entity)
-    private function notifyAddComponent(entity :Entity, component :Component) : Void //refactor
+    private function notifyAddComponent(entity :Entity, component :Component) : Void
     {
         for(key in _keys) {
             var rules = _groups.get(key).rules;
             if(rules.exists(component.componentName)) {
                 var group = _groups.get(key);
-                if(!hasAllRules(entity, rules)) {
+                if(!group.exists(entity) && hasAllRules(entity, rules)) {
                     group.addEntity(entity);
                 }
             }

@@ -24,14 +24,10 @@ package pongo.ecs;
 import pongo.util.Disposable;
 import pongo.ecs.ds.RuleSet;
 
-@:final class GroupedEntity implements Disposable
+@:final class GroupedEntity
 {
     public var rules (default, null):RuleSet;
 
-    /**
-     * [Description]
-     * @param rules 
-     */
     public function new(rules :RuleSet) : Void
     {
         this.rules = rules;
@@ -39,22 +35,28 @@ import pongo.ecs.ds.RuleSet;
         _list = new EntityList();
     }
 
-    /**
-     * [Description]
-     */
-    public function dispose() : Void
-    {
-        _entityMap = new Map<Int,EntityNode>();
-    }
-
-    /**
-     * [Description]
-     * @param entity 
-     * @return Bool
-     */
     public function exists(entity :Entity) : Bool
     {
         return _entityMap.exists(entity.index);
+    }
+
+    public function first() : Entity
+    {
+        return _list.head.entity;
+    }
+
+    public function last() : Entity
+    {
+        return _list.tail.entity;
+    }
+
+    public function manipulate(fn :Entity -> Void) : Void
+    {
+        var p = _list.head;
+        while(p != null) {
+            fn(p.entity);
+            p = p.next;
+        }
     }
 
     @:allow(pongo.ecs.Manager)
@@ -75,23 +77,21 @@ import pongo.ecs.ds.RuleSet;
         }
     }
 
-    public function manipulate(fn :Entity -> Void) : Void
+    private function dispose() : Void
     {
-        var p = _list.head;
-        while(p != null) {
-            fn(p.entity);
-            p = p.next;
-        }
+        _entityMap = new Map<Int,EntityNode>();
+        _list.head = null;
+        _list.tail = null;
     }
 
     private var _entityMap:Map<Int,EntityNode>;
     private var _list :EntityList;
 }
 
-class EntityList
+private class EntityList
 {
-    public var head (default ,null) :EntityNode = null;
-    public var tail (default ,null) :EntityNode = null;
+    @:allow(pongo) public var head (default ,null) :EntityNode = null;
+    @:allow(pongo) public var tail (default ,null) :EntityNode = null;
     public var size (default, null) :Int = 0;
 
     public function new() : Void
@@ -142,7 +142,7 @@ class EntityList
 }
 
 @:allow(pongo)
-class EntityNode
+private class EntityNode
 {
     public var next (default, null) :EntityNode = null;
     public var prev (default, null) :EntityNode = null;
