@@ -38,12 +38,14 @@ import pongo.util.Disposable;
     public var firstChild (default, null) :Entity = null;
     public var next (default, null) :Entity = null;
     public var index (default, null):Int;
+    public var isDisposed (default, null):Bool;
 
     @:allow(pongo.ecs.Manager)
     private function new(manager :Manager) : Void
     {
         this.index = ++Entity.ENTITY_INDEX;
         _manager = manager;
+        isDisposed = false;
     }
 
     /**
@@ -185,12 +187,13 @@ import pongo.util.Disposable;
      */
     public function dispose ()
     {
+        this.isDisposed = true;
         if (parent != null) {
             parent.removeEntity(this);
         }
         disposeChildren();
         _manager._entityMap.removeEntity(this);
-        _manager = null;
+        // _manager = null; //FIX
     }
 
     public inline function getComponentFromName(name :String) : Component
