@@ -53,12 +53,7 @@ import pongo.util.ecs.ds.RuleSet;
     {
         var p = _list.head;
         while(p != null) {
-            if(!p.entity.isDisposed) {
-                fn(p.entity);
-            }
-            else {
-                trace("bummer");
-            }
+            fn(p.entity);
             p = p.next;
         }
     }

@@ -31,7 +31,7 @@ import pongo.Entity;
 
 using pongo.math.CMath;
 
-class Sprite
+class Sprite implements Renderable
 {
     public var x :Float = 0;
     public var y :Float = 0;
@@ -129,38 +129,12 @@ class Sprite
      *  [Description]
      *  @return FastMatrix3
      */
-    @:extern private inline function getMatrix() : FastMatrix3
+    public inline function getMatrix() : FastMatrix3
     {
         return FastMatrix3.identity()
             .multmat(FastMatrix3.translation(x,y))
             .multmat(FastMatrix3.rotation(rotation.toRadians()))
             .multmat(FastMatrix3.scale(scaleX, scaleY))
             .multmat(FastMatrix3.translation(-anchorX, -anchorY));
-    }
-
-    public static function render(entity :Entity, g :Graphics)
-    {
-        if (entity.sprite != null) {
-            g.save();
-            g.transform(entity.sprite.getMatrix());
-            if(entity.sprite.opacity < 1)
-                g.multiplyOpacity(entity.sprite.opacity);
-
-            if(entity.sprite.visible && entity.sprite.opacity > 0) {
-                entity.sprite.draw(g);
-            }
-        }
-
-        var p = entity.firstChild;
-        while (p != null) {
-            var next = p.next;
-            render(p, g);
-            p = next;
-        }
-
-        // If save() was called, unwind it
-        if (entity.sprite != null) {
-            g.restore();
-        }
     }
 }

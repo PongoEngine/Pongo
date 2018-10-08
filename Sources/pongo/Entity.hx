@@ -31,6 +31,7 @@ using haxe.macro.ExprTools;
 import pongo.Component;
 import pongo.util.ecs.Manager;
 import pongo.util.Disposable;
+import pongo.display.Renderable;
 
 @:final class Entity implements Disposable
 {
@@ -38,14 +39,13 @@ import pongo.util.Disposable;
     public var firstChild (default, null) :Entity = null;
     public var next (default, null) :Entity = null;
     public var index (default, null):Int;
-    public var isDisposed (default, null):Bool;
+    public var visual (default, null):Renderable = null;
 
     @:allow(pongo.util.ecs.Manager)
     private function new(manager :Manager) : Void
     {
         this.index = ++Entity.ENTITY_INDEX;
         _manager = manager;
-        isDisposed = false;
     }
 
     /**
@@ -161,14 +161,9 @@ import pongo.util.Disposable;
         
     }
 
-    /**
-     * [Description]
-     * @param sprite 
-     * @return Entity
-     */
-    public function setSprite(sprite :pongo.display.Sprite) : Entity
+    public function setVisual(visual :Renderable) : Entity
     {
-        this.sprite = sprite;
+        this.visual = visual;
         return this;
     }
 
@@ -187,7 +182,6 @@ import pongo.util.Disposable;
      */
     public function dispose ()
     {
-        this.isDisposed = true;
         if (parent != null) {
             parent.removeEntity(this);
         }
@@ -210,7 +204,6 @@ import pongo.util.Disposable;
         return false;
     }
 
-    public var sprite (default, null):pongo.display.Sprite = null;
     private var _manager :Manager;
     private static var ENTITY_INDEX :Int = -1;
 }

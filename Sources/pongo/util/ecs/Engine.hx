@@ -25,6 +25,8 @@ import pongo.util.ecs.Manager;
 import pongo.Entity;
 import pongo.util.Disposable;
 import pongo.Group;
+import pongo.display.Graphics;
+import pongo.display.Sprite;
 
 #if macro
 import haxe.macro.ExprTools;
@@ -68,9 +70,9 @@ import haxe.macro.Context;
         return _manager.getGroup(name);
     }
 
-    public function render(graphics: pongo.display.Graphics) : Void
+    public function render(graphics: Graphics) : Void
     {
-        pongo.display.Sprite.render(this.root, graphics);
+        Engine._render(this.root, graphics);
     }
 
     public inline function createEntity() : Entity
@@ -93,6 +95,32 @@ import haxe.macro.Context;
     @:extern inline public function sortClassNames(classNames :Array<String>) : Array<String>
     {
         return classNames;
+    }
+
+    private static function _render(entity :Entity, g :Graphics) : Void
+    {
+        if (entity.visual != null) {
+            g.save();
+            g.transform(entity.visual.getMatrix());
+            if(entity.visual.opacity < 1)
+                g.multiplyOpacity(entity.visual.opacity);
+
+            if(entity.visual.visible && entity.visual.opacity > 0) {
+                entity.visual.draw(g);
+            }
+        }
+
+        var p = entity.firstChild;
+        while (p != null) {
+            var next = p.next;
+            _render(p, g);
+            p = next;
+        }
+
+        // If save() was called, unwind it
+        if (entity.visual != null) {
+            g.restore();
+        }
     }
 
     private var _manager :Manager;
