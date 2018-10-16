@@ -63,6 +63,7 @@ import pongo.util.ecs.ds.EntityMap;
     @:allow(pongo.Entity)
     private function notifyAddComponent(entity :Entity, component :Component) : Void
     {
+        _entityMap.addComponent(entity, component);
         for(key in _keys) {
             var rules = _groups.get(key).rules;
             if(rules.exists(component.componentName)) {
@@ -72,7 +73,6 @@ import pongo.util.ecs.ds.EntityMap;
                 }
             }
         }
-        _entityMap.addComponent(entity, component);
     }
 
     @:allow(pongo.Entity)

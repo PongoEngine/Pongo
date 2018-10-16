@@ -84,6 +84,15 @@ class Graphics
         #end
     }
 
+    public function drawPolygon(color :Int, x: Float, y: Float, vertices: Array<kha.math.Vector2>, strength: Float = 1) : Void
+    {
+        setColor(color);
+        prepareGraphics2D();
+        #if !macro
+        kha.graphics2.GraphicsExtension.drawPolygon(_framebuffer.g2, x, y, vertices, strength);
+        #end
+    }
+
     public function drawString(text :String, font :SafeFont, color :Color, fontSize :Int, x :Float, y :Float) : Void
     {
         setColor(color);

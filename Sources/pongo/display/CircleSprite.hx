@@ -42,7 +42,7 @@ class CircleSprite extends Sprite
 
     override public function draw(graphics :Graphics) : Void
     {
-        graphics.drawCircle(this.color, radius, radius, radius, 3);
+        graphics.fillCircle(this.color, radius, radius, radius);
     }
 
     override public function getNaturalWidth() : Float

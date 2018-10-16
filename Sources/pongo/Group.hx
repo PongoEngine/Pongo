@@ -41,11 +41,13 @@ import pongo.util.ecs.ds.RuleSet;
 
     public function first() : Entity
     {
+        if(_list.head == null) return null;
         return _list.head.entity;
     }
 
     public function last() : Entity
     {
+        if(_list.tail == null) return null;
         return _list.tail.entity;
     }
 
