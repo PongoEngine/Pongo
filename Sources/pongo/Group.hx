@@ -51,6 +51,11 @@ import pongo.util.ecs.ds.RuleSet;
         return _list.tail.entity;
     }
 
+    public function manipulateChanged(fn :Entity -> Void) : Void
+    {
+
+    }
+
     public function manipulateAll(fn :Entity -> Void) : Void
     {
         var p = _list.head;
@@ -61,7 +66,7 @@ import pongo.util.ecs.ds.RuleSet;
     }
 
     @:allow(pongo.util.ecs.Manager)
-    private function addEntity(entity :Entity) : Void
+    private function add(entity :Entity) : Void
     {
         var node = new EntityNode(entity);
         _list.add(node);
@@ -69,7 +74,7 @@ import pongo.util.ecs.ds.RuleSet;
     }
 
     @:allow(pongo.util.ecs.Manager)
-    private function removeEntity(entity :Entity) : Void
+    private function remove(entity :Entity) : Void
     {
         var node = _entityMap.get(entity.index);
         if(node != null) {

@@ -35,7 +35,7 @@ import haxe.macro.Expr;
 import haxe.macro.Context;
 #end
 
-@:final class Engine implements Disposable
+@:final class Engine
 {
     public var root (default, null):Entity;
 
@@ -78,13 +78,6 @@ import haxe.macro.Context;
     public inline function createEntity() : Entity
     {
         return _manager.createEntity();
-    }
-
-    public function dispose() : Void
-    {
-        _manager.dispose();
-        this.root.dispose();
-        this.root = null;
     }
 
     public function registerGroupWithClassNames(name :String, classNames :Array<String>) : Group

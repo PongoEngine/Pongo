@@ -27,7 +27,7 @@ import pongo.util.Disposable;
 import pongo.util.ecs.ds.RuleSet;
 import pongo.util.ecs.ds.EntityMap;
 
-@:final class Manager implements Disposable
+@:final class Manager
 {
     /**
      * [Description]
@@ -49,17 +49,6 @@ import pongo.util.ecs.ds.EntityMap;
         return new Entity(this);
     }
 
-    /**
-     * [Description]
-     */
-    public function dispose() : Void
-    {
-        while(_keys.length > 0) {
-            var key = _keys.pop();
-            destroyGroup(key);
-        }
-    }
-
     @:allow(pongo.Entity)
     private function notifyAddComponent(entity :Entity, component :Component) : Void
     {
@@ -69,7 +58,7 @@ import pongo.util.ecs.ds.EntityMap;
             if(rules.exists(component.componentName)) {
                 var group = _groups.get(key);
                 if(!group.exists(entity) && hasAllRules(entity, rules)) {
-                    group.addEntity(entity);
+                    group.add(entity);
                 }
             }
         }
@@ -83,7 +72,7 @@ import pongo.util.ecs.ds.EntityMap;
             if(rules.exists(name)) {
                 var group = _groups.get(key);
                 if(group.exists(entity) && hasAllRules(entity, rules)) {
-                    group.removeEntity(entity);
+                    group.remove(entity);
                 }
             }
         }
@@ -97,7 +86,7 @@ import pongo.util.ecs.ds.EntityMap;
             var rules = _groups.get(key).rules;
             var group = _groups.get(key);
             if(!group.exists(entity) && hasAllRules(entity, rules)) {
-                group.addEntity(entity);
+                group.add(entity);
             }
         }
     }
@@ -109,7 +98,7 @@ import pongo.util.ecs.ds.EntityMap;
             var rules = _groups.get(key).rules;
             var group = _groups.get(key);
             if(group.exists(entity) && hasAllRules(entity, rules)) {
-                group.removeEntity(entity);
+                group.remove(entity);
             }
         }
     }

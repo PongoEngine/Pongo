@@ -26,7 +26,7 @@ import pongo.util.Disposable;
 import pongo.util.ecs.Engine;
 import pongo.input.Keyboard;
 
-@:final class Pongo implements Disposable
+@:final class Pongo
 {
     public var width (get, null) :Int;
     public var height (get, null) :Int;
@@ -40,11 +40,6 @@ import pongo.input.Keyboard;
         this.keyboard = new Keyboard();
         _schedulerID = kha.Scheduler.addTimeTask(update, 0, 1/60);
         _systems = new Map<String, Pongo -> Float -> Void>();
-    }
-
-    public function dispose() : Void
-    {
-        kha.Scheduler.removeTimeTask(_schedulerID);
     }
 
     public function addSystem(name :String, fn :Pongo -> Float -> Void) : Void
