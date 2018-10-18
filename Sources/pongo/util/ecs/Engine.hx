@@ -85,9 +85,8 @@ import haxe.macro.Context;
         return _manager.createGroup(name, classNames);
     }
 
-    @:extern inline public function sortClassNames(classNames :Array<String>) : Array<String>
+    public function update() : Void
     {
-        return classNames;
     }
 
     private static function _render(entity :Entity, g :Graphics) : Void

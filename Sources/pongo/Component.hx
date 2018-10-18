@@ -25,4 +25,5 @@ package pongo;
 interface Component
 {
     var componentName (default, null):String;
+    var owner :Entity;
 }

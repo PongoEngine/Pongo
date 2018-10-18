@@ -48,45 +48,26 @@ import pongo.display.Renderable;
         _manager = manager;
     }
 
-    /**
-     * [Description]
-     * @param component 
-     * @return Entity
-     */
     public inline function addComponent(component :Component) : Entity
     {
         if(_manager._entityMap.exists(this, component.componentName)) {
             this.removeComponentByClassName(component.componentName);
         }
+        component.owner = this;
         _manager.notifyAddComponent(this, component);
         return this;
     }
 
-    /**
-     * [Description]
-     * @param component 
-     */
     macro public function removeComponent<T:Component>(self:Expr, componentClass :ExprOf<Class<T>>) : ExprOf<Bool>
     {
         return macro $self.removeComponentByClassName($componentClass.COMPONENT_NAME);
     }
 
-    /**
-     * [Description]
-     * @param self 
-     * @param componentClass 
-     * @return ExprOf<T>
-     */
     macro public function getComponent<T:Component>(self:Expr, componentClass :ExprOf<Class<T>>) :ExprOf<T>
     {
         return macro cast $self.getComponentFromName($componentClass.COMPONENT_NAME);
     }
 
-    /**
-     * [Description]
-     * @param name 
-     * @return Bool
-     */
     macro public function hasComponent<T:Component>(self:Expr, componentClass :ExprOf<Class<T>>) : ExprOf<Bool>
     {
         return macro $self.getComponent($componentClass) != null;
@@ -95,12 +76,6 @@ import pongo.display.Renderable;
     //
     // Flambe - Rapid game development
     // https://github.com/aduros/flambe/blob/master/LICENSE.txt
-    /**
-     * [Description]
-     * @param entity 
-     * @param append 
-     * @return Entity
-     */
     public function addEntity(entity :Entity, append :Bool=true) : Entity
     {
         if (entity.parent != null) {
@@ -134,10 +109,6 @@ import pongo.display.Renderable;
     //
     // Flambe - Rapid game development
     // https://github.com/aduros/flambe/blob/master/LICENSE.txt
-    /**
-     * [Description]
-     * @param entity 
-     */
     public function removeEntity(entity :Entity) : Void
     {
         var prev :Entity = null, p = firstChild;
@@ -167,9 +138,6 @@ import pongo.display.Renderable;
         return this;
     }
 
-    /**
-     * [Description]
-     */
     public function disposeChildren ()
     {
         while (firstChild != null) {
@@ -177,9 +145,6 @@ import pongo.display.Renderable;
         }
     }
 
-    /**
-     * [Description]
-     */
     public function dispose ()
     {
         if (parent != null) {
@@ -199,6 +164,7 @@ import pongo.display.Renderable;
     {
         if(_manager._entityMap.exists(this, name)) {
             _manager.notifyRemoveComponent(this, name);
+            _manager._entityMap.getComponent(this, name).owner = null;
             return true;
         }
         return false;

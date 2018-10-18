@@ -38,7 +38,26 @@ class Macro
                 case FVar(t,_):
                     args.push({name:f.name, type:t, opt:false, value:null});
                     states.push(macro $p{["this", f.name]} = $i{f.name});
+
+                    var setterFunc = [];
+                    setterFunc.push(macro $p{["this", f.name]} = $i{f.name});
+                    setterFunc.push(macro return $i{f.name});
+
                     f.access.push(APublic);
+                    f.kind = FieldType.FProp("default", "set", t);
+
+                    var myFunc:Function = { 
+                        expr: macro $b{setterFunc},
+                        ret: t,
+                        args:[{name:f.name, type:t, opt:false, value:null}]
+                    }
+
+                    fields.push({
+                        name: "set_" + f.name,
+                        access: [Access.APublic],
+                        kind: FieldType.FFun(myFunc),
+                        pos: Context.currentPos(),
+                    });
                 default:
             }
         }
@@ -59,16 +78,23 @@ class Macro
     public static function addComponentNames(fields :Array<Field>):Array<Field> 
     {
         fields.push({
-            name:  "COMPONENT_NAME",
-            access:  [Access.APublic, Access.AStatic, Access.AInline],
+            name: "COMPONENT_NAME",
+            access: [Access.APublic, Access.AStatic, Access.AInline],
             kind: FieldType.FVar(macro:String, macro $v{Context.getLocalClass().toString()}), 
             pos: Context.currentPos(),
         });
 
         fields.push({
-            name:  "componentName",
-            access:  [Access.APublic],
+            name: "componentName",
+            access: [Access.APublic],
             kind: FieldType.FProp("default", "null", macro $v{Context.getLocalClass().toString()}), 
+            pos: Context.currentPos(),
+        });
+
+        fields.push({
+            name: "owner",
+            access: [Access.APublic],
+            kind: FieldType.FVar(macro:pongo.Entity, macro $v{null}), 
             pos: Context.currentPos(),
         });
 
