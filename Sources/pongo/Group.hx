@@ -51,7 +51,7 @@ import pongo.util.ecs.ds.RuleSet;
         return _list.tail.entity;
     }
 
-    public function manipulate(fn :Entity -> Void) : Void
+    public function manipulateAll(fn :Entity -> Void) : Void
     {
         var p = _list.head;
         while(p != null) {
