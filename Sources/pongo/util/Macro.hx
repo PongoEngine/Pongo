@@ -30,6 +30,7 @@ class Macro
     macro public static function build() :Array<Field> 
     {
         var fields = Context.getBuildFields();
+        var pos = Context.currentPos();
         
         var args = [];
         var states = [];
@@ -38,25 +39,28 @@ class Macro
                 case FVar(t,_):
                     args.push({name:f.name, type:t, opt:false, value:null});
                     states.push(macro $p{["this", f.name]} = $i{f.name});
-
-                    var setterFunc = [];
-                    setterFunc.push(macro $p{["this", f.name]} = $i{f.name});
-                    setterFunc.push(macro return $i{f.name});
-
                     f.access.push(APublic);
                     f.kind = FieldType.FProp("default", "set", t);
 
                     var myFunc:Function = { 
-                        expr: macro $b{setterFunc},
+                        expr: macro {
+                            if($p{["this", f.name]} != $i{f.name}) {
+                                $p{["this", f.name]} = $i{f.name};
+                                if(this.owner != null) {
+                                    this.owner.notifyChange($i{f.name});
+                                }
+                            }
+                            return $i{f.name};
+                        },
                         ret: t,
                         args:[{name:f.name, type:t, opt:false, value:null}]
                     }
 
                     fields.push({
                         name: "set_" + f.name,
-                        access: [Access.APublic],
+                        access: [Access.APrivate],
                         kind: FieldType.FFun(myFunc),
-                        pos: Context.currentPos(),
+                        pos: pos,
                     });
                 default:
             }

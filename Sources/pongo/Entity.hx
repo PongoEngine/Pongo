@@ -145,6 +145,10 @@ import pongo.display.Renderable;
         }
     }
 
+    public function notifyChange(value :Dynamic) : Void
+    {
+    }
+
     public function dispose ()
     {
         if (parent != null) {
@@ -152,7 +156,6 @@ import pongo.display.Renderable;
         }
         disposeChildren();
         _manager._entityMap.removeEntity(this);
-        // _manager = null; //FIX
     }
 
     public inline function getComponentFromName(name :String) : Component
@@ -164,7 +167,6 @@ import pongo.display.Renderable;
     {
         if(_manager._entityMap.exists(this, name)) {
             _manager.notifyRemoveComponent(this, name);
-            _manager._entityMap.getComponent(this, name).owner = null;
             return true;
         }
         return false;
