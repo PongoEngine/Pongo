@@ -21,21 +21,20 @@
 
 package pongo.ecs;
 
-import pongo.util.Signal1;
+import pongo.util.Signal3;
 import pongo.ecs.ds.RuleSet;
 import pongo.ecs.ds.EntityList;
+import pongo.Pongo;
 
-@:final class Group
+@:allow(pongo) @:final class Group
 {
     public var rules (default, null):RuleSet;
-    public var changed (default, null) :Signal1<Entity>;
 
     public function new(rules :RuleSet) : Void
     {
         this.rules = rules;
         _list = new EntityList();
         _listChanged = new EntityList();
-        changed = new Signal1<Entity>();
     }
 
     public function first() : Entity
@@ -59,33 +58,29 @@ import pongo.ecs.ds.EntityList;
         }
     }
 
-    @:allow(pongo.ecs.Manager)
+    public function manipulateChanged(fn :Entity -> Void) : Void
+    {
+        var p = _listChanged.head;
+        while(p != null) {
+            fn(p.entity);
+            p = p.next;
+        }
+        _listChanged.clear();
+    }
+
     private function addChanged(entity :Entity) : Bool
     {
         return _listChanged.add(entity);
     }
 
-    @:allow(pongo.ecs.Manager)
     private function add(entity :Entity) : Bool
     {
         return _list.add(entity);
     }
 
-    @:allow(pongo.ecs.Manager)
     private function remove(entity :Entity) : Bool
     {
         return _list.remove(entity);
-    }
-
-    @:allow(pongo.ecs.Manager)
-    private function updateChanged() : Void
-    {
-        var p = _listChanged.head;
-        while(p != null) {
-            changed.emit(p.entity);
-            p = p.next;
-        }
-        _listChanged.clear();
     }
 
     private var _list :EntityList;

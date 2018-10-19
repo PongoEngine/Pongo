@@ -21,6 +21,7 @@
 
 package pongo.ecs;
 
+import pongo.Pongo;
 import pongo.ecs.Manager;
 import pongo.ecs.Entity;
 import pongo.ecs.Group;
@@ -65,11 +66,6 @@ import haxe.macro.Context;
     public function render(graphics: Graphics) : Void
     {
         Engine._render(this.root, graphics);
-    }
-
-    public function update() : Void
-    {
-        _manager.updateGroups();
     }
 
     public inline function createEntity() : Entity

@@ -82,10 +82,10 @@ class EntityList
     public function clear() : Void
     {
         if(size > 0) {
-            head = null;
-            tail = null;
-            _entityMap = new Map<Int,EntityNode>();
-            size = 0;
+            this.head = null;
+            this.tail = null;
+            this._entityMap = new Map<Int,EntityNode>();
+            this.size = 0;
         }
     }
 

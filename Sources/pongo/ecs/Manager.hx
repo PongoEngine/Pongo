@@ -26,12 +26,11 @@ import pongo.ecs.Group;
 import pongo.ecs.ds.RuleSet;
 using pongo.util.StringUtil;
 
-@:final class Manager
+@:allow(pongo) @:final class Manager
 {
     /**
      * [Description]
      */
-    @:allow(pongo.ecs.Engine)
     private function new() : Void
     {
         _keys = new Array<Int>();
@@ -47,7 +46,6 @@ using pongo.util.StringUtil;
         return new Entity(this);
     }
 
-    @:allow(pongo.ecs.Entity)
     private function notifyChange(entity :Entity) : Void
     {
         for(key in _keys) {
@@ -59,7 +57,6 @@ using pongo.util.StringUtil;
         }
     }
 
-    @:allow(pongo.ecs.Entity)
     private function notifyAdd(entity :Entity) : Void
     {
         for(key in _keys) {
@@ -71,7 +68,6 @@ using pongo.util.StringUtil;
         }
     }
 
-    @:allow(pongo.ecs.Entity)
     private function notifyRemove(entity :Entity) : Void
     {
         for(key in _keys) {
@@ -83,7 +79,6 @@ using pongo.util.StringUtil;
         }
     }
 
-    @:allow(pongo.ecs.Engine)
     private function createGroup(classNames :Array<String>) : Group
     {
         var key = classNames.keyFromStrings();
@@ -92,14 +87,6 @@ using pongo.util.StringUtil;
             _keys.push(key);
         }
         return _groups.get(key);
-    }
-
-    @:allow(pongo.ecs.Engine)
-    private inline function updateGroups() : Void
-    {
-        for(group in _groups) {
-            group.updateChanged();
-        }
     }
 
     private var _keys :Array<Int>;

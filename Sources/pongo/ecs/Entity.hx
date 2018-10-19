@@ -34,7 +34,7 @@ import pongo.util.Disposable;
 import pongo.display.Renderable;
 import pongo.ecs.ds.RuleSet;
 
-@:final class Entity implements Disposable
+@:allow(pongo) @:final class Entity implements Disposable
 {
     public var parent (default, null) :Entity = null;
     public var firstChild (default, null) :Entity = null;
@@ -42,7 +42,6 @@ import pongo.ecs.ds.RuleSet;
     public var index (default, null):Int;
     public var visual (default, null):Renderable = null;
 
-    @:allow(pongo.ecs.Manager)
     private function new(manager :Manager) : Void
     {
         this.index = ++Entity.ENTITY_INDEX;
