@@ -27,8 +27,6 @@ package pongo.display;
 
 import kha.math.FastMatrix3;
 import pongo.display.Graphics;
-import pongo.ecs.Entity;
-
 using pongo.math.CMath;
 
 class Sprite
@@ -113,17 +111,6 @@ class Sprite
     {
     }
 
-    /**
-     *  [Description]
-     *  @param localX - 
-     *  @param localY - 
-     *  @return Bool
-     */
-    public function containsLocal (localX :Float, localY :Float) :Bool
-    {
-        return localX >= 0 && localX < getNaturalWidth()
-            && localY >= 0 && localY < getNaturalHeight();
-    }
 
     /**
      *  [Description]

@@ -78,6 +78,7 @@ import pongo.platform.display.Graphics;
         }
         _lastTime = time;
 
+        manager.updateChanged();
         for(system in _systems) {
             system.update(this, dt);
         }

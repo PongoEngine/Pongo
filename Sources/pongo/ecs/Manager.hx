@@ -33,7 +33,7 @@ import haxe.macro.Expr;
 import haxe.macro.Context;
 #end
 
-class Manager
+@:allow(pongo) class Manager
 {
     public function new() : Void
     {
@@ -63,6 +63,17 @@ class Manager
         }
     }
 
+    public function notifyAddChanged(entity :Entity) : Void
+    {
+        for(key in _keys) {
+            var rules = _groups.get(key).rules;
+            var group = _groups.get(key);
+            if(entity.hasAllRules(rules)) {
+                group.queueChanged(entity);
+            }
+        }
+    }
+
     macro public function registerGroup(self:Expr, componentClass :ExprOf<Array<Class<Component>>>) :ExprOf<Group>
     {
         return switch (componentClass.expr) {
@@ -83,6 +94,15 @@ class Manager
             _keys.push(key);
         }
         return _groups.get(key);
+    }
+
+    private function updateChanged() : Void
+    {
+        var i = 0;
+        while(i < _keys.length) {
+            _groups.get(_keys[i]).swapQueue();
+            i++;
+        }
     }
 
     private var _keys :Array<Int>;

@@ -23,6 +23,7 @@ package pongo.ecs;
 
 import pongo.ecs.util.RuleSet;
 import pongo.ecs.util.EntityList;
+import pongo.ecs.util.SwapEntityList;
 
 @:allow(pongo) class Group
 {
@@ -32,6 +33,7 @@ import pongo.ecs.util.EntityList;
     {
         this.rules = rules;
         _list = new EntityList();
+        _swapList = new SwapEntityList();
     }
 
     public function first() : Entity
@@ -46,13 +48,36 @@ import pongo.ecs.util.EntityList;
         return _list.tail.entity;
     }
 
-    public function all(fn :Entity -> Void) : Void
+    public inline function all(fn :Entity -> Void) : Void
     {
         var p = _list.head;
         while(p != null) {
             fn(p.entity);
             p = p.next;
         }
+    }
+
+    public inline function changed(fn :Entity -> Void) : Void
+    {
+        var p = _swapList.active().head;
+        while(p != null) {
+            fn(p.entity);
+            p = p.next;
+        }
+    }
+
+    private function queueChanged(entity :Entity) : Bool
+    {
+        if(entity.isDisposed) {
+            return false;
+        }
+        return _swapList.addToQueue(entity);
+    }
+
+    private function swapQueue() : Void
+    {
+        _swapList.clearActive();
+        _swapList.swap();
     }
 
     private function add(entity :Entity) : Bool
@@ -66,4 +91,5 @@ import pongo.ecs.util.EntityList;
     }
 
     private var _list :EntityList;
+    private var _swapList :SwapEntityList;
 }

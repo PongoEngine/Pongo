@@ -34,36 +34,60 @@ class Macro
         
         var args = [];
         var states = [];
-        for (f in fields) {
-            switch (f.kind) {
-                case FVar(t,_):
-                    args.push({name:f.name, type:t, opt:false, value:null});
-                    states.push(macro $p{["this", f.name]} = $i{f.name});
-                    f.access.push(APublic);
-                    f.kind = FieldType.FProp("default", "set", t);
-                    
-                    var myFunc:Function = { 
+        var i :Int = 0;
+        var length = fields.length;
+        while (i < length) {
+            var field = fields[i];
+            switch (field.kind) {
+                case FVar(type,_):
+                    field.kind = FieldType.FProp("get", "set", type);
+                    var getter:Function = { 
                         expr: macro {
-                            if($p{["this", f.name]} != $i{f.name}) {
-                                $p{["this", f.name]} = $i{f.name};
-                                if(this.owner != null) {
-                                    this.owner.notifyChange();
-                                }
-                            }
-                            return $i{f.name};
+                            return $i{("_" + field.name)};
                         },
-                        ret: t,
-                        args:[{name:f.name, type:t, opt:false, value:null}]
+                        ret: type,
+                        args:[]
+                    }
+                                
+                    var setter:Function = { 
+                        expr: macro {
+                            if($i{"_" + field.name} != $i{field.name}) {
+                                $i{"_" + field.name} = $i{field.name};
+                                this.owner.notifyChange();
+                            }
+                            return $i{("_" + field.name)};
+                        },
+                        ret: type,
+                        args:[{name:field.name, type: type, opt:false, value:null}]
                     }
 
                     fields.push({
-                        name: "set_" + f.name,
+                        name: "_" + field.name,
                         access: [Access.APrivate],
-                        kind: FieldType.FFun(myFunc),
-                        pos: pos,
+                        kind: FieldType.FVar(type, macro $v{null}), 
+                        pos: Context.currentPos(),
                     });
+
+                    fields.push({
+                        name: "set_" + field.name,
+                        access: [Access.APrivate],
+                        kind: FieldType.FFun(setter),
+                        pos: Context.currentPos(),
+                    });
+
+                    fields.push({
+                        name: "get_" + field.name,
+                        access: [Access.APrivate],
+                        kind: FieldType.FFun(getter),
+                        pos: Context.currentPos(),
+                    });
+
+                    args.push({name:field.name, type:type, opt:false, value:null});
+                    states.push(macro $i{"_" + field.name} = $i{field.name});
+                    field.access.push(APublic);
                 default:
             }
+            i++;
         }
         fields.push({
             name: "new",
@@ -76,11 +100,7 @@ class Macro
                 ret: null
             })
         });
-        return addComponentNames(fields);
-    }
 
-    public static function addComponentNames(fields :Array<Field>):Array<Field> 
-    {
         fields.push({
             name: "COMPONENT_NAME",
             access: [Access.APublic, Access.AStatic, Access.AInline],

@@ -41,6 +41,7 @@ import pongo.util.Disposable;
     public var next (default, null) :Entity = null;
     public var index (default, null):Int;
     public var visual (default, null):Sprite = null;
+    public var isDisposed (default, null):Bool = false;
 
     private function new(manager :Manager) : Void
     {
@@ -65,9 +66,10 @@ import pongo.util.Disposable;
         return macro $self.removeComponentByClassName($componentClass.COMPONENT_NAME);
     }
 
-    macro public function getComponent<T:Component>(self:Expr, componentClass :ExprOf<Class<T>>) :ExprOf<T>
+    macro public function getComponent<T>(self:Expr, componentClass :ExprOf<Class<T>>) :ExprOf<T>
     {
-        return macro cast $self.getComponentFromName($componentClass.COMPONENT_NAME);
+        var name = macro $componentClass.COMPONENT_NAME;
+        return macro Std.instance($self.getComponentFromName($name), $componentClass);
     }
 
     macro public function hasComponent<T:Component>(self:Expr, componentClass :ExprOf<Class<T>>) : ExprOf<Bool>
@@ -149,6 +151,7 @@ import pongo.util.Disposable;
 
     public function dispose ()
     {
+        this.isDisposed = true;
         if (parent != null) {
             parent.removeEntity(this);
         }
@@ -167,6 +170,7 @@ import pongo.util.Disposable;
 
     public function notifyChange() : Void
     {
+        _manager.notifyAddChanged(this);
     }
 
     public inline function getComponentFromName(name :String) : Component
