@@ -23,7 +23,7 @@ package pongo;
 
 import pongo.display.Graphics;
 import pongo.util.Disposable;
-import pongo.util.ecs.Engine;
+import pongo.ecs.Engine;
 import pongo.input.Keyboard;
 
 @:final class Pongo

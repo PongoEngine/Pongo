@@ -19,25 +19,24 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.util.ecs;
+package pongo.ecs;
 
-import pongo.Entity;
-import pongo.Group;
+import pongo.ecs.Entity;
+import pongo.ecs.Group;
 import pongo.util.Disposable;
-import pongo.util.ecs.ds.RuleSet;
-import pongo.util.ecs.ds.EntityMap;
+import pongo.ecs.ds.RuleSet;
+using pongo.util.StringUtil;
 
 @:final class Manager
 {
     /**
      * [Description]
      */
-    @:allow(pongo.util.ecs.Engine)
+    @:allow(pongo.ecs.Engine)
     private function new() : Void
     {
-        _keys = new Array();
-        _groups = new Map<String, Group>();
-        _entityMap = new EntityMap();
+        _keys = new Array<Int>();
+        _groups = new Map<Int, Group>();
     }
 
     /**
@@ -49,96 +48,75 @@ import pongo.util.ecs.ds.EntityMap;
         return new Entity(this);
     }
 
-    @:allow(pongo.Entity)
+    @:allow(pongo.ecs.Entity)
+    private function notifyChange(entity :Entity) : Void
+    {
+        // trace("change happened: " +  entity.index);
+    }
+
+    @:allow(pongo.ecs.Entity)
     private function notifyAddComponent(entity :Entity, component :Component) : Void
     {
-        _entityMap.addComponent(entity, component);
         for(key in _keys) {
             var rules = _groups.get(key).rules;
             if(rules.exists(component.componentName)) {
                 var group = _groups.get(key);
-                if(!group.exists(entity) && hasAllRules(entity, rules)) {
+                if(entity.hasAllRules(rules)) {
                     group.add(entity);
                 }
             }
         }
     }
 
-    @:allow(pongo.Entity)
+    @:allow(pongo.ecs.Entity)
     private function notifyRemoveComponent(entity :Entity, name :String) : Void
     {
         for(key in _keys) {
             var rules = _groups.get(key).rules;
             if(rules.exists(name)) {
                 var group = _groups.get(key);
-                if(group.exists(entity) && hasAllRules(entity, rules)) {
+                if(entity.hasAllRules(rules)) {
                     group.remove(entity);
                 }
             }
         }
-        _entityMap.removeComponent(entity, name);
     }
 
-    @:allow(pongo.Entity)
+    @:allow(pongo.ecs.Entity)
     private function notifyAddEntity(entity :Entity) : Void
     {
         for(key in _keys) {
             var rules = _groups.get(key).rules;
             var group = _groups.get(key);
-            if(!group.exists(entity) && hasAllRules(entity, rules)) {
+            if(entity.hasAllRules(rules)) {
                 group.add(entity);
             }
         }
     }
 
-    @:allow(pongo.Entity)
+    @:allow(pongo.ecs.Entity)
     private function notifyRemoveEntity(entity :Entity) : Void
     {
         for(key in _keys) {
             var rules = _groups.get(key).rules;
             var group = _groups.get(key);
-            if(group.exists(entity) && hasAllRules(entity, rules)) {
+            if(entity.hasAllRules(rules)) {
                 group.remove(entity);
             }
         }
     }
 
-    @:allow(pongo.util.ecs.Engine)
-    private function createGroup(name :String, classNames :Array<String>) : Group
+    @:allow(pongo.ecs.Engine)
+    private function createGroup(classNames :Array<String>) : Group
     {
-        if(!_groups.exists(name)) {
-            _groups.set(name, new Group(RuleSet.fromArray(classNames)));
-            _keys.push(name);
+        var key = classNames.keyFromStrings();
+        if(!_groups.exists(key)) {
+            _groups.set(key, new Group(RuleSet.fromArray(classNames)));
+            _keys.push(key);
         }
-        return _groups.get(name);
+        return _groups.get(key);
     }
 
-    @:allow(pongo.util.ecs.Engine)
-    private inline function getGroup(name :String) : Group
-    {
-        return _groups.get(name);
-    }
-
-    @:allow(pongo.util.ecs.Engine)
-    private function destroyGroup(name :String) : Void
-    {
-        if(_groups.exists(name)) {
-            _groups.remove(name);
-            _keys.remove(name);
-        }
-    }
-
-    private function hasAllRules(entity :Entity, rules :RuleSet) : Bool
-    {
-        for(rule in rules) {
-            if(!_entityMap.hasComponent(entity, rule)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private var _keys :Array<String>;
-    private var _groups :Map<String, Group>;
-    @:allow(pongo.Entity) private var _entityMap :EntityMap;
+    private var _keys :Array<Int>;
+    private var _groups :Map<Int, Group>;
 }

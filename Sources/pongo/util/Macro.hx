@@ -47,7 +47,7 @@ class Macro
                             if($p{["this", f.name]} != $i{f.name}) {
                                 $p{["this", f.name]} = $i{f.name};
                                 if(this.owner != null) {
-                                    this.owner.notifyChange($i{f.name});
+                                    this.owner.notifyChange();
                                 }
                             }
                             return $i{f.name};
@@ -98,7 +98,7 @@ class Macro
         fields.push({
             name: "owner",
             access: [Access.APublic],
-            kind: FieldType.FVar(macro:pongo.Entity, macro $v{null}), 
+            kind: FieldType.FVar(macro:pongo.ecs.Entity, macro $v{null}), 
             pos: Context.currentPos(),
         });
 

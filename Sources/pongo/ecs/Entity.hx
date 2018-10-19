@@ -19,7 +19,7 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo;
+package pongo.ecs;
 
 #if macro
 import haxe.macro.Context;
@@ -28,10 +28,11 @@ import haxe.macro.Type;
 using haxe.macro.ExprTools;
 #end
 
-import pongo.Component;
-import pongo.util.ecs.Manager;
+import pongo.ecs.Component;
+import pongo.ecs.Manager;
 import pongo.util.Disposable;
 import pongo.display.Renderable;
+import pongo.ecs.ds.RuleSet;
 
 @:final class Entity implements Disposable
 {
@@ -41,19 +42,21 @@ import pongo.display.Renderable;
     public var index (default, null):Int;
     public var visual (default, null):Renderable = null;
 
-    @:allow(pongo.util.ecs.Manager)
+    @:allow(pongo.ecs.Manager)
     private function new(manager :Manager) : Void
     {
         this.index = ++Entity.ENTITY_INDEX;
+        _components = new Map<String, Component>();
         _manager = manager;
     }
 
     public inline function addComponent(component :Component) : Entity
     {
-        if(_manager._entityMap.exists(this, component.componentName)) {
+        if(_components.exists(component.componentName)) {
             this.removeComponentByClassName(component.componentName);
         }
         component.owner = this;
+        _components.set(component.componentName, component);
         _manager.notifyAddComponent(this, component);
         return this;
     }
@@ -145,27 +148,38 @@ import pongo.display.Renderable;
         }
     }
 
-    public function notifyChange(value :Dynamic) : Void
-    {
-    }
-
     public function dispose ()
     {
         if (parent != null) {
             parent.removeEntity(this);
         }
         disposeChildren();
-        _manager._entityMap.removeEntity(this);
+    }
+
+    public function hasAllRules(rules :RuleSet) : Bool
+    {
+        for(rule in rules) {
+            if(!_components.exists(rule)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function notifyChange() : Void
+    {
+        _manager.notifyChange(this);
     }
 
     public inline function getComponentFromName(name :String) : Component
     {
-        return _manager._entityMap.getComponent(this, name);
+        return _components.get(name);
     }
 
     public inline function removeComponentByClassName(name :String) : Bool
     {
-        if(_manager._entityMap.exists(this, name)) {
+        if(_components.exists(name)) {
+            _components.remove(name);
             _manager.notifyRemoveComponent(this, name);
             return true;
         }
@@ -173,5 +187,6 @@ import pongo.display.Renderable;
     }
 
     private var _manager :Manager;
+    private var _components :Map<String, Component>;
     private static var ENTITY_INDEX :Int = -1;
 }

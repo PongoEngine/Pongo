@@ -19,11 +19,22 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo;
+package pongo.ecs.ds;
 
-@:autoBuild(pongo.util.Macro.build())
-interface Component
+@:forward(iterator, exists)
+abstract RuleSet(Map<String,String>)
 {
-    var componentName (default, null):String;
-    var owner :Entity;
+    inline public function new() : Void
+    {
+        this = new Map<String,String>();
+    }
+
+    inline public static function fromArray(arra :Array<String>) : RuleSet
+    {
+        var m = new Map<String, String>();
+        for(v in arra) {
+            m.set(v,v);
+        }
+        return cast m;
+    }
 }

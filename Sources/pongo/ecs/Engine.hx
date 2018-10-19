@@ -19,17 +19,17 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.util.ecs;
+package pongo.ecs;
 
-import pongo.util.ecs.Manager;
-import pongo.Entity;
+import pongo.ecs.Manager;
+import pongo.ecs.Entity;
 import pongo.util.Disposable;
-import pongo.Group;
+import pongo.ecs.Group;
 import pongo.display.Graphics;
 import pongo.display.Sprite;
 
 #if macro
-import haxe.macro.ExprTools;
+using haxe.macro.ExprTools;
 import haxe.macro.TypeTools;
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -45,29 +45,23 @@ import haxe.macro.Context;
         this.root = this.createEntity();
     }
 
-    macro public function registerGroup(self:Expr, name :ExprOf<String>, componentClass :ExprOf<Array<Class<Component>>>)
+#if macro
+    macro static inline public function getCOMPONENT_NAME<T:Component>(componentClass :ExprOf<Class<T>>) :ExprOf<String>
     {
-        var cNames :Array<Expr> = [];
-        switch (componentClass.expr) {
+        return macro $componentClass.COMPONENT_NAME;
+    }
+#end
+
+    macro public function registerGroup(self:Expr, componentClass :ExprOf<Array<Class<Component>>>) :ExprOf<Group>
+    {
+        return switch (componentClass.expr) {
             case EArrayDecl(vals): {
-                for(val in vals) {
-                    cNames.push(macro $val.COMPONENT_NAME);
-                }
+                macro $self.registerGroupWithClassNames(cast $a{vals.map(function(v) {
+                    return macro $v.COMPONENT_NAME;
+                })});
             }
-            case _:
+            case _: macro throw "err";
         }
-
-        return macro $self.registerGroupWithClassNames($name, $a{cNames});
-    }
-
-    public function unregisterGroup(name :String) : Void
-    {
-        _manager.destroyGroup(name);
-    }
-
-    public inline function getGroup(name :String) : Group
-    {
-        return _manager.getGroup(name);
     }
 
     public function render(graphics: Graphics) : Void
@@ -80,9 +74,9 @@ import haxe.macro.Context;
         return _manager.createEntity();
     }
 
-    public function registerGroupWithClassNames(name :String, classNames :Array<String>) : Group
+    public inline function registerGroupWithClassNames(classNames :Array<String>) : Group
     {
-        return _manager.createGroup(name, classNames);
+        return _manager.createGroup(classNames);
     }
 
     public function update() : Void
