@@ -23,10 +23,8 @@ package pongo.ecs;
 
 import pongo.ecs.Manager;
 import pongo.ecs.Entity;
-import pongo.util.Disposable;
 import pongo.ecs.Group;
 import pongo.display.Graphics;
-import pongo.display.Sprite;
 
 #if macro
 using haxe.macro.ExprTools;

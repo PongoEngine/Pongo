@@ -22,8 +22,8 @@
 package pongo;
 
 import pongo.display.Graphics;
-import pongo.util.Disposable;
 import pongo.ecs.Engine;
+import pongo.ecs.System;
 import pongo.input.Keyboard;
 
 @:final class Pongo
@@ -39,17 +39,17 @@ import pongo.input.Keyboard;
         this.engine = new Engine();
         this.keyboard = new Keyboard();
         _schedulerID = kha.Scheduler.addTimeTask(update, 0, 1/60);
-        _systems = new Map<String, Pongo -> Float -> Void>();
+        _systems = new Map<System, System>();
     }
 
-    public function addSystem(name :String, fn :Pongo -> Float -> Void) : Void
+    public function addSystem(system :System) : Void
     {
-        _systems.set(name, fn);
+        _systems.set(system, system);
     }
 
-    public function removeSystem(name :String) : Void
+    public function removeSystem(system :System) : Void
     {
-        _systems.remove(name);
+        _systems.remove(system);
     }
 
     private function update() : Void
@@ -62,7 +62,7 @@ import pongo.input.Keyboard;
         _lastTime = time;
 
         for(system in _systems) {
-            system(this, dt);
+            system.update(this, dt);
         }
         engine.update();
     }
@@ -90,6 +90,6 @@ import pongo.input.Keyboard;
 
     private var _graphics :Graphics;
     private var _schedulerID :Int;
-    private var _systems :Map<String, Pongo -> Float -> Void>;
+    private var _systems :Map<System, System>;
     private var _lastTime :Float = -1;
 }

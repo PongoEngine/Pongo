@@ -59,11 +59,9 @@ using pongo.util.StringUtil;
     {
         for(key in _keys) {
             var rules = _groups.get(key).rules;
-            if(rules.exists(component.componentName)) {
-                var group = _groups.get(key);
-                if(entity.hasAllRules(rules)) {
-                    group.add(entity);
-                }
+            var group = _groups.get(key);
+            if(entity.hasAllRules(rules)) {
+                group.add(entity);
             }
         }
     }
@@ -73,11 +71,9 @@ using pongo.util.StringUtil;
     {
         for(key in _keys) {
             var rules = _groups.get(key).rules;
-            if(rules.exists(name)) {
-                var group = _groups.get(key);
-                if(entity.hasAllRules(rules)) {
-                    group.remove(entity);
-                }
+            var group = _groups.get(key);
+            if(entity.hasAllRules(rules)) {
+                group.remove(entity);
             }
         }
     }
