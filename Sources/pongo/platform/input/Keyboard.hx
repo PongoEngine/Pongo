@@ -19,21 +19,40 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo;
+package pongo.platform.input;
 
-import pongo.ecs.Engine;
-import pongo.ecs.System;
-import pongo.input.Keyboard;
-import pongo.input.Mouse;
+import kha.input.KeyCode;
+import pongo.util.Signal1;
 
-interface Pongo
+class Keyboard implements pongo.input.Keyboard
 {
-    public var width (get, null) :Int;
-    public var height (get, null) :Int;
-    public var engine (default, null) :Engine;
-    public var keyboard (default, null) :Keyboard;
-    public var mouse (default, null) :Mouse;
+    public var down (default, null) : Signal1<KeyCode>;
+    public var up (default, null) : Signal1<KeyCode>;
 
-    public function addSystem(system :System) : Void;
-    public function removeSystem(system :System) : Void;
+    public function new() : Void
+    {
+        _keyboard = kha.input.Keyboard.get(0);
+        _keyboard.notify(keyDown, keyUp);
+        down = new Signal1<KeyCode>();
+        up = new Signal1<KeyCode>();
+    }
+
+    public function dispose() : Void
+    {
+        _keyboard.remove(keyDown, keyUp, null);
+        _keyboard = null;
+    }
+
+    private function keyDown(key: KeyCode): Void
+    {
+        down.emit(key);
+    }
+
+    private function keyUp(key: KeyCode): Void 
+    {
+        up.emit(key);
+
+    }
+
+    private var _keyboard :kha.input.Keyboard;
 }

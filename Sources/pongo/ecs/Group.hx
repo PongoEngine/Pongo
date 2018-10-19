@@ -21,19 +21,21 @@
 
 package pongo.ecs;
 
+import pongo.util.Signal1;
 import pongo.ecs.ds.RuleSet;
 import pongo.ecs.ds.EntityList;
-import pongo.ecs.ds.EntityList.EntityNode;
 
 @:final class Group
 {
     public var rules (default, null):RuleSet;
+    public var changed (default, null) :Signal1<Entity>;
 
     public function new(rules :RuleSet) : Void
     {
         this.rules = rules;
-        _entityMap = new Map<Int,EntityNode>();
         _list = new EntityList();
+        _listChanged = new EntityList();
+        changed = new Signal1<Entity>();
     }
 
     public function first() : Entity
@@ -58,27 +60,34 @@ import pongo.ecs.ds.EntityList.EntityNode;
     }
 
     @:allow(pongo.ecs.Manager)
-    private function add(entity :Entity) : Void
+    private function addChanged(entity :Entity) : Bool
     {
-        if(!_entityMap.exists(entity.index)) {
-            var node = new EntityNode(entity);
-            _list.add(node);
-            _entityMap.set(entity.index, node);
-        }
+        return _listChanged.add(entity);
+    }
+
+    @:allow(pongo.ecs.Manager)
+    private function add(entity :Entity) : Bool
+    {
+        return _list.add(entity);
     }
 
     @:allow(pongo.ecs.Manager)
     private function remove(entity :Entity) : Bool
     {
-        if(!_entityMap.exists(entity.index)) {
-            var node = _entityMap.get(entity.index);
-            _list.remove(node);
-            _entityMap.remove(entity.index);
-            return true;
-        }
-        return false;
+        return _list.remove(entity);
     }
 
-    private var _entityMap:Map<Int,EntityNode>;
+    @:allow(pongo.ecs.Manager)
+    private function updateChanged() : Void
+    {
+        var p = _listChanged.head;
+        while(p != null) {
+            changed.emit(p.entity);
+            p = p.next;
+        }
+        _listChanged.clear();
+    }
+
     private var _list :EntityList;
+    private var _listChanged :EntityList;
 }

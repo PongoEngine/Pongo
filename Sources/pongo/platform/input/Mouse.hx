@@ -19,17 +19,56 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.input;
+package pongo.platform.input;
 
-import pongo.util.Disposable;
 import pongo.util.Signal1;
 import pongo.util.Signal3;
 import pongo.util.Signal4;
 
-interface Mouse extends Disposable
+class Mouse implements pongo.input.Mouse
 {
+
     public var wheel (default, null) : Signal1<Float>;
     public var down (default, null) : Signal3<Int, Int, Int>;
     public var up (default, null) : Signal3<Int, Int, Int>;
     public var move (default, null) : Signal4<Int, Int, Int, Int>;
+
+    public function new() : Void
+    {
+        _mouse = kha.input.Mouse.get(0);
+        _mouse.notify(downListener, upListener, moveListener, wheelListener);
+
+        wheel = new Signal1<Float>();
+        down = new Signal3<Int, Int, Int>();
+        up = new Signal3<Int, Int, Int>();
+        move = new Signal4<Int, Int, Int, Int>();
+    }
+
+    public function dispose() : Void
+    {
+        _mouse.remove(downListener, upListener, moveListener, wheelListener);
+        _mouse = null;
+    }
+
+    private function downListener(button :Int, x :Int, y :Int) : Void
+    {
+        down.emit(button,x, y);
+    }
+    
+    private function upListener(button :Int, x :Int, y :Int) : Void
+    {
+        down.emit(button,x, y);
+    }
+    
+    private function moveListener(a :Int, b :Int, c :Int, d :Int) : Void
+    {
+        move.emit(a,b,c,d);
+    }
+    
+    private function wheelListener(val :Float) : Void
+    {
+        wheel.emit(val);
+    }
+
+    private var _mouse :kha.input.Mouse;
 }

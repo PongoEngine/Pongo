@@ -51,14 +51,4 @@ class CMath
             else if (value > max) max
             else value;
     }
-
-    public static inline function intersects(circleX :Float, circleY :Float, circleRadius :Float, rectLeft :Float, rectRight :Float, rectTop :Float, rectBottom :Float) : Bool
-    {
-        var closestX :Float = clamp(circleX, rectLeft, rectRight);
-        var closestY :Float = clamp(circleY, rectTop, rectBottom);
-        var distX :Float = circleX - closestX;
-        var distY :Float = circleY - closestY;
-
-        return (distX * distX) + (distY * distY) < (circleRadius * circleRadius);
-    }
 }

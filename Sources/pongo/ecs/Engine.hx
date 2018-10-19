@@ -67,6 +67,11 @@ import haxe.macro.Context;
         Engine._render(this.root, graphics);
     }
 
+    public function update() : Void
+    {
+        _manager.updateGroups();
+    }
+
     public inline function createEntity() : Entity
     {
         return _manager.createEntity();
@@ -75,10 +80,6 @@ import haxe.macro.Context;
     public inline function registerGroupWithClassNames(classNames :Array<String>) : Group
     {
         return _manager.createGroup(classNames);
-    }
-
-    public function update() : Void
-    {
     }
 
     private static function _render(entity :Entity, g :Graphics) : Void

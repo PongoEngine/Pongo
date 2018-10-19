@@ -30,35 +30,63 @@ class EntityList
 
     private function new() : Void
     {
+        _entityMap = new Map<Int,EntityNode>();
     }
 
-    public inline function add(newNode :EntityNode) : Void
+    public inline function exists(entity :Entity) : Bool
     {
-        if(this.head == null) {
-            this.head = newNode;
-            this.tail = newNode;
-        }
-        else {
-            insertAfter(this.tail, newNode);
-        }
-        this.size++;
+        return _entityMap.exists(entity.index);
     }
 
-    public function remove(node :EntityNode) : Void
+    public inline function add(entity :Entity) : Bool
     {
-        if(node.prev == null) {
-            this.head = node.next;
+        if(!_entityMap.exists(entity.index)) {
+            var newNode = new EntityNode(entity);
+            if(this.head == null) {
+                this.head = newNode;
+                this.tail = newNode;
+            }
+            else {
+                insertAfter(this.tail, newNode);
+            }
+            _entityMap.set(entity.index, newNode);
+            this.size++;
+            return true;
         }
-        else {
-            node.prev.next = node.next;
+        return false;
+    }
+
+    public function remove(entity :Entity) : Bool
+    {
+        if(_entityMap.exists(entity.index)) {
+            var node = _entityMap.get(entity.index);
+            if(node.prev == null) {
+                this.head = node.next;
+            }
+            else {
+                node.prev.next = node.next;
+            }
+            if(node.next == null) {
+                this.tail = node.prev;
+            }
+            else {
+                node.next.prev = node.prev;
+            }
+            _entityMap.remove(entity.index);
+            this.size--;
+            return true;
         }
-        if(node.next == null) {
-            this.tail = node.prev;
+        return false;
+    }
+
+    public function clear() : Void
+    {
+        if(size > 0) {
+            head = null;
+            tail = null;
+            _entityMap = new Map<Int,EntityNode>();
+            size = 0;
         }
-        else {
-            node.next.prev = node.prev;
-        }
-        this.size--;
     }
 
     private function insertAfter(node :EntityNode, newNode :EntityNode) : Void
@@ -73,6 +101,8 @@ class EntityList
         }
         node.next = newNode;
     }
+
+    private var _entityMap:Map<Int,EntityNode>;
 }
 
 @:allow(pongo)

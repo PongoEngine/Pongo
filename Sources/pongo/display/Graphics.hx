@@ -19,195 +19,50 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-//
-// Flambe - Rapid game development
-// https://github.com/aduros/flambe/blob/master/LICENSE.txt
-
 package pongo.display;
 
 import kha.math.FastMatrix3;
 import kha.Color;
 
-class Graphics
+interface Graphics
 {
-    public function new(framebuffer :SafeFramebuffer) : Void
-    {
-        _framebuffer = framebuffer;
-    }
+    public function begin() : Void;
 
-    public function begin() : Void
-    {
-        _framebuffer.g2.begin();
-    }
+    public function end() : Void;
 
-    public function end() : Void
-    {
-        _framebuffer.g2.end();
-    }
+    public function fillRect(color :Int, x :Float, y :Float, width :Float, height :Float) : Void;
 
-    public function fillRect(color :Int, x :Float, y :Float, width :Float, height :Float) : Void 
-    {
-        setColor(color);
-        prepareGraphics2D();
-        _framebuffer.g2.fillRect(x, y, width, height);
-    }
+    public function fillCircle(color :Int, cx: Float, cy: Float, radius: Float, segments: Int = 0) : Void;
 
-    public function fillCircle(color :Int, cx: Float, cy: Float, radius: Float, segments: Int = 0) : Void
-    {
-        setColor(color);
-        prepareGraphics2D();
-        #if !macro
-        kha.graphics2.GraphicsExtension.fillCircle(_framebuffer.g2, cx, cy, radius, segments);
-        #end
-    }
+    public function drawRect(color :Int, x: Float, y: Float, width: Float, height: Float, strength: Float = 1.0) : Void;
 
-    public function drawRect(color :Int, x: Float, y: Float, width: Float, height: Float, strength: Float = 1.0) : Void 
-    {
-        setColor(color);
-        prepareGraphics2D();
-        _framebuffer.g2.drawRect(x, y, width, height, strength);
-    }
+    public function drawLine(color :Int, x1: Float, y1: Float, x2: Float, y2: Float, strength: Float = 1.0) : Void;
 
-    public function drawLine(color :Int, x1: Float, y1: Float, x2: Float, y2: Float, strength: Float = 1.0) : Void 
-    {
-        setColor(color);
-        prepareGraphics2D();
-        _framebuffer.g2.drawLine(x1, y1, x2, y2, strength);
-    }
+    public function drawCircle(color :Int, cx: Float, cy: Float, radius: Float, strength: Float = 1, segments: Int = 0) : Void;
 
-    public function drawCircle(color :Int, cx: Float, cy: Float, radius: Float, strength: Float = 1, segments: Int = 0) : Void
-    {
-        setColor(color);
-        prepareGraphics2D();
-        #if !macro
-        kha.graphics2.GraphicsExtension.drawCircle(_framebuffer.g2, cx, cy, radius, strength, segments);
-        #end
-    }
+    public function drawPolygon(color :Int, x: Float, y: Float, vertices: Array<kha.math.Vector2>, strength: Float = 1) : Void;
 
-    public function drawPolygon(color :Int, x: Float, y: Float, vertices: Array<kha.math.Vector2>, strength: Float = 1) : Void
-    {
-        setColor(color);
-        prepareGraphics2D();
-        #if !macro
-        kha.graphics2.GraphicsExtension.drawPolygon(_framebuffer.g2, x, y, vertices, strength);
-        #end
-    }
+    // public function drawString(text :String, font :SafeFont, color :Color, fontSize :Int, x :Float, y :Float) : Void;
 
-    public function drawString(text :String, font :SafeFont, color :Color, fontSize :Int, x :Float, y :Float) : Void
-    {
-        setColor(color);
+    // public function drawImage(img: SafeImage, x: Float, y: Float) : Void;
 
-        prepareGraphics2D();
+    // public function drawSubImage(img: SafeImage, x: Float, y: Float, sx: Float, sy: Float, sw: Float, sh: Float) : Void;
 
-        _framebuffer.g2.font = font;
-        _framebuffer.g2.fontSize = fontSize;
+    public function translate(x :Float, y :Float) : Void;
 
-        _framebuffer.g2.drawString(text, x, y);
-    }
+    public function scale(x :Float, y :Float) : Void;
 
-    public function drawImage(img: SafeImage, x: Float, y: Float) : Void
-    {
-        setColor(0xffffffff);
-        prepareGraphics2D();
-        _framebuffer.g2.drawImage(img, x, y);
-    }
+    public function rotate(rotation :Float) : Void;
 
-    public function drawSubImage(img: SafeImage, x: Float, y: Float, sx: Float, sy: Float, sw: Float, sh: Float) : Void
-    {
-        setColor(0xffffffff);
-        prepareGraphics2D();
-        _framebuffer.g2.drawSubImage(img, x, y, sx, sy, sw, sh);
-    }
+    public function transform(matrix :FastMatrix3) : Void;
 
-    @:extern public inline function translate(x :Float, y :Float) : Void
-    {
-        _stateList.matrix.setFrom(_stateList.matrix.multmat(FastMatrix3.translation(x,y)));
-    }
+    public function save() : Void;
 
-    @:extern public inline function scale(x :Float, y :Float) : Void
-    {
-        _stateList.matrix.setFrom(_stateList.matrix.multmat(FastMatrix3.scale(x,y)));
-    }
+    public function restore() : Void;
 
-    @:extern public inline function rotate(rotation :Float) : Void
-    {
-        _stateList.matrix.setFrom(_stateList.matrix.multmat(FastMatrix3.rotation(rotation)));
-    }
+    public function multiplyOpacity(factor :Float) : Void;
 
-    @:extern public inline function transform(matrix :FastMatrix3) : Void
-    {
-        _stateList.matrix.setFrom(_stateList.matrix.multmat(matrix));
-    }
+    public function setOpacity(opacity :Float) : Void;
 
-    public function save() : Void
-    {
-        var current = _stateList;
-        var state = _stateList.next;
-
-        if (state == null) {
-            state = new DrawingState();
-            state.prev = current;
-            current.next = state;
-        }
-
-        state.matrix.setFrom(current.matrix);
-        state.opacity = current.opacity;
-        state.color = current.color;
-
-        _stateList = state;
-    }
-
-    public function restore() : Void
-    {
-        _stateList = _stateList.prev;
-    }
-
-    public function prepareGraphics2D() : Void
-    {
-        _framebuffer.g2.transformation.setFrom(_stateList.matrix);
-        _framebuffer.g2.opacity = _stateList.opacity;
-        
-        if(_framebuffer.g2.color != _stateList.color) {
-            _framebuffer.g2.color = _stateList.color;
-        }
-    }
-
-    public function multiplyOpacity(factor :Float) : Void
-    {
-        _stateList.opacity *= factor;
-    }
-
-    public function setOpacity(opacity :Float) : Void
-    {
-        _stateList.opacity = opacity;
-    }
-
-    public function setColor(color :Color) : Void
-    {
-        _stateList.color = color;
-    }
-
-    private var _stateList :DrawingState = new DrawingState();
-    private var _framebuffer :SafeFramebuffer;
+    public function setColor(color :Color) : Void;
 }
-
-private class DrawingState
-{
-    public var matrix :FastMatrix3;
-    public var opacity :Float;
-    public var color :kha.Color;
-
-    public var prev :DrawingState = null;
-    public var next :DrawingState = null;
-
-    public function new() : Void
-    {
-        matrix = FastMatrix3.identity();
-        opacity = 1;
-        color = Color.Black;
-    }
-}
-
-typedef SafeFont = #if macro Dynamic; #else kha.Font; #end
-typedef SafeFramebuffer = #if macro Dynamic; #else kha.Framebuffer; #end
-typedef SafeImage = #if macro Dynamic; #else kha.Image; #end

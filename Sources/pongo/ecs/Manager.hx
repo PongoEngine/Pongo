@@ -23,7 +23,6 @@ package pongo.ecs;
 
 import pongo.ecs.Entity;
 import pongo.ecs.Group;
-import pongo.util.Disposable;
 import pongo.ecs.ds.RuleSet;
 using pongo.util.StringUtil;
 
@@ -51,11 +50,17 @@ using pongo.util.StringUtil;
     @:allow(pongo.ecs.Entity)
     private function notifyChange(entity :Entity) : Void
     {
-        // trace("change happened: " +  entity.index);
+        for(key in _keys) {
+            var rules = _groups.get(key).rules;
+            var group = _groups.get(key);
+            if(entity.hasAllRules(rules)) {
+                group.addChanged(entity);
+            }
+        }
     }
 
     @:allow(pongo.ecs.Entity)
-    private function notifyAddComponent(entity :Entity, component :Component) : Void
+    private function notifyAdd(entity :Entity) : Void
     {
         for(key in _keys) {
             var rules = _groups.get(key).rules;
@@ -67,31 +72,7 @@ using pongo.util.StringUtil;
     }
 
     @:allow(pongo.ecs.Entity)
-    private function notifyRemoveComponent(entity :Entity, name :String) : Void
-    {
-        for(key in _keys) {
-            var rules = _groups.get(key).rules;
-            var group = _groups.get(key);
-            if(entity.hasAllRules(rules)) {
-                group.remove(entity);
-            }
-        }
-    }
-
-    @:allow(pongo.ecs.Entity)
-    private function notifyAddEntity(entity :Entity) : Void
-    {
-        for(key in _keys) {
-            var rules = _groups.get(key).rules;
-            var group = _groups.get(key);
-            if(entity.hasAllRules(rules)) {
-                group.add(entity);
-            }
-        }
-    }
-
-    @:allow(pongo.ecs.Entity)
-    private function notifyRemoveEntity(entity :Entity) : Void
+    private function notifyRemove(entity :Entity) : Void
     {
         for(key in _keys) {
             var rules = _groups.get(key).rules;
@@ -111,6 +92,14 @@ using pongo.util.StringUtil;
             _keys.push(key);
         }
         return _groups.get(key);
+    }
+
+    @:allow(pongo.ecs.Engine)
+    private inline function updateGroups() : Void
+    {
+        for(group in _groups) {
+            group.updateChanged();
+        }
     }
 
     private var _keys :Array<Int>;

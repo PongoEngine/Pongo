@@ -57,7 +57,7 @@ import pongo.ecs.ds.RuleSet;
         }
         component.owner = this;
         _components.set(component.componentName, component);
-        _manager.notifyAddComponent(this, component);
+        _manager.notifyAdd(this);
         return this;
     }
 
@@ -104,7 +104,7 @@ import pongo.ecs.ds.RuleSet;
             entity.next = firstChild;
             firstChild = entity;
         }
-        _manager.notifyAddEntity(entity);
+        _manager.notifyAdd(entity);
 
         return this;
     }
@@ -126,7 +126,7 @@ import pongo.ecs.ds.RuleSet;
                 }
                 p.parent = null;
                 p.next = null;
-                _manager.notifyRemoveEntity(entity);
+                _manager.notifyRemove(entity);
                 return;
             }
             prev = p;
@@ -180,7 +180,7 @@ import pongo.ecs.ds.RuleSet;
     {
         if(_components.exists(name)) {
             _components.remove(name);
-            _manager.notifyRemoveComponent(this, name);
+            _manager.notifyRemove(this);
             return true;
         }
         return false;

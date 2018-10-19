@@ -21,6 +21,8 @@
 
 package pongo.ecs;
 
+import pongo.platform.Pongo;
+
 interface System {
     function update(pongo :Pongo, dt :Float) : Void;
 }

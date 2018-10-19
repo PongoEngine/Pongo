@@ -41,7 +41,7 @@ class Macro
                     states.push(macro $p{["this", f.name]} = $i{f.name});
                     f.access.push(APublic);
                     f.kind = FieldType.FProp("default", "set", t);
-
+                    
                     var myFunc:Function = { 
                         expr: macro {
                             if($p{["this", f.name]} != $i{f.name}) {
