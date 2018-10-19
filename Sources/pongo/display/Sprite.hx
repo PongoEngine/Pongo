@@ -31,7 +31,7 @@ import pongo.ecs.Entity;
 
 using pongo.math.CMath;
 
-class Sprite implements Renderable
+class Sprite
 {
     public var x :Float = 0;
     public var y :Float = 0;

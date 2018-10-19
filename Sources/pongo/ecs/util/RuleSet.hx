@@ -19,7 +19,7 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.ecs.ds;
+package pongo.ecs.util;
 
 @:forward(iterator, exists)
 abstract RuleSet(Map<String,String>)

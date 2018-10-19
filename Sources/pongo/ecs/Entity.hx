@@ -30,17 +30,17 @@ using haxe.macro.ExprTools;
 
 import pongo.ecs.Component;
 import pongo.ecs.Manager;
+import pongo.ecs.util.RuleSet;
+import pongo.display.Sprite;
 import pongo.util.Disposable;
-import pongo.display.Renderable;
-import pongo.ecs.ds.RuleSet;
 
-@:allow(pongo) @:final class Entity implements Disposable
+@:allow(pongo) class Entity implements Disposable
 {
     public var parent (default, null) :Entity = null;
     public var firstChild (default, null) :Entity = null;
     public var next (default, null) :Entity = null;
     public var index (default, null):Int;
-    public var visual (default, null):Renderable = null;
+    public var visual (default, null):Sprite = null;
 
     private function new(manager :Manager) : Void
     {
@@ -134,7 +134,7 @@ import pongo.ecs.ds.RuleSet;
         
     }
 
-    public function setVisual(visual :Renderable) : Entity
+    public function setVisual(visual :Sprite) : Entity
     {
         this.visual = visual;
         return this;
@@ -167,7 +167,6 @@ import pongo.ecs.ds.RuleSet;
 
     public function notifyChange() : Void
     {
-        _manager.notifyChange(this);
     }
 
     public inline function getComponentFromName(name :String) : Component

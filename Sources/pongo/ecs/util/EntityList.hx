@@ -19,7 +19,7 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.ecs.ds;
+package pongo.ecs.util;
 
 @:allow(pongo)
 class EntityList

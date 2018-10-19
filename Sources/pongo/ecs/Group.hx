@@ -21,12 +21,10 @@
 
 package pongo.ecs;
 
-import pongo.util.Signal3;
-import pongo.ecs.ds.RuleSet;
-import pongo.ecs.ds.EntityList;
-import pongo.Pongo;
+import pongo.ecs.util.RuleSet;
+import pongo.ecs.util.EntityList;
 
-@:allow(pongo) @:final class Group
+@:allow(pongo) class Group
 {
     public var rules (default, null):RuleSet;
 
@@ -34,7 +32,6 @@ import pongo.Pongo;
     {
         this.rules = rules;
         _list = new EntityList();
-        _listChanged = new EntityList();
     }
 
     public function first() : Entity
@@ -49,28 +46,13 @@ import pongo.Pongo;
         return _list.tail.entity;
     }
 
-    public function manipulateAll(fn :Entity -> Void) : Void
+    public function all(fn :Entity -> Void) : Void
     {
         var p = _list.head;
         while(p != null) {
             fn(p.entity);
             p = p.next;
         }
-    }
-
-    public function manipulateChanged(fn :Entity -> Void) : Void
-    {
-        var p = _listChanged.head;
-        while(p != null) {
-            fn(p.entity);
-            p = p.next;
-        }
-        _listChanged.clear();
-    }
-
-    private function addChanged(entity :Entity) : Bool
-    {
-        return _listChanged.add(entity);
     }
 
     private function add(entity :Entity) : Bool
@@ -84,5 +66,4 @@ import pongo.Pongo;
     }
 
     private var _list :EntityList;
-    private var _listChanged :EntityList;
 }

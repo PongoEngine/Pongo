@@ -21,19 +21,24 @@
 
 package pongo;
 
-import pongo.ecs.Engine;
+import pongo.ecs.Entity;
 import pongo.ecs.System;
+import pongo.ecs.Group;
+import pongo.ecs.Manager;
 import pongo.input.Keyboard;
 import pongo.input.Mouse;
 
 interface Pongo
 {
+    public var root (default, null):Entity;
     public var width (get, null) :Int;
     public var height (get, null) :Int;
-    public var engine (default, null) :Engine;
     public var keyboard (default, null) :Keyboard;
     public var mouse (default, null) :Mouse;
+    public var manager (default, null):Manager;
 
     public function addSystem(system :System) : Void;
     public function removeSystem(system :System) : Void;
+    public function createGroup(classNames :Array<String>) : Group;
+    public function createEntity() : Entity;
 }

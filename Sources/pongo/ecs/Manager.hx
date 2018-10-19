@@ -23,41 +23,25 @@ package pongo.ecs;
 
 import pongo.ecs.Entity;
 import pongo.ecs.Group;
-import pongo.ecs.ds.RuleSet;
+import pongo.ecs.util.RuleSet;
 using pongo.util.StringUtil;
 
-@:allow(pongo) @:final class Manager
+#if macro
+using haxe.macro.ExprTools;
+import haxe.macro.TypeTools;
+import haxe.macro.Expr;
+import haxe.macro.Context;
+#end
+
+class Manager
 {
-    /**
-     * [Description]
-     */
-    private function new() : Void
+    public function new() : Void
     {
         _keys = new Array<Int>();
         _groups = new Map<Int, Group>();
     }
 
-    /**
-     * [Description]
-     * @return Entity
-     */
-    public function createEntity() : Entity
-    {
-        return new Entity(this);
-    }
-
-    private function notifyChange(entity :Entity) : Void
-    {
-        for(key in _keys) {
-            var rules = _groups.get(key).rules;
-            var group = _groups.get(key);
-            if(entity.hasAllRules(rules)) {
-                group.addChanged(entity);
-            }
-        }
-    }
-
-    private function notifyAdd(entity :Entity) : Void
+    public function notifyAdd(entity :Entity) : Void
     {
         for(key in _keys) {
             var rules = _groups.get(key).rules;
@@ -68,7 +52,7 @@ using pongo.util.StringUtil;
         }
     }
 
-    private function notifyRemove(entity :Entity) : Void
+    public function notifyRemove(entity :Entity) : Void
     {
         for(key in _keys) {
             var rules = _groups.get(key).rules;
@@ -79,7 +63,19 @@ using pongo.util.StringUtil;
         }
     }
 
-    private function createGroup(classNames :Array<String>) : Group
+    macro public function registerGroup(self:Expr, componentClass :ExprOf<Array<Class<Component>>>) :ExprOf<Group>
+    {
+        return switch (componentClass.expr) {
+            case EArrayDecl(vals): {
+                macro $self.createGroup(cast $a{vals.map(function(v) {
+                    return macro $v.COMPONENT_NAME;
+                })});
+            }
+            case _: macro throw "err";
+        }
+    }
+
+    public function createGroup(classNames :Array<String>) : Group
     {
         var key = classNames.keyFromStrings();
         if(!_groups.exists(key)) {
