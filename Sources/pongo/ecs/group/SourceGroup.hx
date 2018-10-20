@@ -19,21 +19,26 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.ecs;
+package pongo.ecs.group;
 
-import pongo.ecs.util.RuleSet;
-import pongo.ecs.util.EntityList;
-import pongo.ecs.util.SwapEntityList;
+#if macro
+import haxe.macro.Context;
+import haxe.macro.Expr;
+import haxe.macro.Type;
+using haxe.macro.ExprTools;
+#end
 
-@:allow(pongo) class Group
+class SourceGroup implements Group
 {
-    public var rules (default, null):RuleSet;
+    public var rules (default, null):Rules;
+    public var changed (default, null) :Group;
 
-    public function new(rules :RuleSet) : Void
+    public function new(rules :Rules) : Void
     {
         this.rules = rules;
         _list = new EntityList();
-        _swapList = new SwapEntityList();
+        _reactiveGroups = [];
+        changed = createReactiveGroup(function(e) return true);
     }
 
     public function first() : Entity
@@ -48,7 +53,7 @@ import pongo.ecs.util.SwapEntityList;
         return _list.tail.entity;
     }
 
-    public inline function all(fn :Entity -> Void) : Void
+    public inline function iterate(fn :Entity -> Void) : Void
     {
         var p = _list.head;
         while(p != null) {
@@ -57,39 +62,44 @@ import pongo.ecs.util.SwapEntityList;
         }
     }
 
-    public inline function changed(fn :Entity -> Void) : Void
+    public function createReactiveGroup(rule :Entity -> Bool) : Group
     {
-        var p = _swapList.active().head;
-        while(p != null) {
-            fn(p.entity);
-            p = p.next;
-        }
+        var subGroup = new ReactiveGroup(new Rules(rule));
+        _reactiveGroups.push(subGroup);
+        return subGroup;
     }
 
-    private function queueChanged(entity :Entity) : Bool
+    @:allow(pongo.ecs.Manager)
+    private function queueChanged(entity :Entity) : Void
     {
         if(entity.isDisposed) {
-            return false;
+            return;
         }
-        return _swapList.addToQueue(entity);
+        for(group in _reactiveGroups) {
+            group.queueChanged(entity);
+        }
     }
 
+    @:allow(pongo.ecs.Manager)
     private function swapQueue() : Void
     {
-        _swapList.clearActive();
-        _swapList.swap();
+        for(group in _reactiveGroups) {
+            group.swapQueue();
+        }
     }
 
+    @:allow(pongo.ecs.Manager)
     private function add(entity :Entity) : Bool
     {
         return _list.add(entity);
     }
 
+    @:allow(pongo.ecs.Manager)
     private function remove(entity :Entity) : Bool
     {
         return _list.remove(entity);
     }
 
     private var _list :EntityList;
-    private var _swapList :SwapEntityList;
+    private var _reactiveGroups :Array<ReactiveGroup>;
 }

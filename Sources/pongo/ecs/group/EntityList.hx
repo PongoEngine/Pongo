@@ -19,15 +19,16 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.ecs.util;
+package pongo.ecs.group;
 
-@:allow(pongo)
 class EntityList
 {
     public var head (default ,null) :EntityNode = null;
     public var tail (default ,null) :EntityNode = null;
     public var size (default, null) :Int = 0;
 
+    @:allow(pongo.ecs.group.SwapEntityList)
+    @:allow(pongo.ecs.group.SourceGroup)
     private function new() : Void
     {
         _entityMap = new Map<Int,EntityNode>();
@@ -82,9 +83,13 @@ class EntityList
     public function clear() : Void
     {
         if(size > 0) {
+            var p = head;
+            while(p != null) {
+                this._entityMap.remove(p.entity.index);
+                p = p.next;
+            }
             this.head = null;
             this.tail = null;
-            this._entityMap = new Map<Int,EntityNode>();
             this.size = 0;
         }
     }

@@ -22,15 +22,12 @@
 package pongo.ecs;
 
 #if macro
-import haxe.macro.Context;
 import haxe.macro.Expr;
-import haxe.macro.Type;
-using haxe.macro.ExprTools;
 #end
 
 import pongo.ecs.Component;
 import pongo.ecs.Manager;
-import pongo.ecs.util.RuleSet;
+import pongo.ecs.group.Rules;
 import pongo.display.Sprite;
 import pongo.util.Disposable;
 
@@ -158,19 +155,9 @@ import pongo.util.Disposable;
         disposeChildren();
     }
 
-    public function hasAllRules(rules :RuleSet) : Bool
-    {
-        for(rule in rules) {
-            if(!_components.exists(rule)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public function notifyChange() : Void
     {
-        _manager.notifyAddChanged(this);
+        _manager.notifyChanged(this);
     }
 
     public inline function getComponentFromName(name :String) : Component

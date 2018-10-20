@@ -23,7 +23,7 @@ package pongo;
 
 import pongo.ecs.Entity;
 import pongo.ecs.System;
-import pongo.ecs.Group;
+import pongo.ecs.group.SourceGroup;
 import pongo.ecs.Manager;
 import pongo.input.Keyboard;
 import pongo.input.Mouse;
@@ -39,6 +39,6 @@ interface Pongo
 
     public function addSystem(system :System) : Void;
     public function removeSystem(system :System) : Void;
-    public function createGroup(classNames :Array<String>) : Group;
+    public function createGroup(classNames :Array<String>) : SourceGroup;
     public function createEntity() : Entity;
 }

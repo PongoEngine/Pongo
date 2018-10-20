@@ -19,22 +19,29 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.ecs.util;
+package pongo.ecs.group;
 
-@:forward(iterator, exists)
-abstract RuleSet(Map<String,String>)
+abstract Rules(Entity -> Bool)
 {
-    inline public function new() : Void
+    inline public function new(fn :Entity -> Bool) : Void
     {
-        this = new Map<String,String>();
+        this = fn;
     }
 
-    inline public static function fromArray(arra :Array<String>) : RuleSet
+    inline public function satisfy(e :Entity) : Bool
     {
-        var m = new Map<String, String>();
-        for(v in arra) {
-            m.set(v,v);
-        }
-        return cast m;
+        return this(e);
+    }
+
+    inline public static function fromStrings(arra :Array<String>) : Rules
+    {
+        return new Rules(function(e :Entity) {
+            for(str in arra) {
+                if(!e._components.exists(str)) {
+                    return false;
+                }
+            }
+            return true;
+        });
     }
 }

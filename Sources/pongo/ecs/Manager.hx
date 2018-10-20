@@ -22,61 +22,57 @@
 package pongo.ecs;
 
 import pongo.ecs.Entity;
-import pongo.ecs.Group;
-import pongo.ecs.util.RuleSet;
+import pongo.ecs.group.SourceGroup;
+import pongo.ecs.group.Rules;
 using pongo.util.StringUtil;
 
 #if macro
-using haxe.macro.ExprTools;
-import haxe.macro.TypeTools;
 import haxe.macro.Expr;
-import haxe.macro.Context;
 #end
 
-@:allow(pongo) class Manager
+class Manager
 {
     public function new() : Void
     {
-        _keys = new Array<Int>();
-        _groups = new Map<Int, Group>();
+        _classKeys = new Array<Int>();
+        _classGroups = new Map<Int, SourceGroup>();
     }
 
     public function notifyAdd(entity :Entity) : Void
     {
-        for(key in _keys) {
-            var rules = _groups.get(key).rules;
-            var group = _groups.get(key);
-            if(entity.hasAllRules(rules)) {
-                group.add(entity);
-            }
-        }
+        handleGroups(entity, _classKeys, _classGroups, function(group) {
+            group.add(entity);
+            group.queueChanged(entity);
+        });
     }
 
     public function notifyRemove(entity :Entity) : Void
     {
-        for(key in _keys) {
-            var rules = _groups.get(key).rules;
-            var group = _groups.get(key);
-            if(entity.hasAllRules(rules)) {
-                group.remove(entity);
+        handleGroups(entity, _classKeys, _classGroups, function(group) {
+            group.remove(entity);
+        });
+    }
+
+    public function notifyChanged(entity :Entity) : Void
+    {
+        handleGroups(entity, _classKeys, _classGroups, function(group) {
+            group.queueChanged(entity);
+        });
+    }
+
+    private inline function handleGroups<T>(entity :Entity, keys :Array<T>, groups :Map<T, SourceGroup>, fn :SourceGroup -> Void) : Void
+    {
+        for(key in keys) {
+            var group = groups.get(key);
+            if(group.rules.satisfy(entity)) {
+                fn(group);
             }
         }
     }
 
-    public function notifyAddChanged(entity :Entity) : Void
+    macro public function registerGroup(self:Expr, classes :ExprOf<Array<Class<Component>>>) :ExprOf<SourceGroup>
     {
-        for(key in _keys) {
-            var rules = _groups.get(key).rules;
-            var group = _groups.get(key);
-            if(entity.hasAllRules(rules)) {
-                group.queueChanged(entity);
-            }
-        }
-    }
-
-    macro public function registerGroup(self:Expr, componentClass :ExprOf<Array<Class<Component>>>) :ExprOf<Group>
-    {
-        return switch (componentClass.expr) {
+        return switch (classes.expr) {
             case EArrayDecl(vals): {
                 macro $self.createGroup(cast $a{vals.map(function(v) {
                     return macro $v.COMPONENT_NAME;
@@ -86,25 +82,25 @@ import haxe.macro.Context;
         }
     }
 
-    public function createGroup(classNames :Array<String>) : Group
+    public function createGroup(classNames :Array<String>) : SourceGroup
     {
         var key = classNames.keyFromStrings();
-        if(!_groups.exists(key)) {
-            _groups.set(key, new Group(RuleSet.fromArray(classNames)));
-            _keys.push(key);
+        if(!_classGroups.exists(key)) {
+            _classGroups.set(key, new SourceGroup(Rules.fromStrings(classNames)));
+            _classKeys.push(key);
         }
-        return _groups.get(key);
+        return _classGroups.get(key);
     }
 
-    private function updateChanged() : Void
+    @:allow(pongo.platform.Pongo) private function update() : Void
     {
         var i = 0;
-        while(i < _keys.length) {
-            _groups.get(_keys[i]).swapQueue();
+        while(i < _classKeys.length) {
+            _classGroups.get(_classKeys[i]).swapQueue();
             i++;
         }
     }
 
-    private var _keys :Array<Int>;
-    private var _groups :Map<Int, Group>;
+    private var _classKeys :Array<Int>;
+    private var _classGroups :Map<Int, SourceGroup>;
 }

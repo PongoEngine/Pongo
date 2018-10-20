@@ -23,7 +23,7 @@ package pongo.platform;
 
 import pongo.ecs.System;
 import pongo.ecs.Entity;
-import pongo.ecs.Group;
+import pongo.ecs.group.SourceGroup;
 import pongo.ecs.Manager;
 import pongo.platform.input.Keyboard;
 import pongo.platform.input.Mouse;
@@ -64,7 +64,7 @@ import pongo.platform.display.Graphics;
         _systems.remove(system);
     }
 
-    public inline function createGroup(classNames :Array<String>) : Group
+    public inline function createGroup(classNames :Array<String>) : SourceGroup
     {
         return manager.createGroup(classNames);
     }
@@ -78,7 +78,7 @@ import pongo.platform.display.Graphics;
         }
         _lastTime = time;
 
-        manager.updateChanged();
+        manager.update();
         for(system in _systems) {
             system.update(this, dt);
         }

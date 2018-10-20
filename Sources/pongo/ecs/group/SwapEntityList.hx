@@ -19,7 +19,7 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.ecs.util;
+package pongo.ecs.group;
 
 @:allow(pongo)
 class SwapEntityList
