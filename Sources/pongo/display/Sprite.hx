@@ -25,6 +25,7 @@
 
 package pongo.display;
 
+import pongo.Pongo;
 import kha.math.FastMatrix3;
 import pongo.display.Graphics;
 using pongo.math.CMath;
@@ -107,7 +108,7 @@ class Sprite
      *  [Description]
      *  @param graphics - 
      */
-    public function draw(graphics: Graphics) : Void
+    public function draw(pongo :Pongo, graphics: Graphics) : Void
     {
     }
 

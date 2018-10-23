@@ -64,7 +64,7 @@ class Macro
                     fields.push({
                         name: "_" + field.name,
                         access: [Access.APrivate],
-                        kind: FieldType.FVar(type, macro $v{null}), 
+                        kind: FieldType.FVar(type, null), 
                         pos: Context.currentPos(),
                     });
 

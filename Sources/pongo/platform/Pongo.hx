@@ -23,7 +23,6 @@ package pongo.platform;
 
 import pongo.ecs.System;
 import pongo.ecs.Entity;
-import pongo.ecs.group.SourceGroup;
 import pongo.ecs.Manager;
 import pongo.platform.input.Keyboard;
 import pongo.platform.input.Mouse;
@@ -54,19 +53,16 @@ import pongo.platform.display.Graphics;
         return new Entity(manager);
     }
 
-    public function addSystem(system :System) : Void
+    public function addSystem(system :System) : Pongo
     {
         _systems.set(system, system);
+        return this;
     }
 
-    public function removeSystem(system :System) : Void
+    public function removeSystem(system :System) : Pongo
     {
         _systems.remove(system);
-    }
-
-    public inline function createGroup(classNames :Array<String>) : SourceGroup
-    {
-        return manager.createGroup(classNames);
+        return this;
     }
 
     private function update() : Void
@@ -91,11 +87,11 @@ import pongo.platform.display.Graphics;
         }
 
         _graphics.begin();
-        _render(this.root, _graphics);
+        _render(this, this.root, _graphics);
         _graphics.end();
     }
 
-    private static function _render(entity :Entity, g :Graphics) : Void
+    private static function _render(pongo :Pongo, entity :Entity, g :Graphics) : Void
     {
         if (entity.visual != null) {
             g.save();
@@ -104,14 +100,14 @@ import pongo.platform.display.Graphics;
                 g.multiplyOpacity(entity.visual.opacity);
 
             if(entity.visual.visible && entity.visual.opacity > 0) {
-                entity.visual.draw(g);
+                entity.visual.draw(pongo, g);
             }
         }
 
         var p = entity.firstChild;
         while (p != null) {
             var next = p.next;
-            _render(p, g);
+            _render(pongo, p, g);
             p = next;
         }
 

@@ -26,6 +26,7 @@
 package pongo.display;
 
 import kha.Color;
+import pongo.Pongo;
 
 class CircleSprite extends Sprite
 {
@@ -40,7 +41,7 @@ class CircleSprite extends Sprite
         this.radius = radius;
     }
 
-    override public function draw(graphics :Graphics) : Void
+    override public function draw(pongo :Pongo, graphics :Graphics) : Void
     {
         graphics.fillCircle(this.color, radius, radius, radius);
     }

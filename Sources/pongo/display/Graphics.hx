@@ -42,6 +42,8 @@ interface Graphics
 
     public function drawPolygon(color :Int, x: Float, y: Float, vertices: Array<kha.math.Vector2>, strength: Float = 1) : Void;
 
+    public function drawCubicBezierPath(color :Int, x :Array<Float>, y :Array<Float>, strength:Float = 1.0):Void;
+
     // public function drawString(text :String, font :SafeFont, color :Color, fontSize :Int, x :Float, y :Float) : Void;
 
     // public function drawImage(img: SafeImage, x: Float, y: Float) : Void;

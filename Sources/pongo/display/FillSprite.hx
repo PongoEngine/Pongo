@@ -26,6 +26,7 @@
 package pongo.display;
 
 import kha.Color;
+import pongo.Pongo;
 
 class FillSprite extends Sprite
 {
@@ -42,7 +43,7 @@ class FillSprite extends Sprite
         this.height = height;
     }
 
-    override public function draw(graphics :Graphics) : Void
+    override public function draw(pongo :Pongo, graphics :Graphics) : Void
     {
         graphics.fillRect(this.color, 0, 0, width, height);
     }

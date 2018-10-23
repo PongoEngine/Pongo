@@ -84,6 +84,15 @@ class Graphics implements pongo.display.Graphics
         #end
     }
 
+    public function drawCubicBezierPath(color :Int, x :Array<Float>, y :Array<Float>, strength:Float = 1.0):Void
+    {
+        setColor(color);
+        prepareGraphics2D();
+        #if !macro
+        kha.graphics2.GraphicsExtension.drawCubicBezierPath(_framebuffer.g2, x, y, 20, strength);
+        #end
+    }
+
     public function drawPolygon(color :Int, x: Float, y: Float, vertices: Array<kha.math.Vector2>, strength: Float = 1) : Void
     {
         setColor(color);

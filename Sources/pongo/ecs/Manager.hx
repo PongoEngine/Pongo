@@ -74,7 +74,7 @@ class Manager
     {
         return switch (classes.expr) {
             case EArrayDecl(vals): {
-                macro $self.createGroup(cast $a{vals.map(function(v) {
+                macro $self.createGroupFromClassNames(cast $a{vals.map(function(v) {
                     return macro $v.COMPONENT_NAME;
                 })});
             }
@@ -82,7 +82,7 @@ class Manager
         }
     }
 
-    public function createGroup(classNames :Array<String>) : SourceGroup
+    public function createGroupFromClassNames(classNames :Array<String>) : SourceGroup
     {
         var key = classNames.keyFromStrings();
         if(!_classGroups.exists(key)) {

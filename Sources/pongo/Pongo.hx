@@ -37,8 +37,7 @@ interface Pongo
     public var mouse (default, null) :Mouse;
     public var manager (default, null):Manager;
 
-    public function addSystem(system :System) : Void;
-    public function removeSystem(system :System) : Void;
-    public function createGroup(classNames :Array<String>) : SourceGroup;
+    public function addSystem(system :System) : Pongo;
+    public function removeSystem(system :System) : Pongo;
     public function createEntity() : Entity;
 }

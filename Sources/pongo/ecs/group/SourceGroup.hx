@@ -31,14 +31,13 @@ using haxe.macro.ExprTools;
 class SourceGroup implements Group
 {
     public var rules (default, null):Rules;
-    public var changed (default, null) :Group;
+    public var changed (get, null) :ReactiveGroup;
 
     public function new(rules :Rules) : Void
     {
         this.rules = rules;
         _list = new EntityList();
         _reactiveGroups = [];
-        changed = createReactiveGroup(function(e) return true);
     }
 
     public function first() : Entity
@@ -62,11 +61,19 @@ class SourceGroup implements Group
         }
     }
 
-    public function createReactiveGroup(rule :Entity -> Bool) : Group
+    public function createReactiveGroup(rule :Entity -> Bool) : ReactiveGroup
     {
         var subGroup = new ReactiveGroup(new Rules(rule));
         _reactiveGroups.push(subGroup);
         return subGroup;
+    }
+
+    private function get_changed() : ReactiveGroup
+    {
+        if(_changed == null) {
+            _changed = createReactiveGroup(function(e) return true);
+        }
+        return _changed;
     }
 
     @:allow(pongo.ecs.Manager)
@@ -102,4 +109,5 @@ class SourceGroup implements Group
 
     private var _list :EntityList;
     private var _reactiveGroups :Array<ReactiveGroup>;
+    private var _changed :ReactiveGroup = null;
 }
