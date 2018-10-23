@@ -31,7 +31,7 @@ import pongo.ecs.group.Rules;
 import pongo.display.Sprite;
 import pongo.util.Disposable;
 
-@:allow(pongo) class Entity implements Disposable
+class Entity implements Disposable
 {
     public var parent (default, null) :Entity = null;
     public var firstChild (default, null) :Entity = null;
@@ -40,6 +40,7 @@ import pongo.util.Disposable;
     public var visual (default, null):Sprite = null;
     public var isDisposed (default, null):Bool = false;
 
+    @:allow(pongo.platform.Pongo)
     private function new(manager :Manager) : Void
     {
         this.index = ++Entity.ENTITY_INDEX;
@@ -47,7 +48,7 @@ import pongo.util.Disposable;
         _manager = manager;
     }
 
-    public inline function addComponent(component :Component) : Entity
+    public function addComponent(component :Component) : Entity
     {
         if(_components.exists(component.componentName)) {
             this.removeComponentByClassName(component.componentName);
@@ -63,10 +64,16 @@ import pongo.util.Disposable;
         return macro $self.removeComponentByClassName($componentClass.COMPONENT_NAME);
     }
 
-    macro public function getComponent<T>(self:Expr, componentClass :ExprOf<Class<T>>) :ExprOf<T>
+    macro public function getComponent<T:Component>(self:Expr, componentClass :ExprOf<Class<T>>) :ExprOf<T>
     {
         var name = macro $componentClass.COMPONENT_NAME;
-        return macro Std.instance($self.getComponentFromName($name), $componentClass);
+        return macro $self._internal_unsafeCast($self.getComponentFromName($name), $componentClass);
+    }
+
+    @:extern // Inline even in debug builds
+    inline public function _internal_unsafeCast<A:Component> (component :Component, cl :Class<A>) :A
+    {
+        return cast component;
     }
 
     macro public function hasComponent<T:Component>(self:Expr, componentClass :ExprOf<Class<T>>) : ExprOf<Bool>
@@ -160,12 +167,12 @@ import pongo.util.Disposable;
         _manager.notifyChanged(this);
     }
 
-    public inline function getComponentFromName(name :String) : Component
+    public function getComponentFromName(name :String) : Component
     {
         return _components.get(name);
     }
 
-    public inline function removeComponentByClassName(name :String) : Bool
+    public function removeComponentByClassName(name :String) : Bool
     {
         if(_components.exists(name)) {
             _components.remove(name);
@@ -176,6 +183,7 @@ import pongo.util.Disposable;
     }
 
     private var _manager :Manager;
+    @:allow(pongo.ecs.group.Rules)
     private var _components :Map<String, Component>;
     private static var ENTITY_INDEX :Int = -1;
 }
