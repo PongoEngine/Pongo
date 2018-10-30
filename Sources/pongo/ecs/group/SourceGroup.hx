@@ -32,6 +32,7 @@ class SourceGroup implements Group
 {
     public var rules (default, null):Rules;
     public var changed (get, null) :ReactiveGroup;
+    public var length (get, null):Int;
 
     public function new(rules :Rules) : Void
     {
@@ -115,7 +116,15 @@ class SourceGroup implements Group
     @:allow(pongo.ecs.Manager)
     private function remove(entity :Entity) : Bool
     {
+        for(group in _reactiveGroups) {
+            group.remove(entity);
+        }
         return _list.remove(entity);
+    }
+
+    private function get_length() : Int
+    {
+        return _list.size;
     }
 
     private var _list :EntityList;

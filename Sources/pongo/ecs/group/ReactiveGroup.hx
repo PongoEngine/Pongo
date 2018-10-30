@@ -3,6 +3,7 @@ package pongo.ecs.group;
 class ReactiveGroup implements Group
 {
     public var rules (default, null):Rules;
+    public var length (get, null):Int;
 
     public function new(rules :Rules) : Void
     {
@@ -56,6 +57,19 @@ class ReactiveGroup implements Group
     {
         _swapList.clearActive();
         _swapList.swap();
+    }
+
+    @:allow(pongo.ecs.group.SourceGroup)
+    private function remove(entity :Entity) : Void
+    {
+        _swapList.active().remove(entity);
+        _swapList.queued().remove(entity);
+    }
+
+
+    private function get_length() : Int
+    {
+        return _swapList.active().size;
     }
 
     private var _swapList :SwapEntityList;

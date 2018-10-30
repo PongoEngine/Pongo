@@ -6,6 +6,7 @@ import pongo.ecs.group.Rules;
 interface Group
 {
     public var rules (default, null):Rules;
+    public var length (get, null):Int;
 
     public function first() : Entity;
 
