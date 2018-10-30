@@ -31,6 +31,17 @@ class ReactiveGroup implements Group
         }
     }
 
+    public function iterateEscape(fn :Entity -> Bool) : Void
+    {
+        var p = _swapList.active().head;
+        while(p != null) {
+            if(fn(p.entity)) {
+                return;
+            }
+            p = p.next;
+        }
+    }
+
     @:allow(pongo.ecs.group.SourceGroup)
     private function queueChanged(entity :Entity) : Bool
     {

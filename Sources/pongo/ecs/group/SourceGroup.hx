@@ -61,6 +61,17 @@ class SourceGroup implements Group
         }
     }
 
+    public function iterateEscape(fn :Entity -> Bool) : Void
+    {
+        var p = _list.head;
+        while(p != null) {
+            if(fn(p.entity)) {
+                return;
+            }
+            p = p.next;
+        }
+    }
+
     public function createReactiveGroup(rule :Entity -> Bool) : ReactiveGroup
     {
         var subGroup = new ReactiveGroup(new Rules(rule));
