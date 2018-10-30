@@ -31,7 +31,7 @@ class ReactiveGroup implements Group
         }
     }
 
-    public function iterateEscape(fn :Entity -> Bool) : Void
+    public function iterateWithEscape(fn :Entity -> Bool) : Void
     {
         var p = _swapList.active().head;
         while(p != null) {

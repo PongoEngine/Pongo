@@ -61,7 +61,7 @@ class SourceGroup implements Group
         }
     }
 
-    public function iterateEscape(fn :Entity -> Bool) : Void
+    public function iterateWithEscape(fn :Entity -> Bool) : Void
     {
         var p = _list.head;
         while(p != null) {

@@ -12,5 +12,5 @@ interface Group
     public function last() : Entity;
 
     public function iterate(fn :Entity -> Void) : Void;
-    public function iterateEscape(fn :Entity -> Bool) : Void;
+    public function iterateWithEscape(fn :Entity -> Bool) : Void;
 }
