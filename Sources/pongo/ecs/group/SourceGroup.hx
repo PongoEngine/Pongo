@@ -47,12 +47,6 @@ class SourceGroup implements Group
         return _list.head.entity;
     }
 
-    public function last() : Entity
-    {
-        if(_list.tail == null) return null;
-        return _list.tail.entity;
-    }
-
     public inline function iterate(fn :Entity -> Void) : Void
     {
         var p = _list.head;
@@ -88,7 +82,7 @@ class SourceGroup implements Group
         return _changed;
     }
 
-    @:allow(pongo.ecs.Manager)
+    @:allow(pongo.ecs.manager.Manager)
     private function queueChanged(entity :Entity) : Void
     {
         if(entity.isDisposed) {
@@ -99,7 +93,7 @@ class SourceGroup implements Group
         }
     }
 
-    @:allow(pongo.ecs.Manager)
+    @:allow(pongo.ecs.manager.ManagedGroup)
     private function swapQueue() : Void
     {
         for(group in _reactiveGroups) {
@@ -107,13 +101,13 @@ class SourceGroup implements Group
         }
     }
 
-    @:allow(pongo.ecs.Manager)
+    @:allow(pongo.ecs.manager.Manager)
     private function add(entity :Entity) : Bool
     {
         return _list.add(entity);
     }
 
-    @:allow(pongo.ecs.Manager)
+    @:allow(pongo.ecs.manager.Manager)
     private function remove(entity :Entity) : Bool
     {
         for(group in _reactiveGroups) {

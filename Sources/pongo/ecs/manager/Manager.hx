@@ -19,7 +19,7 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.ecs;
+package pongo.ecs.manager;
 
 import pongo.ecs.Entity;
 import pongo.ecs.group.SourceGroup;
@@ -34,13 +34,12 @@ class Manager
 {
     public function new() : Void
     {
-        _classKeys = new Array<Int>();
-        _classGroups = new Map<Int, SourceGroup>();
+        managedGroup = new ManagedGroup();
     }
 
     public function notifyAdd(entity :Entity) : Void
     {
-        handleGroups(entity, _classKeys, _classGroups, function(group) {
+        managedGroup.handle(entity, function(group) {
             group.add(entity);
             group.queueChanged(entity);
         });
@@ -48,33 +47,23 @@ class Manager
 
     public function notifyRemove(entity :Entity) : Void
     {
-        handleGroups(entity, _classKeys, _classGroups, function(group) {
+        managedGroup.handle(entity, function(group) {
             group.remove(entity);
         });
     }
 
     public function notifyChanged(entity :Entity) : Void
     {
-        handleGroups(entity, _classKeys, _classGroups, function(group) {
+        managedGroup.handle(entity, function(group) {
             group.queueChanged(entity);
         });
-    }
-
-    private inline function handleGroups<T>(entity :Entity, keys :Array<T>, groups :Map<T, SourceGroup>, fn :SourceGroup -> Void) : Void
-    {
-        for(key in keys) {
-            var group = groups.get(key);
-            if(group.rules.satisfy(entity)) {
-                fn(group);
-            }
-        }
     }
 
     macro public function registerGroup(self:Expr, classes :ExprOf<Array<Class<Component>>>) :ExprOf<SourceGroup>
     {
         return switch (classes.expr) {
             case EArrayDecl(vals): {
-                macro $self.createGroupFromClassNames(cast $a{vals.map(function(v) {
+                macro $self.managedGroup.createGroupFromClassNames(cast $a{vals.map(function(v) {
                     return macro $v.COMPONENT_NAME;
                 })});
             }
@@ -82,25 +71,10 @@ class Manager
         }
     }
 
-    public function createGroupFromClassNames(classNames :Array<String>) : SourceGroup
+    public inline function update() : Void
     {
-        var key = classNames.keyFromStrings();
-        if(!_classGroups.exists(key)) {
-            _classGroups.set(key, new SourceGroup(Rules.fromStrings(classNames)));
-            _classKeys.push(key);
-        }
-        return _classGroups.get(key);
+        managedGroup.update();
     }
 
-    @:allow(pongo.platform.Pongo) private function update() : Void
-    {
-        var i = 0;
-        while(i < _classKeys.length) {
-            _classGroups.get(_classKeys[i]).swapQueue();
-            i++;
-        }
-    }
-
-    private var _classKeys :Array<Int>;
-    private var _classGroups :Map<Int, SourceGroup>;
+    public var managedGroup (default, null) : ManagedGroup;
 }

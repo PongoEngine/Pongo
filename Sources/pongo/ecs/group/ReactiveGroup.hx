@@ -17,12 +17,6 @@ class ReactiveGroup implements Group
         return _swapList.active().head.entity;
     }
 
-    public function last() : Entity
-    {
-        if(_swapList.active().tail == null) return null;
-        return _swapList.active().tail.entity;
-    }
-
     public inline function iterate(fn :Entity -> Void) : Void
     {
         var p = _swapList.active().head;

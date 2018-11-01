@@ -26,7 +26,7 @@ import haxe.macro.Expr;
 #end
 
 import pongo.ecs.Component;
-import pongo.ecs.Manager;
+import pongo.ecs.manager.Manager;
 import pongo.ecs.group.Rules;
 import pongo.display.Sprite;
 import pongo.util.Disposable;

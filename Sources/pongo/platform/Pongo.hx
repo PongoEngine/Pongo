@@ -23,7 +23,7 @@ package pongo.platform;
 
 import pongo.ecs.System;
 import pongo.ecs.Entity;
-import pongo.ecs.Manager;
+import pongo.ecs.manager.Manager;
 import pongo.platform.input.Keyboard;
 import pongo.platform.input.Mouse;
 import pongo.platform.display.Graphics;

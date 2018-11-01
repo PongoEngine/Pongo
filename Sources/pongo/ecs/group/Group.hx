@@ -9,9 +9,6 @@ interface Group
     public var length (get, null):Int;
 
     public function first() : Entity;
-
-    public function last() : Entity;
-
     public function iterate(fn :Entity -> Void) : Void;
     public function iterateWithEscape(fn :Entity -> Bool) : Void;
 }

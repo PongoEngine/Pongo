@@ -21,36 +21,34 @@
 
 package pongo.ecs.group;
 
-class EntityList
+class EntityList extends EntityNode
 {
-    public var head (default ,null) :EntityNode = null;
-    public var tail (default ,null) :EntityNode = null;
+    public var head (get, set) :EntityNode;
     public var size (default, null) :Int = 0;
 
     @:allow(pongo.ecs.group.SwapEntityList)
     @:allow(pongo.ecs.group.SourceGroup)
     private function new() : Void
     {
-        _entityMap = new Map<Int,EntityNode>();
-    }
-
-    public inline function exists(entity :Entity) : Bool
-    {
-        return _entityMap.exists(entity.index);
+        super(null);
+        _entityMap = new Map<Int, Int>();
     }
 
     public inline function add(entity :Entity) : Bool
     {
         if(!_entityMap.exists(entity.index)) {
-            var newNode = new EntityNode(entity);
-            if(this.head == null) {
-                this.head = newNode;
-                this.tail = newNode;
+            var tail = null, p = this.head;
+            while (p != null) {
+                tail = p;
+                p = p.next;
             }
-            else {
-                insertAfter(this.tail, newNode);
+            if (tail != null) {
+                tail.next = new EntityNode(entity);
+            } else {
+                this.head = new EntityNode(entity);
             }
-            _entityMap.set(entity.index, newNode);
+
+            _entityMap.set(entity.index, entity.index);
             this.size++;
             return true;
         }
@@ -60,64 +58,62 @@ class EntityList
     public function remove(entity :Entity) : Bool
     {
         if(_entityMap.exists(entity.index)) {
-            var node = _entityMap.get(entity.index);
-            if(node.prev == null) {
-                this.head = node.next;
+            var prev :EntityNode = null, p = this.head;
+            while (p != null) {
+                var next = p.next;
+                if (p.entity == entity) {
+                    // Splice out the entity
+                    if (prev == null) {
+                        this.head = next;
+                    } else {
+                        prev.next = next;
+                    }
+                    p.next = null;
+
+                    this.size--;
+                    _entityMap.remove(entity.index);
+                    return true;
+                }
+                prev = p;
+                p = next;
             }
-            else {
-                node.prev.next = node.next;
-            }
-            if(node.next == null) {
-                this.tail = node.prev;
-            }
-            else {
-                node.next.prev = node.prev;
-            }
-            _entityMap.remove(entity.index);
-            this.size--;
-            return true;
         }
         return false;
     }
 
     public function clear() : Void
     {
-        if(size > 0) {
-            var p = head;
-            while(p != null) {
-                this._entityMap.remove(p.entity.index);
-                p = p.next;
-            }
-            this.head = null;
-            this.tail = null;
-            this.size = 0;
+        var p = this.head;
+        while(p != null) {
+            this.remove(p.entity);
+            _entityMap.remove(p.entity.index);
+            p = p.next;
         }
     }
 
-    private function insertAfter(node :EntityNode, newNode :EntityNode) : Void
+    private inline function get_head() : EntityNode
     {
-        newNode.prev = node;
-        if(node.next == null) {
-            this.tail = newNode;
-        }
-        else {
-            newNode.next = node.next;
-            node.next.prev = newNode;
-        }
-        node.next = newNode;
+        return this.next;
     }
 
-    private var _entityMap:Map<Int,EntityNode>;
+    private inline function set_head(head_ :EntityNode) : EntityNode
+    {
+        this.next = head_;
+        return this.next;
+    }
+
+    private var _entityMap:Map<Int,Int>;
 }
 
-@:allow(pongo)
-class EntityNode
+@:allow(pongo.ecs.group.EntityList)
+@:allow(pongo.ecs.group.SourceGroup)
+@:allow(pongo.ecs.group.ReactiveGroup)
+private class EntityNode
 {
-    public var next (default, null) :EntityNode = null;
-    public var prev (default, null) :EntityNode = null;
-    public var entity (default, null) :Entity = null;
+    private var next (default, null) :EntityNode = null;
+    private var entity (default, null) :Entity = null;
 
-    public function new(entity :Entity) : Void
+    public function new(entity :Null<Entity>) : Void
     {
         this.entity = entity;
     }
