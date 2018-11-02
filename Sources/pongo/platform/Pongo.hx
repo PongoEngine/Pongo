@@ -81,7 +81,7 @@ import pongo.Window;
     private function update() : Void
     {
         var dt :Float = 0;
-        var time = kha.Scheduler.time();
+        var time = kha.System.time;
         if(_lastTime != -1) {
             dt = time - _lastTime;
         }
