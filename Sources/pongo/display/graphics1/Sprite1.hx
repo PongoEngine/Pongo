@@ -23,6 +23,59 @@
 // Flambe - Rapid game development
 // https://github.com/aduros/flambe/blob/master/LICENSE.txt
 
-package pongo.display;
+package pongo.display.graphics1;
 
-typedef Sprite = #if graphics1 pongo.display.graphics1.Sprite1 #else pongo.display.graphics1.Sprite2; #end
+import pongo.Pongo;
+import pongo.display.Graphics;
+
+class Sprite1
+{
+    public var x :Int = 0;
+    public var y :Int = 0;
+    public var opacity :Float = 1;
+    public var visible :Bool = true;
+
+    public function new() : Void
+    {
+    }
+
+    public inline function setXY(x :Int, y :Int) : Sprite1
+    {
+        this.x = x;
+        this.y = y;
+        return this;
+    }
+
+
+    public inline function setOpacity(opacity :Float) : Sprite1
+    {
+        this.opacity = opacity;
+        return this;
+    }
+
+    /**
+     *  [Description]
+     *  @return Float
+     */
+    public function getNaturalWidth() : Float
+    {
+        return 0;
+    }
+
+    /**
+     *  [Description]
+     *  @return Float
+     */
+    public function getNaturalHeight() : Float
+    {
+        return 0;
+    }
+
+    /**
+     *  [Description]
+     *  @param graphics - 
+     */
+    public function draw(pongo :Pongo, graphics: Graphics) : Void
+    {
+    }
+}

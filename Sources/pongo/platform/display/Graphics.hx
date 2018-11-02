@@ -37,14 +37,23 @@ class Graphics implements pongo.display.Graphics
 
     public function begin() : Void
     {
+#if graphics1
+        _framebuffer.g1.begin();
+#else
         _framebuffer.g2.begin();
+#end
     }
 
     public function end() : Void
     {
+#if graphics1
+        _framebuffer.g1.end();
+#else
         _framebuffer.g2.end();
+#end
     }
 
+#if !graphics1
     public function fillRect(color :Int, x :Float, y :Float, width :Float, height :Float) : Void 
     {
         setColor(color);
@@ -127,7 +136,14 @@ class Graphics implements pongo.display.Graphics
         prepareGraphics2D();
         _framebuffer.g2.drawSubImage(img, x, y, sx, sy, sw, sh);
     }
+#else
+    public function setPixel(color :Int, x :Int, y :Int) : Void
+    {
+        _framebuffer.g1.setPixel(x, y, color);
+    }
+#end
 
+#if !graphics1
     public inline function translate(x :Float, y :Float) : Void
     {
         _stateList.matrix.setFrom(_stateList.matrix.multmat(FastMatrix3.translation(x,y)));
@@ -162,7 +178,6 @@ class Graphics implements pongo.display.Graphics
         state.matrix.setFrom(current.matrix);
         state.opacity = current.opacity;
         state.color = current.color;
-
         _stateList = state;
     }
 
@@ -175,7 +190,7 @@ class Graphics implements pongo.display.Graphics
     {
         _framebuffer.g2.transformation.setFrom(_stateList.matrix);
         _framebuffer.g2.opacity = _stateList.opacity;
-        
+
         if(_framebuffer.g2.color != _stateList.color) {
             _framebuffer.g2.color = _stateList.color;
         }
@@ -197,6 +212,8 @@ class Graphics implements pongo.display.Graphics
     }
 
     private var _stateList :DrawingState = new DrawingState();
+#end
+
     private var _framebuffer :kha.Framebuffer;
 }
 
@@ -204,7 +221,9 @@ private class DrawingState
 {
     public var matrix :FastMatrix3;
     public var opacity :Float;
+#if !graphics1
     public var color :kha.Color;
+#end
 
     public var prev :DrawingState = null;
     public var next :DrawingState = null;
@@ -213,6 +232,8 @@ private class DrawingState
     {
         matrix = FastMatrix3.identity();
         opacity = 1;
+#if !graphics1
         color = Color.Black;
+#end
     }
 }

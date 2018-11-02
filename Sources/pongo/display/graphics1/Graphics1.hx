@@ -19,42 +19,13 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-//
-// Flambe - Rapid game development
-// https://github.com/aduros/flambe/blob/master/LICENSE.txt
+package pongo.display.graphics1;
 
-package pongo.display;
-
-import kha.Color;
-import pongo.Pongo;
-
-class FillSprite extends Sprite
+interface Graphics1
 {
-    public var color :Color;
-    public var width :Float;
-    public var height :Float;
+    public function begin() : Void;
 
-    public function new(color :Color, width :Float, height :Float) : Void
-    {
-        super();
+    public function end() : Void;
 
-        this.color = color;
-        this.width = width;
-        this.height = height;
-    }
-
-    override public function draw(pongo :Pongo, graphics :Graphics) : Void
-    {
-        graphics.fillRect(this.color, 0, 0, width, height);
-    }
-
-    override public function getNaturalWidth() : Float
-    {
-        return this.width;
-    }
-
-    override public function getNaturalHeight() : Float
-    {
-        return this.height;
-    }
+    public function setPixel(color :Int, x :Int, y :Int) : Void;
 }
