@@ -81,6 +81,13 @@ class Entity implements Disposable
         return macro $self.getComponent($componentClass) != null;
     }
 
+    public function createChild(append :Bool=true) : Entity
+    {
+        var e = new Entity(_manager);
+        this.addEntity(e, append);
+        return e;
+    }
+
     //
     // Flambe - Rapid game development
     // https://github.com/aduros/flambe/blob/master/LICENSE.txt
