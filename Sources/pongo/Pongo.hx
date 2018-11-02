@@ -26,17 +26,18 @@ import pongo.ecs.System;
 import pongo.ecs.manager.Manager;
 import pongo.input.Keyboard;
 import pongo.input.Mouse;
+import pongo.Window;
 
 interface Pongo
 {
-    public var root (default, null):Entity;
-    public var width (get, null) :Int;
-    public var height (get, null) :Int;
-    public var keyboard (default, null) :Keyboard;
-    public var mouse (default, null) :Mouse;
-    public var manager (default, null):Manager;
+    var root (default, null):Entity;
+    var keyboard (default, null) :Keyboard;
+    var mouse (default, null) :Mouse;
+    var manager (default, null):Manager;
+    var window (default, null):Window;
 
-    public function addSystem(system :System) : Pongo;
-    public function removeSystem(system :System) : Pongo;
-    public function createEntity() : Entity;
+    function addSystem(system :System) : Pongo;
+    function removeSystem(system :System) : Pongo;
+    function createEntity() : Entity;
+    function isMobile() : Bool;
 }

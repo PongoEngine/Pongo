@@ -27,19 +27,27 @@ import pongo.ecs.manager.Manager;
 import pongo.platform.input.Keyboard;
 import pongo.platform.input.Mouse;
 import pongo.platform.display.Graphics;
+import pongo.Window;
 
 @:final class Pongo implements pongo.Pongo
 {
-    public var width (get, null) :Int;
-    public var height (get, null) :Int;
     public var keyboard (default, null) :Keyboard;
     public var mouse (default, null) :Mouse;
     public var root (default, null):Entity;
     public var manager (default, null):Manager;
+    public var window (default, null):Window;
 
-    public function new()  :Void
+    public static function create(title :String, width :Int, height :Int, cb :Pongo -> Void) : Void
+    {
+        kha.System.start({title: title, width: width, height: height}, function(window :kha.Window) {
+            cb(new Pongo(new pongo.platform.Window(window)));
+        });
+    }
+
+    private function new(window :Window)  :Void
     {
         kha.System.notifyOnFrames(renderSprites);
+        this.window = window;
         this.keyboard = new Keyboard();
         this.mouse = new Mouse();
         this.manager = new Manager();
@@ -63,6 +71,11 @@ import pongo.platform.display.Graphics;
     {
         _systems.remove(system);
         return this;
+    }
+
+    public function isMobile() : Bool
+    {
+        return kha.System.systemId == "HTML5";
     }
 
     private function update() : Void
@@ -115,16 +128,6 @@ import pongo.platform.display.Graphics;
         if (entity.visual != null) {
             g.restore();
         }
-    }
-
-    private function get_width() : Int
-    {
-        return kha.System.windowWidth();
-    }
-
-    private function get_height() : Int
-    {
-        return kha.System.windowHeight();
     }
 
     private var _graphics :Graphics;
