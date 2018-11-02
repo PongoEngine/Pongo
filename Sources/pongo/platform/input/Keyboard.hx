@@ -21,7 +21,7 @@
 
 package pongo.platform.input;
 
-import kha.input.KeyCode;
+import pongo.input.KeyCode;
 import pongo.util.Signal1;
 
 class Keyboard implements pongo.input.Keyboard

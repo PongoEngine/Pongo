@@ -22,7 +22,6 @@
 package pongo.input;
 
 import pongo.util.Disposable;
-import kha.input.KeyCode;
 import pongo.util.Signal1;
 
 interface Keyboard extends Disposable
