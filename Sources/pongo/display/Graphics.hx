@@ -43,7 +43,7 @@ interface Graphics
 
     public function drawCubicBezierPath(color :Int, x :Array<Float>, y :Array<Float>, strength:Float = 1.0):Void;
 
-    // public function drawString(text :String, font :SafeFont, color :Color, fontSize :Int, x :Float, y :Float) : Void;
+    public function drawString(text :String, font :Font, color :Int, fontSize :Int, x :Float, y :Float) : Void;
 
     public function drawImage(texture: Texture, x: Float, y: Float) : Void;
 

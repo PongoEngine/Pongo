@@ -102,14 +102,19 @@ class Graphics implements pongo.display.Graphics
         #end
     }
 
-    public function drawString(text :String, font :kha.Font, color :Color, fontSize :Int, x :Float, y :Float) : Void
+    public function drawString(text :String, font :pongo.display.Font, color :Int, fontSize :Int, x :Float, y :Float) : Void
     {
         setColor(color);
-
         prepareGraphics2D();
 
-        _framebuffer.g2.font = font;
-        _framebuffer.g2.fontSize = fontSize;
+        var nativeFont = cast(font, Font).nativeFont;
+        if(_framebuffer.g2.font != nativeFont) {
+            _framebuffer.g2.font = nativeFont;
+        }
+
+        if(_framebuffer.g2.fontSize != fontSize) {
+            _framebuffer.g2.fontSize = fontSize;
+        }
 
         _framebuffer.g2.drawString(text, x, y);
     }
