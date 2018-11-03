@@ -68,7 +68,7 @@ class Entity implements Disposable
     }
 
     @:extern // Inline even in debug builds
-    inline public function _internal_unsafeCast<A:Component> (component :Component, cl :Class<A>) :A
+    inline public function _internal_unsafeCast<T:Component> (component :Component, cl :Class<T>) :T
     {
         return cast component;
     }
