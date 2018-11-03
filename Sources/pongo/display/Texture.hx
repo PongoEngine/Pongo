@@ -1,6 +1,5 @@
 package pongo.display;
 
-import haxe.io.Bytes;
 import pongo.util.Disposable;
 
 interface Texture extends Disposable

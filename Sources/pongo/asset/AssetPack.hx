@@ -22,6 +22,7 @@
 package pongo.asset;
 
 import pongo.display.Texture;
+import pongo.display.Font;
 import pongo.sound.Sound;
 
 import pongo.util.Disposable;
@@ -32,7 +33,7 @@ interface AssetPack extends Disposable
 
     public function getSound(name :String) :Sound;
 
-    // public function getFont(name :String) :Font;
+    public function getFont(name :String) :Font;
 
     public function dispose() : Void;
 }

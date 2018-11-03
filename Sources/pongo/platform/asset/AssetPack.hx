@@ -22,7 +22,7 @@
 
 package pongo.platform.asset;
 
-import kha.Font;
+import pongo.platform.display.Font;
 import pongo.platform.display.Texture;
 import pongo.platform.sound.Sound;
 import pongo.asset.Manifest;
@@ -64,7 +64,7 @@ class AssetPack implements pongo.asset.AssetPack
             sound.dispose();
 
         for(font in fonts)
-            font.unload();
+            font.dispose();
     }
 
     public static function loadManifest(manifest :Manifest, cb :pongo.asset.AssetPack -> Void) : Void
@@ -93,7 +93,7 @@ class AssetPack implements pongo.asset.AssetPack
 
                 case FONT(name): kha.Assets.loadFont(name, function(font :kha.Font) {
                     loadedCount++;
-                    checkLoadCount(loadedCount, targetCount, assetPack.fonts, name, font, assetPack, cb);
+                    checkLoadCount(loadedCount, targetCount, assetPack.fonts, name, new Font(font), assetPack, cb);
                 });
             }
         }
