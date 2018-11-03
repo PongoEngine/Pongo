@@ -19,42 +19,23 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+package pongo.ecs.transform;
 
-// Flambe - Rapid game development
-// https://github.com/aduros/flambe/blob/master/LICENSE.txt
+import kha.math.FastMatrix3;
+import pongo.ecs.Component;
+import pongo.display.Sprite;
 
-// package pongo.display;
-
-// import kha.Color;
-// import pongo.Pongo;
-
-// class FillSprite extends Sprite
-// {
-//     public var color :Color;
-//     public var width :Float;
-//     public var height :Float;
-
-//     public function new(color :Color, width :Float, height :Float) : Void
-//     {
-//         super();
-
-//         this.color = color;
-//         this.width = width;
-//         this.height = height;
-//     }
-
-//     override public function draw(pongo :Pongo, graphics :Graphics) : Void
-//     {
-//         graphics.fillRect(this.color, 0, 0, width, height);
-//     }
-
-//     override public function getNaturalWidth() : Float
-//     {
-//         return this.width;
-//     }
-
-//     override public function getNaturalHeight() : Float
-//     {
-//         return this.height;
-//     }
-// }
+class Transform implements Component
+{
+    var x :Float = 0;
+    var y :Float = 0;
+    var anchorX :Float = 0;
+    var anchorY :Float = 0;
+    var scaleX :Float = 1;
+    var scaleY :Float = 1;
+    var rotation :Float = 0;
+    var opacity :Float = 1;
+    var visible :Bool = true;
+    @:notReactive var matrix :FastMatrix3 = FastMatrix3.identity();
+    @:notReactive var sprite :Sprite;
+}

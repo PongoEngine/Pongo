@@ -19,25 +19,39 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo;
+// Flambe - Rapid game development
+// https://github.com/aduros/flambe/blob/master/LICENSE.txt
 
-import pongo.ecs.Entity;
-import pongo.ecs.System;
-import pongo.ecs.manager.Manager;
-import pongo.input.Keyboard;
-import pongo.input.Mouse;
-import pongo.Window;
+package pongo.display;
 
-interface Pongo
+import kha.Color;
+import pongo.ecs.transform.Transform;
+
+class FillSprite implements Sprite
 {
-    var root (default, null):Entity;
-    var keyboard (default, null) :Keyboard;
-    var mouse (default, null) :Mouse;
-    var manager (default, null):Manager;
-    var window (default, null):Window;
+    public var color :Color;
+    public var width :Float;
+    public var height :Float;
 
-    function addSystem(system :System) : Pongo;
-    function removeSystem(system :System) : Pongo;
-    function createEntity() : Entity;
-    function isWeb() : Bool;
+    public function new(color :Color, width :Float, height :Float) : Void
+    {
+        this.color = color;
+        this.width = width;
+        this.height = height;
+    }
+
+    public function draw(transform :Transform, graphics :Graphics) : Void
+    {
+        graphics.fillRect(this.color, 0, 0, width, height);
+    }
+
+    public function getNaturalWidth() : Float
+    {
+        return this.width;
+    }
+
+    public function getNaturalHeight() : Float
+    {
+        return this.height;
+    }
 }

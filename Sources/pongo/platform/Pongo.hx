@@ -28,6 +28,8 @@ import pongo.platform.input.Keyboard;
 import pongo.platform.input.Mouse;
 import pongo.platform.display.Graphics;
 import pongo.Window;
+import pongo.ecs.transform.Transform;
+import pongo.ecs.transform.TransformSystem;
 
 @:final class Pongo implements pongo.Pongo
 {
@@ -54,6 +56,7 @@ import pongo.Window;
         _schedulerID = kha.Scheduler.addTimeTask(update, 0, 1/60);
         _systems = new Map<System, System>();
         this.root = this.createEntity();
+        this.addSystem(new TransformSystem(this.manager.registerGroup([Transform])));
     }
 
     public inline function createEntity() : Entity
@@ -73,7 +76,7 @@ import pongo.Window;
         return this;
     }
 
-    public function isMobile() : Bool
+    public function isWeb() : Bool
     {
         return kha.System.systemId == "HTML5";
     }
@@ -99,36 +102,10 @@ import pongo.Window;
             _graphics = new Graphics(framebuffer[0]);
         }
 
-        // _graphics.begin();
-        // _render(this, this.root, _graphics);
-        // _graphics.end();
+        _graphics.begin();
+        TransformSystem.render(this.root, _graphics);
+        _graphics.end();
     }
-
-    // private static function _render(pongo :Pongo, entity :Entity, g :Graphics) : Void
-    // {
-    //     if (entity.visual != null) {
-    //         g.save();
-    //         g.transform(entity.visual.getMatrix());
-    //         if(entity.visual.opacity < 1)
-    //             g.multiplyOpacity(entity.visual.opacity);
-
-    //         if(entity.visual.visible && entity.visual.opacity > 0) {
-    //             entity.visual.draw(pongo, g);
-    //         }
-    //     }
-
-    //     var p = entity.firstChild;
-    //     while (p != null) {
-    //         var next = p.next;
-    //         _render(pongo, p, g);
-    //         p = next;
-    //     }
-
-    //     // If save() was called, unwind it
-    //     if (entity.visual != null) {
-    //         g.restore();
-    //     }
-    // }
 
     private var _graphics :Graphics;
     private var _schedulerID :Int;

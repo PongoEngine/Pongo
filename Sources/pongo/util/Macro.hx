@@ -87,12 +87,17 @@ class Macro
 
                     if(expr == null) {
                         args.push({name:field.name, type:type, opt:false, value:null});
-                        states.push(macro $i{"_" + field.name} = $i{field.name});
+                        if(isReactive(field.meta)) {
+                            states.push(macro $i{"_" + field.name} = $i{field.name});
+                        }
+                        else {
+                            states.push(macro $p{["this", field.name]} = $i{field.name});
+                        }
                     }
 
                     field.access = [APublic];
                 }
-                default: throw "Component can only be data.";
+                default: throw new haxe.macro.Error("Components can only contain data!", field.pos);
             }
             i++;
         }
