@@ -41,11 +41,11 @@ class Manifest
     public static function fromAssets (packName :String) :Manifest
     {
         var packData :Array<Dynamic> = Reflect.field(Meta.getType(Manifest).assets[0], packName);
-        if (packData == null) {
-            return null;
-        }
-
         var manifest = new Manifest();
+
+        if (packData == null) {
+            return manifest;
+        }
 
         for (asset in packData) {
             var name = asset.name;
@@ -66,8 +66,6 @@ class Manifest
                 case "ttf": FONT(name, url);
                 case _: DATA(name, url);
             }
-        } else {
-            // Log.warn("No file extension for asset, it will be loaded as data", ["url", url]);
         }
         return DATA(name, url);
     }
