@@ -24,16 +24,15 @@
 
 package pongo.display;
 
-import kha.Color;
 import pongo.ecs.transform.Transform;
 
 class FillSprite implements Sprite
 {
-    public var color :Color;
+    public var color :Int;
     public var width :Float;
     public var height :Float;
 
-    public function new(color :Color, width :Float, height :Float) : Void
+    public function new(color :Int, width :Float, height :Float) : Void
     {
         this.color = color;
         this.width = width;

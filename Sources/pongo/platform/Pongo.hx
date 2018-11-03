@@ -21,6 +21,8 @@
 
 package pongo.platform;
 
+import pongo.asset.Manifest;
+import pongo.platform.asset.AssetPack;
 import pongo.ecs.System;
 import pongo.ecs.Entity;
 import pongo.ecs.manager.Manager;
@@ -79,6 +81,11 @@ import pongo.ecs.transform.TransformSystem;
     public function isWeb() : Bool
     {
         return kha.System.systemId == "HTML5";
+    }
+
+    public inline function loadManifest(manifest :Manifest, cb :pongo.asset.AssetPack -> Void) : Void
+    {
+        AssetPack.loadManifest(manifest, cb);
     }
 
     private function update() : Void

@@ -22,7 +22,6 @@
 package pongo.display;
 
 import kha.math.FastMatrix3;
-import kha.Color;
 
 interface Graphics
 {
@@ -46,9 +45,9 @@ interface Graphics
 
     // public function drawString(text :String, font :SafeFont, color :Color, fontSize :Int, x :Float, y :Float) : Void;
 
-    // public function drawImage(img: SafeImage, x: Float, y: Float) : Void;
+    public function drawImage(texture: Texture, x: Float, y: Float) : Void;
 
-    // public function drawSubImage(img: SafeImage, x: Float, y: Float, sx: Float, sy: Float, sw: Float, sh: Float) : Void;
+    public function drawSubImage(texture: Texture, x: Float, y: Float, sx: Float, sy: Float, sw: Float, sh: Float) : Void;
 
     public function translate(x :Float, y :Float) : Void;
 
@@ -66,5 +65,5 @@ interface Graphics
 
     public function setOpacity(opacity :Float) : Void;
 
-    public function setColor(color :Color) : Void;
+    public function setColor(color :Int) : Void;
 }

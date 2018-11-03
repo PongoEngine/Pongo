@@ -21,13 +21,6 @@
 
 package pongo.ecs.group;
 
-#if macro
-import haxe.macro.Context;
-import haxe.macro.Expr;
-import haxe.macro.Type;
-using haxe.macro.ExprTools;
-#end
-
 class SourceGroup implements Group
 {
     public var rules (default, null):Rules;

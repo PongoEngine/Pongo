@@ -114,18 +114,19 @@ class Graphics implements pongo.display.Graphics
         _framebuffer.g2.drawString(text, x, y);
     }
 
-    public function drawImage(img: kha.Image, x: Float, y: Float) : Void
+    public function drawImage(texture: pongo.display.Texture, x: Float, y: Float) : Void
     {
         setColor(0xffffffff);
         prepareGraphics2D();
-        _framebuffer.g2.drawImage(img, x, y);
+
+        _framebuffer.g2.drawImage(cast(texture, Texture).nativeTexture, x, y);
     }
 
-    public function drawSubImage(img: kha.Image, x: Float, y: Float, sx: Float, sy: Float, sw: Float, sh: Float) : Void
+    public function drawSubImage(texture: pongo.display.Texture, x: Float, y: Float, sx: Float, sy: Float, sw: Float, sh: Float) : Void
     {
         setColor(0xffffffff);
         prepareGraphics2D();
-        _framebuffer.g2.drawSubImage(img, x, y, sx, sy, sw, sh);
+        _framebuffer.g2.drawSubImage(cast(texture, Texture).nativeTexture, x, y, sx, sy, sw, sh);
     }
 
     public inline function translate(x :Float, y :Float) : Void

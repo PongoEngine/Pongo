@@ -22,7 +22,6 @@
 package pongo.ecs.group;
 
 import pongo.ecs.group.Rules;
-import pongo.ecs.group.Rules;
 
 interface Group
 {

@@ -19,35 +19,35 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-// package pongo.sound;
+package pongo.sound;
 
-// import pongo.util.Disposable;
+import pongo.util.Disposable;
 
-// class Sound implements Disposable
-// {
-//     public function new(s :kha.Sound) : Void
-//     {
-//         _nativeSound = s;
-//     }
+class Sound implements Disposable
+{
+    public function new(s :kha.Sound) : Void
+    {
+        _nativeSound = s;
+    }
 
-//     public function play(volume :Float = 1.0) : kha.audio1.AudioChannel
-//     {
-//         var playback = kha.audio2.Audio1.play(_nativeSound, false);
-//         playback.volume = volume;
-//         return playback;
-//     }
+    public function play(volume :Float = 1.0) : kha.audio1.AudioChannel
+    {
+        var playback = kha.audio2.Audio1.play(_nativeSound, false);
+        playback.volume = volume;
+        return playback;
+    }
 
-//     public function loop(volume :Float = 1.0) : kha.audio1.AudioChannel
-//     {
-//         var playback = kha.audio2.Audio1.play(_nativeSound, true);
-//         playback.volume = volume;
-//         return playback;
-//     }
+    public function loop(volume :Float = 1.0) : kha.audio1.AudioChannel
+    {
+        var playback = kha.audio2.Audio1.play(_nativeSound, true);
+        playback.volume = volume;
+        return playback;
+    }
 
-//     public function dispose() : Void
-//     {
-//         _nativeSound.unload();
-//     }
+    public function dispose() : Void
+    {
+        _nativeSound.unload();
+    }
 
-//     private var _nativeSound :kha.Sound;
-// }
+    private var _nativeSound :kha.Sound;
+}

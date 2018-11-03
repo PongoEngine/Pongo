@@ -19,28 +19,34 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo;
+// Flambe - Rapid game development
+// https://github.com/aduros/flambe/blob/master/LICENSE.txt
 
-import pongo.ecs.Entity;
-import pongo.ecs.System;
-import pongo.ecs.manager.Manager;
-import pongo.input.Keyboard;
-import pongo.input.Mouse;
-import pongo.Window;
-import pongo.asset.AssetPack;
-import pongo.asset.Manifest;
+package pongo.display;
 
-interface Pongo
+import pongo.ecs.transform.Transform;
+
+class ImageSprite implements Sprite
 {
-    var root (default, null):Entity;
-    var keyboard (default, null) :Keyboard;
-    var mouse (default, null) :Mouse;
-    var manager (default, null):Manager;
-    var window (default, null):Window;
+    public var texture :Texture;
 
-    function addSystem(system :System) : Pongo;
-    function removeSystem(system :System) : Pongo;
-    function createEntity() : Entity;
-    function isWeb() : Bool;
-    function loadManifest(manifest :Manifest, cb :AssetPack -> Void) : Void;
+    public function new(texture :Texture) : Void
+    {
+        this.texture = texture;
+    }
+
+    public function draw(transform :Transform, graphics :Graphics) : Void
+    {
+        graphics.drawImage(texture, 0, 0);
+    }
+
+    public function getNaturalWidth() : Float
+    {
+        return this.texture.width;
+    }
+
+    public function getNaturalHeight() : Float
+    {
+        return this.texture.height;
+    }
 }
