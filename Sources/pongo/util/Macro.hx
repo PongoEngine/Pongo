@@ -54,7 +54,9 @@ class Macro
                             expr: macro {
                                 if($i{"_" + field.name} != $i{field.name}) {
                                     $i{"_" + field.name} = $i{field.name};
-                                    this.owner.notifyChange();
+                                    if(this.owner != null) {
+                                        this.owner.notifyChange();
+                                    }
                                 }
                                 return $i{("_" + field.name)};
                             },

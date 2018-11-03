@@ -24,6 +24,7 @@ package pongo.ecs.transform;
 import kha.math.FastMatrix3;
 import pongo.ecs.Component;
 import pongo.display.Sprite;
+using pongo.math.CMath;
 
 class Transform implements Component
 {
@@ -38,4 +39,54 @@ class Transform implements Component
     var visible :Bool = true;
     @:notReactive var matrix :FastMatrix3 = FastMatrix3.identity();
     @:notReactive var sprite :Sprite;
+}
+
+class TransformUtil
+{
+    public static function centerAnchor(transform :Transform) :Transform
+    {
+        transform.anchorX = transform.sprite.getNaturalWidth()/2;
+        transform.anchorY = transform.sprite.getNaturalHeight()/2;
+        return transform;
+    }
+
+    public static function setOpacity(transform :Transform, opacity :Float) :Transform
+    {
+        transform.opacity = opacity;
+        return transform;
+    }
+
+    public static function setAnchor(transform :Transform, x :Float, y :Float) :Transform
+    {
+        transform.anchorX = x;
+        transform.anchorY = y;
+        return transform;
+    }
+
+    public static function setRotation(transform :Transform, rotation :Float, fromDegrees :Bool = false) :Transform
+    {
+        transform.rotation = fromDegrees ? rotation.toRadians() : rotation;
+        return transform;
+    }
+
+    public static function setScale(transform :Transform, scale :Float) :Transform
+    {
+        transform.scaleX = scale;
+        transform.scaleY = scale;
+        return transform;
+    }
+
+    public static function setScaleXY(transform :Transform, scaleX :Float, scaleY :Float) :Transform
+    {
+        transform.scaleX = scaleX;
+        transform.scaleY = scaleY;
+        return transform;
+    }
+
+    public static function setXY(transform :Transform, x :Float, y :Float) :Transform
+    {
+        transform.x = x;
+        transform.y = y;
+        return transform;
+    }
 }
