@@ -19,13 +19,40 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.display.graphics1;
 
-interface Graphics1
+Flambe - Rapid game development
+https://github.com/aduros/flambe/blob/master/LICENSE.txt
+
+package pongo.display;
+
+import kha.Color;
+import pongo.Pongo;
+
+class CircleSprite extends Sprite
 {
-    public function begin() : Void;
+    public var color :Color;
+    public var radius :Float;
 
-    public function end() : Void;
+    public function new(color :Color, radius :Float) : Void
+    {
+        super();
 
-    public function setPixel(color :Int, x :Int, y :Int) : Void;
+        this.color = color;
+        this.radius = radius;
+    }
+
+    override public function draw(pongo :Pongo, graphics :Graphics) : Void
+    {
+        graphics.fillCircle(this.color, radius, radius, radius);
+    }
+
+    override public function getNaturalWidth() : Float
+    {
+        return this.radius*2;
+    }
+
+    override public function getNaturalHeight() : Float
+    {
+        return this.radius*2;
+    }
 }

@@ -107,12 +107,10 @@ import pongo.Window;
     private static function _render(pongo :Pongo, entity :Entity, g :Graphics) : Void
     {
         if (entity.visual != null) {
-#if !graphics1
             g.save();
             g.transform(entity.visual.getMatrix());
             if(entity.visual.opacity < 1)
                 g.multiplyOpacity(entity.visual.opacity);
-#end
 
             if(entity.visual.visible && entity.visual.opacity > 0) {
                 entity.visual.draw(pongo, g);
@@ -126,12 +124,10 @@ import pongo.Window;
             p = next;
         }
 
-#if !graphics1
         // If save() was called, unwind it
         if (entity.visual != null) {
             g.restore();
         }
-#end
     }
 
     private var _graphics :Graphics;

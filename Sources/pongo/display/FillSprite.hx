@@ -19,40 +19,42 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-//
+
 // Flambe - Rapid game development
 // https://github.com/aduros/flambe/blob/master/LICENSE.txt
 
-// package pongo.display.graphics2;
+package pongo.display;
 
-// import kha.Color;
-// import pongo.Pongo;
+import kha.Color;
+import pongo.Pongo;
 
-// class CircleSprite extends Sprite
-// {
-//     public var color :Color;
-//     public var radius :Float;
+class FillSprite extends Sprite
+{
+    public var color :Color;
+    public var width :Float;
+    public var height :Float;
 
-//     public function new(color :Color, radius :Float) : Void
-//     {
-//         super();
+    public function new(color :Color, width :Float, height :Float) : Void
+    {
+        super();
 
-//         this.color = color;
-//         this.radius = radius;
-//     }
+        this.color = color;
+        this.width = width;
+        this.height = height;
+    }
 
-//     override public function draw(pongo :Pongo, graphics :Graphics) : Void
-//     {
-//         graphics.fillCircle(this.color, radius, radius, radius);
-//     }
+    override public function draw(pongo :Pongo, graphics :Graphics) : Void
+    {
+        graphics.fillRect(this.color, 0, 0, width, height);
+    }
 
-//     override public function getNaturalWidth() : Float
-//     {
-//         return this.radius*2;
-//     }
+    override public function getNaturalWidth() : Float
+    {
+        return this.width;
+    }
 
-//     override public function getNaturalHeight() : Float
-//     {
-//         return this.radius*2;
-//     }
-// }
+    override public function getNaturalHeight() : Float
+    {
+        return this.height;
+    }
+}
