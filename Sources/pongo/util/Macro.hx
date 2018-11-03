@@ -39,53 +39,60 @@ class Macro
         while (i < length) {
             var field = fields[i];
             switch (field.kind) {
-                case FVar(type,_):
-                    field.kind = FieldType.FProp("get", "set", type);
-                    var getter:Function = { 
-                        expr: macro {
-                            return $i{("_" + field.name)};
-                        },
-                        ret: type,
-                        args:[]
+                case FVar(type,expr): {
+                    if(isReactive(field.meta)) {
+                        field.kind = FieldType.FProp("get", "set", type);
+                        var getter:Function = { 
+                            expr: macro {
+                                return $i{("_" + field.name)};
+                            },
+                            ret: type,
+                            args:[]
+                        }
+                                    
+                        var setter:Function = { 
+                            expr: macro {
+                                if($i{"_" + field.name} != $i{field.name}) {
+                                    $i{"_" + field.name} = $i{field.name};
+                                    this.owner.notifyChange();
+                                }
+                                return $i{("_" + field.name)};
+                            },
+                            ret: type,
+                            args:[{name:field.name, type: type, opt:false, value:null}]
+                        }
+
+                        var fieldValue = {
+                            name: "_" + field.name,
+                            access: [Access.APrivate],
+                            kind: FieldType.FVar(type, expr), 
+                            pos: Context.currentPos(),
+                        };
+                        fields.push(fieldValue);
+
+                        fields.push({
+                            name: "set_" + field.name,
+                            access: [Access.APrivate],
+                            kind: FieldType.FFun(setter),
+                            pos: Context.currentPos(),
+                        });
+
+                        fields.push({
+                            name: "get_" + field.name,
+                            access: [Access.APrivate],
+                            kind: FieldType.FFun(getter),
+                            pos: Context.currentPos(),
+                        });
                     }
-                                
-                    var setter:Function = { 
-                        expr: macro {
-                            if($i{"_" + field.name} != $i{field.name}) {
-                                $i{"_" + field.name} = $i{field.name};
-                                this.owner.notifyChange();
-                            }
-                            return $i{("_" + field.name)};
-                        },
-                        ret: type,
-                        args:[{name:field.name, type: type, opt:false, value:null}]
+
+                    if(expr == null) {
+                        args.push({name:field.name, type:type, opt:false, value:null});
+                        states.push(macro $i{"_" + field.name} = $i{field.name});
                     }
 
-                    fields.push({
-                        name: "_" + field.name,
-                        access: [Access.APrivate],
-                        kind: FieldType.FVar(type, null), 
-                        pos: Context.currentPos(),
-                    });
-
-                    fields.push({
-                        name: "set_" + field.name,
-                        access: [Access.APrivate],
-                        kind: FieldType.FFun(setter),
-                        pos: Context.currentPos(),
-                    });
-
-                    fields.push({
-                        name: "get_" + field.name,
-                        access: [Access.APrivate],
-                        kind: FieldType.FFun(getter),
-                        pos: Context.currentPos(),
-                    });
-
-                    args.push({name:field.name, type:type, opt:false, value:null});
-                    states.push(macro $i{"_" + field.name} = $i{field.name});
-                    field.access.push(APublic);
-                default:
+                    field.access = [APublic];
+                }
+                default: throw "Component can only be data.";
             }
             i++;
         }
@@ -123,6 +130,15 @@ class Macro
         });
 
         return fields;
+    }
+
+    static function isReactive(meta :Null<Metadata>) : Bool
+    {
+        if(meta == null || meta.length == 0) return true;
+        for(m in meta) {
+            if(m.name == ":notReactive") return false;
+        }
+        return true;
     }
 #end
 }

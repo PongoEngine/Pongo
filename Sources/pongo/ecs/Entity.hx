@@ -27,8 +27,6 @@ import haxe.macro.Expr;
 
 import pongo.ecs.Component;
 import pongo.ecs.manager.Manager;
-import pongo.ecs.group.Rules;
-import pongo.display.Sprite;
 import pongo.util.Disposable;
 
 class Entity implements Disposable
@@ -37,7 +35,6 @@ class Entity implements Disposable
     public var firstChild (default, null) :Entity = null;
     public var next (default, null) :Entity = null;
     public var index (default, null):Int;
-    public var visual (default, null):Sprite = null;
     public var isDisposed (default, null):Bool = false;
 
     @:allow(pongo.platform.Pongo)
@@ -145,12 +142,6 @@ class Entity implements Disposable
             p = next;
         }
         
-    }
-
-    public function setVisual(visual :Sprite) : Entity
-    {
-        this.visual = visual;
-        return this;
     }
 
     public function disposeChildren ()

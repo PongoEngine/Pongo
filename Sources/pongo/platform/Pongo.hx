@@ -99,36 +99,36 @@ import pongo.Window;
             _graphics = new Graphics(framebuffer[0]);
         }
 
-        _graphics.begin();
-        _render(this, this.root, _graphics);
-        _graphics.end();
+        // _graphics.begin();
+        // _render(this, this.root, _graphics);
+        // _graphics.end();
     }
 
-    private static function _render(pongo :Pongo, entity :Entity, g :Graphics) : Void
-    {
-        if (entity.visual != null) {
-            g.save();
-            g.transform(entity.visual.getMatrix());
-            if(entity.visual.opacity < 1)
-                g.multiplyOpacity(entity.visual.opacity);
+    // private static function _render(pongo :Pongo, entity :Entity, g :Graphics) : Void
+    // {
+    //     if (entity.visual != null) {
+    //         g.save();
+    //         g.transform(entity.visual.getMatrix());
+    //         if(entity.visual.opacity < 1)
+    //             g.multiplyOpacity(entity.visual.opacity);
 
-            if(entity.visual.visible && entity.visual.opacity > 0) {
-                entity.visual.draw(pongo, g);
-            }
-        }
+    //         if(entity.visual.visible && entity.visual.opacity > 0) {
+    //             entity.visual.draw(pongo, g);
+    //         }
+    //     }
 
-        var p = entity.firstChild;
-        while (p != null) {
-            var next = p.next;
-            _render(pongo, p, g);
-            p = next;
-        }
+    //     var p = entity.firstChild;
+    //     while (p != null) {
+    //         var next = p.next;
+    //         _render(pongo, p, g);
+    //         p = next;
+    //     }
 
-        // If save() was called, unwind it
-        if (entity.visual != null) {
-            g.restore();
-        }
-    }
+    //     // If save() was called, unwind it
+    //     if (entity.visual != null) {
+    //         g.restore();
+    //     }
+    // }
 
     private var _graphics :Graphics;
     private var _schedulerID :Int;

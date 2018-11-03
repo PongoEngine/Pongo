@@ -19,111 +19,22 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-//
-// Flambe - Rapid game development
-// https://github.com/aduros/flambe/blob/master/LICENSE.txt
-
 package pongo.display;
 
-import pongo.Pongo;
 import kha.math.FastMatrix3;
 import pongo.display.Graphics;
-using pongo.math.CMath;
+import pongo.ecs.Component;
 
-class Sprite
+class Sprite implements Component
 {
-    public var x :Float = 0;
-    public var y :Float = 0;
-    public var anchorX :Float = 0;
-    public var anchorY :Float = 0;
-    public var scaleX :Float = 1;
-    public var scaleY :Float = 1;
-    public var rotation :Float = 0;
-    public var opacity :Float = 1;
-    public var visible :Bool = true;
-
-    public function new() : Void
-    {
-    }
-
-    public inline function setXY(x :Float, y :Float) : Sprite
-    {
-        this.x = x;
-        this.y = y;
-        return this;
-    }
-
-    public inline function setAnchorXY(x :Float, y :Float) : Sprite
-    {
-        this.anchorX = x;
-        this.anchorY = y;
-        return this;
-    }
-
-    public inline function setRotation(degrees :Float) : Sprite
-    {
-        this.rotation = degrees;
-        return this;
-    }
-
-    public inline function setOpacity(opacity :Float) : Sprite
-    {
-        this.opacity = opacity;
-        return this;
-    }
-
-    public inline function setScaleXY(scaleX :Float, scaleY :Float) : Sprite
-    {
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-        return this;
-    }
-
-    public inline function centerAnchor() : Sprite
-    {
-        this.anchorX = this.getNaturalWidth() / 2;
-        this.anchorY = this.getNaturalHeight() / 2;
-        return this;
-    }
-
-    /**
-     *  [Description]
-     *  @return Float
-     */
-    public function getNaturalWidth() : Float
-    {
-        return 0;
-    }
-
-    /**
-     *  [Description]
-     *  @return Float
-     */
-    public function getNaturalHeight() : Float
-    {
-        return 0;
-    }
-
-    /**
-     *  [Description]
-     *  @param graphics - 
-     */
-    public function draw(pongo :Pongo, graphics: Graphics) : Void
-    {
-    }
-
-
-
-    /**
-     *  [Description]
-     *  @return FastMatrix3
-     */
-    public inline function getMatrix() : FastMatrix3
-    {
-        return FastMatrix3.identity()
-            .multmat(FastMatrix3.translation(x,y))
-            .multmat(FastMatrix3.rotation(rotation.toRadians()))
-            .multmat(FastMatrix3.scale(scaleX, scaleY))
-            .multmat(FastMatrix3.translation(-anchorX, -anchorY));
-    }
+    var x :Float = 0;
+    var y :Float = 0;
+    var anchorX :Float = 0;
+    var anchorY :Float = 0;
+    var scaleX :Float = 1;
+    var scaleY :Float = 1;
+    var rotation :Float = 0;
+    var opacity :Float = 1;
+    var visible :Bool = true;
+    @:notReactive var matrix :FastMatrix3 = FastMatrix3.identity();
 }

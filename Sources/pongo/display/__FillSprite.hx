@@ -23,38 +23,38 @@
 // Flambe - Rapid game development
 // https://github.com/aduros/flambe/blob/master/LICENSE.txt
 
-package pongo.display;
+// package pongo.display;
 
-import kha.Color;
-import pongo.Pongo;
+// import kha.Color;
+// import pongo.Pongo;
 
-class FillSprite extends Sprite
-{
-    public var color :Color;
-    public var width :Float;
-    public var height :Float;
+// class FillSprite extends Sprite
+// {
+//     public var color :Color;
+//     public var width :Float;
+//     public var height :Float;
 
-    public function new(color :Color, width :Float, height :Float) : Void
-    {
-        super();
+//     public function new(color :Color, width :Float, height :Float) : Void
+//     {
+//         super();
 
-        this.color = color;
-        this.width = width;
-        this.height = height;
-    }
+//         this.color = color;
+//         this.width = width;
+//         this.height = height;
+//     }
 
-    override public function draw(pongo :Pongo, graphics :Graphics) : Void
-    {
-        graphics.fillRect(this.color, 0, 0, width, height);
-    }
+//     override public function draw(pongo :Pongo, graphics :Graphics) : Void
+//     {
+//         graphics.fillRect(this.color, 0, 0, width, height);
+//     }
 
-    override public function getNaturalWidth() : Float
-    {
-        return this.width;
-    }
+//     override public function getNaturalWidth() : Float
+//     {
+//         return this.width;
+//     }
 
-    override public function getNaturalHeight() : Float
-    {
-        return this.height;
-    }
-}
+//     override public function getNaturalHeight() : Float
+//     {
+//         return this.height;
+//     }
+// }
