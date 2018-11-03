@@ -21,8 +21,6 @@
 
 package pongo.asset;
 
-// import kha.Blob;
-// import kha.Font;
 import pongo.display.Texture;
 import pongo.sound.Sound;
 
@@ -33,8 +31,6 @@ interface AssetPack extends Disposable
     public function getImage(name :String) :Texture;
 
     public function getSound(name :String) :Sound;
-
-    // public function getBlob(name :String) :Blob;
 
     // public function getFont(name :String) :Font;
 

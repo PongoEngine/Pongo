@@ -40,11 +40,6 @@ class Manifest
         assets.push(SOUND(name));
     }
 
-    public function addBlob(name :String) : Void
-    {
-        assets.push(BLOB(name));
-    }
-
     public function addFont(name :String) : Void
     {
         assets.push(FONT(name));
@@ -55,6 +50,5 @@ enum AssetType
 {
     IMAGE(name :String);
     SOUND(name :String);
-    BLOB(name :String);
     FONT(name :String);
 }

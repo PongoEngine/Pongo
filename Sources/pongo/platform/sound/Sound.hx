@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2018 Jeremy Meltingtallow
  *
@@ -19,13 +20,34 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.sound;
+package pongo.platform.sound;
 
-import pongo.util.Disposable;
-
-interface Sound extends Disposable
+class Sound implements pongo.sound.Sound
 {
-    public function play(volume :Float = 1.0) : Playback;
+    public var nativeSound :kha.Sound;
 
-    public function loop(volume :Float = 1.0) : Playback;
+    public function new(s :kha.Sound) : Void
+    {
+        nativeSound = s;
+    }
+
+    public function play(volume :Float = 1.0) : Playback
+    {
+        var channel = kha.audio2.Audio1.play(nativeSound, false);
+        channel.volume = volume;
+        return new Playback(channel);
+    }
+
+    public function loop(volume :Float = 1.0) : Playback
+    {
+        var channel = kha.audio2.Audio1.play(nativeSound, true);
+        channel.volume = volume;
+        return new Playback(channel);
+    }
+
+    public function dispose() : Void
+    {
+        nativeSound.unload();
+    }
+
 }

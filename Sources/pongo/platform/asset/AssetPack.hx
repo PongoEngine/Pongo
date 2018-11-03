@@ -22,25 +22,21 @@
 
 package pongo.platform.asset;
 
-import kha.Image;
-import kha.Blob;
 import kha.Font;
 import pongo.platform.display.Texture;
-import pongo.sound.Sound;
+import pongo.platform.sound.Sound;
 import pongo.asset.Manifest;
 
 class AssetPack implements pongo.asset.AssetPack
 {
     public var images :Map<String, Texture>;
     public var sounds :Map<String, Sound>;
-    public var blobs :Map<String, Blob>;
     public var fonts :Map<String, Font>;
 
     public function new() : Void
     {
         images = new Map<String, Texture>();
         sounds = new Map<String, Sound>();
-        blobs = new Map<String, Blob>();
         fonts = new Map<String, Font>();
     }
 
@@ -52,11 +48,6 @@ class AssetPack implements pongo.asset.AssetPack
     public function getSound(name :String) :Sound
     {
         return sounds.get(name);
-    }
-
-    public function getBlob(name :String) :Blob
-    {
-        return blobs.get(name);
     }
 
     public function getFont(name :String) :Font
@@ -71,9 +62,6 @@ class AssetPack implements pongo.asset.AssetPack
 
         for(sound in sounds)
             sound.dispose();
-
-        for(blob in blobs)
-            blob.unload();
 
         for(font in fonts)
             font.unload();
@@ -93,38 +81,29 @@ class AssetPack implements pongo.asset.AssetPack
             switch asset {
                 case IMAGE(name): kha.Assets.loadImageFromPath(name, false, function(image :kha.Image) {
                     loadedCount++;
-                    assetPack.images.set(name, new Texture(image));
-                    if(loadedCount == targetCount) {
-                        cb(assetPack);
-                    }
+                    checkLoadCount(loadedCount, targetCount, assetPack.images, name, new Texture(image), assetPack, cb);
                 });
 
                 case SOUND(name): kha.Assets.loadSound(name, function(nativeSound :kha.Sound) {
                     nativeSound.uncompress(function() {
                         loadedCount++;
-                        assetPack.sounds.set(name, new Sound(nativeSound));
-                        if(loadedCount == targetCount) {
-                            cb(assetPack);
-                        }
+                        checkLoadCount(loadedCount, targetCount, assetPack.sounds, name, new Sound(nativeSound), assetPack, cb);
                     });
-                });
-
-                case BLOB(name): kha.Assets.loadBlob(name, function(blob :kha.Blob) {
-                    loadedCount++;
-                    assetPack.blobs.set(name, blob);
-                    if(loadedCount == targetCount) {
-                        cb(assetPack);
-                    }
                 });
 
                 case FONT(name): kha.Assets.loadFont(name, function(font :kha.Font) {
                     loadedCount++;
-                    assetPack.fonts.set(name, font);
-                    if(loadedCount == targetCount) {
-                        cb(assetPack);
-                    }
+                    checkLoadCount(loadedCount, targetCount, assetPack.fonts, name, font, assetPack, cb);
                 });
             }
+        }
+    }
+
+    static function checkLoadCount<T>(loadedCount :Int, targetCount :Int, map :Map<String, T>, name :String, asset :T, assetPack :pongo.asset.AssetPack, cb :pongo.asset.AssetPack -> Void) : Void
+    {
+        map.set(name, asset);
+        if(loadedCount == targetCount) {
+            cb(assetPack);
         }
     }
 }
