@@ -21,7 +21,7 @@
 
 package pongo.util;
 
-class StringUtil
+class Strings
 {
     public static function keyFromStrings(strs :Array<String>) : Int
     {
@@ -45,5 +45,24 @@ class StringUtil
         }
 
         return hash;
+    }
+
+    public static function getFileExtension (fileName :String) :String
+    {
+        var dot = fileName.lastIndexOf(".");
+        return (dot > 0) ? fileName.substr(dot+1) : null;
+    }
+
+    public static function getUrlExtension (url :String) :String
+    {
+        var question = url.lastIndexOf("?");
+        if (question >= 0) {
+            url = url.substr(0, question);
+        }
+        var slash = url.lastIndexOf("/");
+        if (slash >= 0) {
+            url = url.substr(slash+1);
+        }
+        return getFileExtension(url);
     }
 }

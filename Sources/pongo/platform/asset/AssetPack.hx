@@ -77,24 +77,27 @@ class AssetPack implements pongo.asset.AssetPack
             return;
         }
 
+
         for(asset in manifest.assets) {
             switch asset {
-                case IMAGE(name): kha.Assets.loadImageFromPath(name, true, function(image :kha.Image) {
+                case IMAGE(name, url): kha.Assets.loadImageFromPath(name, true, function(image :kha.Image) {
                     loadedCount++;
                     checkLoadCount(loadedCount, targetCount, assetPack.images, name, new Texture(image), assetPack, cb);
                 });
 
-                case SOUND(name): kha.Assets.loadSoundFromPath(name, function(nativeSound :kha.Sound) {
+                case SOUND(name, url): kha.Assets.loadSoundFromPath(name, function(nativeSound :kha.Sound) {
                     nativeSound.uncompress(function() {
                         loadedCount++;
                         checkLoadCount(loadedCount, targetCount, assetPack.sounds, name, new Sound(nativeSound), assetPack, cb);
                     });
                 });
 
-                case FONT(name): kha.Assets.loadFontFromPath(name, function(font :kha.Font) {
+                case FONT(name, url): kha.Assets.loadFontFromPath(name, function(font :kha.Font) {
                     loadedCount++;
                     checkLoadCount(loadedCount, targetCount, assetPack.fonts, name, new Font(font), assetPack, cb);
                 });
+
+                case DATA(name, url): throw "data not allowed yet";
             }
         }
     }

@@ -21,6 +21,9 @@
 
 package pongo.asset;
 
+import haxe.rtti.Meta;
+using pongo.util.Strings;
+
 class Manifest
 {
     public var assets (default, null):Array<AssetType>;
@@ -30,25 +33,50 @@ class Manifest
         assets = [];
     }
 
-    public function addImage(name :String) : Void
+    public function add(name :String, url :String) :Void
     {
-        assets.push(IMAGE(name));
+        assets.push(createAssetType(name, url));
     }
 
-    public function addSound(name :String) : Void
+    public static function fromAssets (packName :String) :Manifest
     {
-        assets.push(SOUND(name));
+        var packData :Array<Dynamic> = Reflect.field(Meta.getType(Manifest).assets[0], packName);
+        if (packData == null) {
+            return null;
+        }
+
+        var manifest = new Manifest();
+
+        for (asset in packData) {
+            var name = asset.name;
+            var path = packName + "/" + name + "?v=" + asset.md5;
+            manifest.assets.push(createAssetType(name, path));
+        }
+
+        return manifest;
     }
 
-    public function addFont(name :String) : Void
+    private static function createAssetType(name :String, url :String) :AssetType
     {
-        assets.push(FONT(name));
+        var extension = url.getUrlExtension();
+        if (extension != null) {
+            return switch (extension.toLowerCase()) {
+                case "gif", "jpg", "jpeg", "png": IMAGE(name, url);
+                case "m4a", "mp3", "ogg", "wav": SOUND(name, url);
+                case "ttf": FONT(name, url);
+                case _: DATA(name, url);
+            }
+        } else {
+            // Log.warn("No file extension for asset, it will be loaded as data", ["url", url]);
+        }
+        return DATA(name, url);
     }
 }
 
 enum AssetType
 {
-    IMAGE(name :String);
-    SOUND(name :String);
-    FONT(name :String);
+    IMAGE(name :String, url :String);
+    SOUND(name :String, url :String);
+    FONT(name :String, url :String);
+    DATA(name :String, url :String);
 }

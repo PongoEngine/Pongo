@@ -24,7 +24,7 @@ package pongo.ecs.manager;
 import pongo.ecs.Entity;
 import pongo.ecs.group.SourceGroup;
 import pongo.ecs.group.Rules;
-using pongo.util.StringUtil;
+using pongo.util.Strings;
 
 #if macro
 import haxe.macro.Expr;

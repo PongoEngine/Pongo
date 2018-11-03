@@ -43,6 +43,7 @@ import pongo.ecs.transform.TransformSystem;
 
     public static function create(title :String, width :Int, height :Int, cb :Pongo -> Void) : Void
     {
+        pongo.platform.asset.ManifestBuilder.use("../Assets");
         kha.System.start({title: title, width: width, height: height}, function(window :kha.Window) {
             cb(new Pongo(new pongo.platform.Window(window)));
         });
