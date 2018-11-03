@@ -79,7 +79,7 @@ class Macro
 
                         fields.push({
                             name: "get_" + field.name,
-                            access: [Access.APrivate],
+                            access: [Access.APrivate, Access.AInline],
                             kind: FieldType.FFun(getter),
                             pos: Context.currentPos(),
                         });

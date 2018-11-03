@@ -103,8 +103,35 @@ import pongo.ecs.transform.TransformSystem;
         }
 
         _graphics.begin();
-        TransformSystem.render(this.root, _graphics);
+        Pongo.render(this.root, _graphics);
         _graphics.end();
+    }
+
+    private static function render(entity :Entity, g :Graphics) : Void
+    {
+        var transform = entity.getComponent(Transform);
+        if (transform != null) {
+            g.save();
+            g.transform(transform.matrix);
+            if(transform.opacity < 1)
+                g.multiplyOpacity(transform.opacity);
+
+            if(transform.visible && transform.opacity > 0) {
+                transform.sprite.draw(transform, g);
+            }
+        }
+
+        var p = entity.firstChild;
+        while (p != null) {
+            var next = p.next;
+            render(p, g);
+            p = next;
+        }
+
+        // If save() was called, unwind it
+        if (transform != null) {
+            g.restore();
+        }
     }
 
     private var _graphics :Graphics;

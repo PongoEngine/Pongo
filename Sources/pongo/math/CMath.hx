@@ -23,6 +23,18 @@ package pongo.math;
 
 class CMath
 {
+    /** The lowest integer value in Flash and JS. */
+    public static inline var INT_MIN :Int = -2147483648;
+
+    /** The highest integer value in Flash and JS. */
+    public static inline var INT_MAX :Int = 2147483647;
+
+    /** The lowest float value in Flash and JS. */
+    public static inline var FLOAT_MIN = -1.79769313486231e+308;
+
+    /** The highest float value in Flash and JS. */
+    public static inline var FLOAT_MAX = 1.79769313486231e+308;
+
     public static inline function toRadians(degrees :Float) : Float
     {
         return degrees * (Math.PI/180);

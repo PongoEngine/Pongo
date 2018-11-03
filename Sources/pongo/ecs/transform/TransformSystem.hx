@@ -25,8 +25,6 @@ import pongo.ecs.System;
 import pongo.ecs.Entity;
 import pongo.ecs.group.SourceGroup;
 import kha.math.FastMatrix3;
-import pongo.display.Graphics;
-using pongo.math.CMath;
 
 class TransformSystem implements System
 {
@@ -42,37 +40,10 @@ class TransformSystem implements System
             transform.matrix
                 .setFrom(FastMatrix3.identity()
                 .multmat(FastMatrix3.translation(transform.x,transform.y))
-                .multmat(FastMatrix3.rotation(transform.rotation.toRadians()))
+                .multmat(FastMatrix3.rotation(transform.rotation))
                 .multmat(FastMatrix3.scale(transform.scaleX, transform.scaleY))
                 .multmat(FastMatrix3.translation(-transform.anchorX, -transform.anchorY)));
         });
-    }
-
-    public static function render(entity :Entity, g :Graphics) : Void
-    {
-        var transform = entity.getComponent(Transform);
-        if (transform != null) {
-            g.save();
-            g.transform(transform.matrix);
-            if(transform.opacity < 1)
-                g.multiplyOpacity(transform.opacity);
-
-            if(transform.visible && transform.opacity > 0) {
-                transform.sprite.draw(transform, g);
-            }
-        }
-
-        var p = entity.firstChild;
-        while (p != null) {
-            var next = p.next;
-            render(p, g);
-            p = next;
-        }
-
-        // If save() was called, unwind it
-        if (transform != null) {
-            g.restore();
-        }
     }
 
     private var _transforms :SourceGroup;

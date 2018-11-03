@@ -21,6 +21,8 @@
 
 package pongo.ecs.group;
 
+import pongo.util.Pool;
+
 class EntityList extends EntityNode
 {
     public var head (get, set) :EntityNode;
@@ -30,22 +32,27 @@ class EntityList extends EntityNode
     @:allow(pongo.ecs.group.SourceGroup)
     private function new() : Void
     {
-        super(null);
+        super();
         _entityMap = new Map<Int, Int>();
+        _nodePool = new Pool(function() {
+            return new EntityNode();
+        });
     }
 
     public inline function add(entity :Entity) : Bool
     {
         if(!_entityMap.exists(entity.index)) {
+            var node = _nodePool.take();
+            node.entity = entity;
             var tail = null, p = this.head;
             while (p != null) {
                 tail = p;
                 p = p.next;
             }
             if (tail != null) {
-                tail.next = new EntityNode(entity);
+                tail.next = node;
             } else {
-                this.head = new EntityNode(entity);
+                this.head = node;
             }
 
             _entityMap.set(entity.index, entity.index);
@@ -69,7 +76,8 @@ class EntityList extends EntityNode
                         prev.next = next;
                     }
                     p.next = null;
-
+                    p.entity = null;
+                    _nodePool.put(p);
                     this.size--;
                     _entityMap.remove(entity.index);
                     return true;
@@ -86,7 +94,6 @@ class EntityList extends EntityNode
         var p = this.head;
         while(p != null) {
             this.remove(p.entity);
-            _entityMap.remove(p.entity.index);
             p = p.next;
         }
     }
@@ -103,6 +110,7 @@ class EntityList extends EntityNode
     }
 
     private var _entityMap:Map<Int,Int>;
+    private var _nodePool:Pool<EntityNode>;
 }
 
 @:allow(pongo.ecs.group.EntityList)
@@ -112,9 +120,5 @@ private class EntityNode
 {
     private var next (default, null) :EntityNode = null;
     private var entity (default, null) :Entity = null;
-
-    public function new(entity :Null<Entity>) : Void
-    {
-        this.entity = entity;
-    }
+    private function new() : Void {}
 }
