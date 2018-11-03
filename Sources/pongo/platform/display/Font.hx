@@ -24,13 +24,8 @@ class Font implements pongo.display.Font
         return this.nativeFont.height(fontSize);
     }
 
-    // private inline function get_width() : Float
-    // {
-    //     return 0;
-    // }
-
-    // private inline function get_height() : Float
-    // {
-    //     return nativeFont.height;
-    // }
+    public inline function baseline(fontSize: Int): Float
+    {
+        return this.nativeFont.baseline(fontSize);
+    }
 }
