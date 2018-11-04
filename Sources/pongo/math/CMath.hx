@@ -63,4 +63,14 @@ class CMath
             else if (value > max) max
             else value;
     }
+
+    public static inline function min<T:Float> (a :T, b :T) :T
+    {
+        return (a < b) ? a : b;
+    }
+
+    public static inline function max<T:Float> (a :T, b :T) :T
+    {
+        return (a > b) ? a : b;
+    }
 }
