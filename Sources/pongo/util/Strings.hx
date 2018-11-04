@@ -65,4 +65,10 @@ class Strings
         }
         return getFileExtension(url);
     }
+
+    public static function removeFileExtension (fileName :String) :String
+    {
+        var dot = fileName.lastIndexOf(".");
+        return (dot > 0) ? fileName.substr(0, dot) : fileName;
+    }
 }

@@ -26,18 +26,23 @@ import pongo.platform.display.Font;
 import pongo.platform.display.Texture;
 import pongo.platform.sound.Sound;
 import pongo.asset.Manifest;
+import pongo.asset.File;
+
+using pongo.util.Strings;
 
 class AssetPack implements pongo.asset.AssetPack
 {
     public var images :Map<String, Texture>;
     public var sounds :Map<String, Sound>;
     public var fonts :Map<String, Font>;
+    public var files :Map<String, File>;
 
     public function new() : Void
     {
         images = new Map<String, Texture>();
         sounds = new Map<String, Sound>();
         fonts = new Map<String, Font>();
+        files = new Map<String, File>();
     }
 
     public function getImage(name :String) :Texture
@@ -53,6 +58,11 @@ class AssetPack implements pongo.asset.AssetPack
     public function getFont(name :String) :Font
     {
         return fonts.get(name);
+    }
+
+    public function getFile(name :String) :File
+    {
+        return files.get(name);
     }
 
     public function dispose() : Void
@@ -97,14 +107,17 @@ class AssetPack implements pongo.asset.AssetPack
                     checkLoadCount(loadedCount, targetCount, assetPack.fonts, name, new Font(font), assetPack, cb);
                 });
 
-                case DATA(name, url): throw "data not allowed yet";
+                case DATA(name, url): kha.Assets.loadBlobFromPath(name, function(blob :kha.Blob) {
+                    loadedCount++;
+                    checkLoadCount(loadedCount, targetCount, assetPack.files, name, new File(blob.readUtf8String()), assetPack, cb);
+                });
             }
         }
     }
 
     static function checkLoadCount<T>(loadedCount :Int, targetCount :Int, map :Map<String, T>, name :String, asset :T, assetPack :pongo.asset.AssetPack, cb :pongo.asset.AssetPack -> Void) : Void
     {
-        map.set(name, asset);
+        map.set(name.removeFileExtension(), asset);
         if(loadedCount == targetCount) {
             cb(assetPack);
         }

@@ -35,5 +35,7 @@ interface AssetPack extends Disposable
 
     public function getFont(name :String) :Font;
 
+    public function getFile(name :String) :File;
+
     public function dispose() : Void;
 }
