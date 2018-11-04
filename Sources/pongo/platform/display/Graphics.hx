@@ -27,29 +27,38 @@ package pongo.platform.display;
 
 import kha.math.FastMatrix3;
 import kha.Color;
+import kha.Image;
+import kha.Scaler;
 
 class Graphics implements pongo.display.Graphics
 {
-    public function new(framebuffer :kha.Framebuffer) : Void
+    public function new(width :Int, height :Int) : Void
     {
-        _framebuffer = framebuffer;
+        _backBuffer = Image.createRenderTarget(width, height);
     }
 
     public function begin() : Void
     {
-        _framebuffer.g2.begin();
+        _backBuffer.g2.begin();
     }
 
     public function end() : Void
     {
-        _framebuffer.g2.end();
+        _backBuffer.g2.end();
+    }
+
+    public function drawToBuffer(frameBuffer :kha.Framebuffer) : Void
+    {
+        frameBuffer.g2.begin();
+        Scaler.scale(_backBuffer, frameBuffer, kha.System.screenRotation);
+        frameBuffer.g2.end();
     }
 
     public function fillRect(color :Int, x :Float, y :Float, width :Float, height :Float) : Void 
     {
         setColor(color);
         prepareGraphics2D();
-        _framebuffer.g2.fillRect(x, y, width, height);
+        _backBuffer.g2.fillRect(x, y, width, height);
     }
 
     public function fillCircle(color :Int, cx: Float, cy: Float, radius: Float, segments: Int = 0) : Void
@@ -57,7 +66,7 @@ class Graphics implements pongo.display.Graphics
         setColor(color);
         prepareGraphics2D();
         #if !macro
-        kha.graphics2.GraphicsExtension.fillCircle(_framebuffer.g2, cx, cy, radius, segments);
+        kha.graphics2.GraphicsExtension.fillCircle(_backBuffer.g2, cx, cy, radius, segments);
         #end
     }
 
@@ -65,14 +74,14 @@ class Graphics implements pongo.display.Graphics
     {
         setColor(color);
         prepareGraphics2D();
-        _framebuffer.g2.drawRect(x, y, width, height, strength);
+        _backBuffer.g2.drawRect(x, y, width, height, strength);
     }
 
     public function drawLine(color :Int, x1: Float, y1: Float, x2: Float, y2: Float, strength: Float = 1.0) : Void 
     {
         setColor(color);
         prepareGraphics2D();
-        _framebuffer.g2.drawLine(x1, y1, x2, y2, strength);
+        _backBuffer.g2.drawLine(x1, y1, x2, y2, strength);
     }
 
     public function drawCircle(color :Int, cx: Float, cy: Float, radius: Float, strength: Float = 1, segments: Int = 0) : Void
@@ -80,7 +89,7 @@ class Graphics implements pongo.display.Graphics
         setColor(color);
         prepareGraphics2D();
         #if !macro
-        kha.graphics2.GraphicsExtension.drawCircle(_framebuffer.g2, cx, cy, radius, strength, segments);
+        kha.graphics2.GraphicsExtension.drawCircle(_backBuffer.g2, cx, cy, radius, strength, segments);
         #end
     }
 
@@ -89,7 +98,7 @@ class Graphics implements pongo.display.Graphics
         setColor(color);
         prepareGraphics2D();
         #if !macro
-        kha.graphics2.GraphicsExtension.drawCubicBezierPath(_framebuffer.g2, x, y, 20, strength);
+        kha.graphics2.GraphicsExtension.drawCubicBezierPath(_backBuffer.g2, x, y, 20, strength);
         #end
     }
 
@@ -98,7 +107,7 @@ class Graphics implements pongo.display.Graphics
         setColor(color);
         prepareGraphics2D();
         #if !macro
-        kha.graphics2.GraphicsExtension.drawPolygon(_framebuffer.g2, x, y, vertices, strength);
+        kha.graphics2.GraphicsExtension.drawPolygon(_backBuffer.g2, x, y, vertices, strength);
         #end
     }
 
@@ -108,15 +117,15 @@ class Graphics implements pongo.display.Graphics
         prepareGraphics2D();
 
         var nativeFont = cast(font, Font).nativeFont;
-        if(_framebuffer.g2.font != nativeFont) {
-            _framebuffer.g2.font = nativeFont;
+        if(_backBuffer.g2.font != nativeFont) {
+            _backBuffer.g2.font = nativeFont;
         }
 
-        if(_framebuffer.g2.fontSize != fontSize) {
-            _framebuffer.g2.fontSize = fontSize;
+        if(_backBuffer.g2.fontSize != fontSize) {
+            _backBuffer.g2.fontSize = fontSize;
         }
 
-        _framebuffer.g2.drawString(text, x, y);
+        _backBuffer.g2.drawString(text, x, y);
     }
 
     public function drawImage(texture: pongo.display.Texture, x: Float, y: Float) : Void
@@ -124,14 +133,14 @@ class Graphics implements pongo.display.Graphics
         setColor(0xffffffff);
         prepareGraphics2D();
 
-        _framebuffer.g2.drawImage(cast(texture, Texture).nativeTexture, x, y);
+        _backBuffer.g2.drawImage(cast(texture, Texture).nativeTexture, x, y);
     }
 
     public function drawSubImage(texture: pongo.display.Texture, x: Float, y: Float, sx: Float, sy: Float, sw: Float, sh: Float) : Void
     {
         setColor(0xffffffff);
         prepareGraphics2D();
-        _framebuffer.g2.drawSubImage(cast(texture, Texture).nativeTexture, x, y, sx, sy, sw, sh);
+        _backBuffer.g2.drawSubImage(cast(texture, Texture).nativeTexture, x, y, sx, sy, sw, sh);
     }
 
     public inline function translate(x :Float, y :Float) : Void
@@ -178,11 +187,11 @@ class Graphics implements pongo.display.Graphics
 
     public function prepareGraphics2D() : Void
     {
-        _framebuffer.g2.transformation.setFrom(_stateList.matrix);
-        _framebuffer.g2.opacity = _stateList.opacity;
+        _backBuffer.g2.transformation.setFrom(_stateList.matrix);
+        _backBuffer.g2.opacity = _stateList.opacity;
 
-        if(_framebuffer.g2.color != _stateList.color) {
-            _framebuffer.g2.color = _stateList.color;
+        if(_backBuffer.g2.color != _stateList.color) {
+            _backBuffer.g2.color = _stateList.color;
         }
     }
 
@@ -202,8 +211,7 @@ class Graphics implements pongo.display.Graphics
     }
 
     private var _stateList :DrawingState = new DrawingState();
-
-    private var _framebuffer :kha.Framebuffer;
+    private var _backBuffer :kha.Image;
 }
 
 private class DrawingState

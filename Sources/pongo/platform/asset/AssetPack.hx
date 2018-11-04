@@ -90,7 +90,7 @@ class AssetPack implements pongo.asset.AssetPack
 
         for(asset in manifest.assets) {
             switch asset {
-                case IMAGE(name, url): kha.Assets.loadImageFromPath(name, true, function(image :kha.Image) {
+                case IMAGE(name, url): kha.Assets.loadImageFromPath(name, false, function(image :kha.Image) {
                     loadedCount++;
                     checkLoadCount(loadedCount, targetCount, assetPack.images, name, new Texture(image), assetPack, cb);
                 });

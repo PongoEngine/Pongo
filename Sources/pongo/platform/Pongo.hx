@@ -45,13 +45,21 @@ import pongo.ecs.transform.TransformSystem;
     {
         pongo.platform.asset.ManifestBuilder.use("../Assets");
         kha.System.start({title: title, width: width, height: height}, function(window :kha.Window) {
-            cb(new Pongo(new pongo.platform.Window(window)));
+            cb(new Pongo(width, height, new pongo.platform.Window(window)));
         });
     }
 
-    private function new(window :Window)  :Void
+    private function new(width :Int, height :Int, window :Window)  :Void
     {
-        kha.System.notifyOnFrames(renderSprites);
+        _graphics = new Graphics(width, height);
+        
+        kha.System.notifyOnFrames(function(buffers) {
+            _graphics.begin();
+            Pongo.render(this.root, _graphics);
+            _graphics.end();
+            _graphics.drawToBuffer(buffers[0]);
+        });
+
         this.window = window;
         this.keyboard = new Keyboard();
         this.mouse = new Mouse();
@@ -104,17 +112,6 @@ import pongo.ecs.transform.TransformSystem;
         }
     }
 
-    private function renderSprites(framebuffer: Array<kha.Framebuffer>) : Void 
-    {
-        if(_graphics == null) {
-            _graphics = new Graphics(framebuffer[0]);
-        }
-
-        _graphics.begin();
-        Pongo.render(this.root, _graphics);
-        _graphics.end();
-    }
-
     private static function render(entity :Entity, g :Graphics) : Void
     {
         var transform = entity.getComponent(Transform);
@@ -124,7 +121,7 @@ import pongo.ecs.transform.TransformSystem;
             if(transform.opacity < 1)
                 g.multiplyOpacity(transform.opacity);
 
-            if(transform.visible && transform.opacity > 0) {
+            if(transform.visible && transform.opacity > 0 && transform.sprite != null) {
                 transform.sprite.draw(transform, g);
             }
         }
