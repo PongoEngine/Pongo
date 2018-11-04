@@ -32,6 +32,7 @@ import pongo.platform.display.Graphics;
 import pongo.Window;
 import pongo.ecs.transform.Transform;
 import pongo.ecs.transform.TransformSystem;
+import kha.FramebufferOptions;
 
 @:final class Pongo implements pongo.Pongo
 {
