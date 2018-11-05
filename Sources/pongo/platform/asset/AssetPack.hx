@@ -109,7 +109,7 @@ class AssetPack implements pongo.asset.AssetPack
 
                 case DATA(name, url): kha.Assets.loadBlobFromPath(name, function(blob :kha.Blob) {
                     loadedCount++;
-                    checkLoadCount(loadedCount, targetCount, assetPack.files, name, new File(blob.readUtf8String()), assetPack, cb);
+                    checkLoadCount(loadedCount, targetCount, assetPack.files, name, new File(blob.toString()), assetPack, cb);
                 });
             }
         }
