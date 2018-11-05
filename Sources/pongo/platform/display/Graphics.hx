@@ -27,41 +27,39 @@ package pongo.platform.display;
 
 import kha.math.FastMatrix3;
 import kha.Color;
-import kha.Image;
 import kha.Scaler;
+import kha.System;
 
 class Graphics implements pongo.display.Graphics
 {
+    public var framebuffer (default, null): kha.Framebuffer;
+    public var width (default, null): Int;
+    public var height (default, null): Int;
 
-    public var backBuffer :kha.Image;
-
-    public function new(width :Int, height :Int) : Void
+    public function new(framebuffer :kha.Framebuffer, width :Int, height :Int) : Void
     {
-        this.backBuffer = Image.createRenderTarget(width, height);
+        this.framebuffer = framebuffer;
+        this.width = width;
+        this.height = height;
     }
 
     public function begin() : Void
     {
-        backBuffer.g2.begin();
+        framebuffer.g2.begin();
+        var transform = Scaler.getScaledTransformation(this.width, this.height, System.windowWidth(), System.windowHeight(), System.screenRotation);
+        _stateList.matrix.setFrom(transform);
     }
 
     public function end() : Void
     {
-        backBuffer.g2.end();
-    }
-
-    public function drawToBuffer(frameBuffer :kha.Framebuffer) : Void
-    {
-        frameBuffer.g2.begin();
-        Scaler.scale(backBuffer, frameBuffer, kha.System.screenRotation);
-        frameBuffer.g2.end();
+        framebuffer.g2.end();
     }
 
     public function fillRect(color :Int, x :Float, y :Float, width :Float, height :Float) : Void 
     {
         setColor(color);
         prepareGraphics2D();
-        backBuffer.g2.fillRect(x, y, width, height);
+        framebuffer.g2.fillRect(x, y, width, height);
     }
 
     public function fillCircle(color :Int, cx: Float, cy: Float, radius: Float, segments: Int = 0) : Void
@@ -69,7 +67,7 @@ class Graphics implements pongo.display.Graphics
         setColor(color);
         prepareGraphics2D();
         #if !macro
-        kha.graphics2.GraphicsExtension.fillCircle(backBuffer.g2, cx, cy, radius, segments);
+        kha.graphics2.GraphicsExtension.fillCircle(framebuffer.g2, cx, cy, radius, segments);
         #end
     }
 
@@ -77,14 +75,14 @@ class Graphics implements pongo.display.Graphics
     {
         setColor(color);
         prepareGraphics2D();
-        backBuffer.g2.drawRect(x, y, width, height, strength);
+        framebuffer.g2.drawRect(x, y, width, height, strength);
     }
 
     public function drawLine(color :Int, x1: Float, y1: Float, x2: Float, y2: Float, strength: Float = 1.0) : Void 
     {
         setColor(color);
         prepareGraphics2D();
-        backBuffer.g2.drawLine(x1, y1, x2, y2, strength);
+        framebuffer.g2.drawLine(x1, y1, x2, y2, strength);
     }
 
     public function drawCircle(color :Int, cx: Float, cy: Float, radius: Float, strength: Float = 1, segments: Int = 0) : Void
@@ -92,7 +90,7 @@ class Graphics implements pongo.display.Graphics
         setColor(color);
         prepareGraphics2D();
         #if !macro
-        kha.graphics2.GraphicsExtension.drawCircle(backBuffer.g2, cx, cy, radius, strength, segments);
+        kha.graphics2.GraphicsExtension.drawCircle(framebuffer.g2, cx, cy, radius, strength, segments);
         #end
     }
 
@@ -101,7 +99,7 @@ class Graphics implements pongo.display.Graphics
         setColor(color);
         prepareGraphics2D();
         #if !macro
-        kha.graphics2.GraphicsExtension.drawCubicBezierPath(backBuffer.g2, x, y, 20, strength);
+        kha.graphics2.GraphicsExtension.drawCubicBezierPath(framebuffer.g2, x, y, 20, strength);
         #end
     }
 
@@ -110,7 +108,7 @@ class Graphics implements pongo.display.Graphics
         setColor(color);
         prepareGraphics2D();
         #if !macro
-        kha.graphics2.GraphicsExtension.drawPolygon(backBuffer.g2, x, y, vertices, strength);
+        kha.graphics2.GraphicsExtension.drawPolygon(framebuffer.g2, x, y, vertices, strength);
         #end
     }
 
@@ -120,15 +118,15 @@ class Graphics implements pongo.display.Graphics
         prepareGraphics2D();
 
         var nativeFont = cast(font, Font).nativeFont;
-        if(backBuffer.g2.font != nativeFont) {
-            backBuffer.g2.font = nativeFont;
+        if(framebuffer.g2.font != nativeFont) {
+            framebuffer.g2.font = nativeFont;
         }
 
-        if(backBuffer.g2.fontSize != fontSize) {
-            backBuffer.g2.fontSize = fontSize;
+        if(framebuffer.g2.fontSize != fontSize) {
+            framebuffer.g2.fontSize = fontSize;
         }
 
-        backBuffer.g2.drawString(text, x, y);
+        framebuffer.g2.drawString(text, x, y);
     }
 
     public function drawImage(texture: pongo.display.Texture, x: Float, y: Float) : Void
@@ -136,14 +134,14 @@ class Graphics implements pongo.display.Graphics
         setColor(0xffffffff);
         prepareGraphics2D();
 
-        backBuffer.g2.drawImage(cast(texture, Texture).nativeTexture, x, y);
+        framebuffer.g2.drawImage(cast(texture, Texture).nativeTexture, x, y);
     }
 
     public function drawSubImage(texture: pongo.display.Texture, x: Float, y: Float, sx: Float, sy: Float, sw: Float, sh: Float) : Void
     {
         setColor(0xffffffff);
         prepareGraphics2D();
-        backBuffer.g2.drawSubImage(cast(texture, Texture).nativeTexture, x, y, sx, sy, sw, sh);
+        framebuffer.g2.drawSubImage(cast(texture, Texture).nativeTexture, x, y, sx, sy, sw, sh);
     }
 
     public inline function translate(x :Float, y :Float) : Void
@@ -190,11 +188,11 @@ class Graphics implements pongo.display.Graphics
 
     public function prepareGraphics2D() : Void
     {
-        backBuffer.g2.transformation.setFrom(_stateList.matrix);
-        backBuffer.g2.opacity = _stateList.opacity;
+        framebuffer.g2.transformation.setFrom(_stateList.matrix);
+        framebuffer.g2.opacity = _stateList.opacity;
 
-        if(backBuffer.g2.color != _stateList.color) {
-            backBuffer.g2.color = _stateList.color;
+        if(framebuffer.g2.color != _stateList.color) {
+            framebuffer.g2.color = _stateList.color;
         }
     }
 
@@ -214,6 +212,7 @@ class Graphics implements pongo.display.Graphics
     }
 
     private var _stateList :DrawingState = new DrawingState();
+
 }
 
 private class DrawingState

@@ -52,13 +52,14 @@ import kha.FramebufferOptions;
 
     private function new(width :Int, height :Int, window :Window)  :Void
     {
-        _graphics = new Graphics(width, height);
-        
         kha.System.notifyOnFrames(function(buffers) {
+            if(_graphics == null) {
+                _graphics = new Graphics(buffers[0], width, height);
+            }
+
             _graphics.begin();
             Pongo.render(this.root, _graphics);
             _graphics.end();
-            _graphics.drawToBuffer(buffers[0]);
         });
 
         this.window = window;
