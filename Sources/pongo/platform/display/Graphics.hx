@@ -29,6 +29,16 @@ import kha.math.FastMatrix3;
 import kha.Color;
 import kha.Scaler;
 import kha.System;
+import kha.graphics4.PipelineState;
+import kha.graphics4.VertexShader;
+import kha.graphics4.VertexStructure;
+import kha.graphics4.VertexData;
+import kha.graphics4.BlendingOperation;
+import kha.graphics4.BlendingFactor;
+import kha.graphics4.TextureFormat;
+import kha.Shaders;
+import pongo.display.BlendMode;
+import kha.graphics4.Graphics2;
 
 class Graphics implements pongo.display.Graphics
 {
@@ -41,107 +51,135 @@ class Graphics implements pongo.display.Graphics
         this.framebuffer = framebuffer;
         this.width = width;
         this.height = height;
+        initPipeline();
     }
 
     public function begin() : Void
     {
-        framebuffer.g2.begin();
+        this.framebuffer.g2.begin();
         var transform = Scaler.getScaledTransformation(this.width, this.height, System.windowWidth(), System.windowHeight(), System.screenRotation);
         _stateList.matrix.setFrom(transform);
     }
 
+    private inline function initPipeline() : Void
+    {
+        var image = kha.Image.createRenderTarget(300, 300, TextureFormat.RGBA32);
+
+        var structure = Graphics2.createImageVertexStructure();
+        var pipeline = Graphics2.createImagePipeline(structure);
+        pipeline.compile();
+
+        _blendModes = new Map<Int, PipelineState -> Void>();
+        _blendModes.set(BlendMode.NORMAL, (p) -> {
+            p.blendSource = BlendingFactor.BlendOne;
+            p.blendDestination = BlendingFactor.InverseSourceAlpha;
+            p.alphaBlendSource = BlendingFactor.BlendOne;
+            p.alphaBlendDestination = BlendingFactor.InverseSourceAlpha;
+            p.blendOperation = BlendingOperation.Add;
+        });
+        _blendModes.set(BlendMode.LIGHTEST, (p) -> {
+            p.blendSource = BlendingFactor.BlendOne;
+            p.blendDestination = BlendingFactor.InverseSourceAlpha;
+            p.alphaBlendSource = BlendingFactor.BlendOne;
+            p.alphaBlendDestination = BlendingFactor.InverseSourceAlpha;
+            p.blendOperation = BlendingOperation.Max;
+        });
+        _blendModes.set(BlendMode.SUBTRACT, (p) -> {
+            p.blendSource = BlendingFactor.BlendOne;
+            p.blendDestination = BlendingFactor.InverseSourceAlpha;
+            p.alphaBlendSource = BlendingFactor.BlendOne;
+            p.alphaBlendDestination = BlendingFactor.InverseSourceAlpha;
+            p.blendOperation = BlendingOperation.ReverseSubtract;
+        });
+
+        this.framebuffer.g2.pipeline = pipeline;
+    }
+
     public function end() : Void
     {
-        framebuffer.g2.end();
+        this.framebuffer.g2.end();
     }
 
     public function fillRect(color :Int, x :Float, y :Float, width :Float, height :Float) : Void 
     {
-        setColor(color);
-        prepareGraphics2D();
-        framebuffer.g2.fillRect(x, y, width, height);
+        prepare(color);
+        this.framebuffer.g2.fillRect(x, y, width, height);
     }
 
     public function fillCircle(color :Int, cx: Float, cy: Float, radius: Float, segments: Int = 0) : Void
     {
-        setColor(color);
-        prepareGraphics2D();
+        prepare(color);
         #if !macro
-        kha.graphics2.GraphicsExtension.fillCircle(framebuffer.g2, cx, cy, radius, segments);
+        kha.graphics2.GraphicsExtension.fillCircle(this.framebuffer.g2, cx, cy, radius, segments);
         #end
     }
 
     public function drawRect(color :Int, x: Float, y: Float, width: Float, height: Float, strength: Float = 1.0) : Void 
     {
-        setColor(color);
-        prepareGraphics2D();
-        framebuffer.g2.drawRect(x, y, width, height, strength);
+        prepare(color);
+        this.framebuffer.g2.drawRect(x, y, width, height, strength);
     }
 
     public function drawLine(color :Int, x1: Float, y1: Float, x2: Float, y2: Float, strength: Float = 1.0) : Void 
     {
-        setColor(color);
-        prepareGraphics2D();
-        framebuffer.g2.drawLine(x1, y1, x2, y2, strength);
+        prepare(color);
+        this.framebuffer.g2.drawLine(x1, y1, x2, y2, strength);
     }
 
     public function drawCircle(color :Int, cx: Float, cy: Float, radius: Float, strength: Float = 1, segments: Int = 0) : Void
     {
-        setColor(color);
-        prepareGraphics2D();
+        prepare(color);
         #if !macro
-        kha.graphics2.GraphicsExtension.drawCircle(framebuffer.g2, cx, cy, radius, strength, segments);
+        kha.graphics2.GraphicsExtension.drawCircle(this.framebuffer.g2, cx, cy, radius, strength, segments);
         #end
     }
 
     public function drawCubicBezierPath(color :Int, x :Array<Float>, y :Array<Float>, strength:Float = 1.0):Void
     {
-        setColor(color);
-        prepareGraphics2D();
+        prepare(color);
         #if !macro
-        kha.graphics2.GraphicsExtension.drawCubicBezierPath(framebuffer.g2, x, y, 20, strength);
+        kha.graphics2.GraphicsExtension.drawCubicBezierPath(this.framebuffer.g2, x, y, 20, strength);
         #end
     }
 
     public function drawPolygon(color :Int, x: Float, y: Float, vertices: Array<kha.math.Vector2>, strength: Float = 1) : Void
     {
-        setColor(color);
-        prepareGraphics2D();
+        prepare(color);
         #if !macro
-        kha.graphics2.GraphicsExtension.drawPolygon(framebuffer.g2, x, y, vertices, strength);
+        kha.graphics2.GraphicsExtension.drawPolygon(this.framebuffer.g2, x, y, vertices, strength);
         #end
     }
 
     public function drawString(text :String, font :pongo.display.Font, color :Int, fontSize :Int, x :Float, y :Float) : Void
     {
-        setColor(color);
-        prepareGraphics2D();
+        prepare(color);
 
         var nativeFont = cast(font, Font).nativeFont;
-        if(framebuffer.g2.font != nativeFont) {
-            framebuffer.g2.font = nativeFont;
+        if(this.framebuffer.g2.font != nativeFont) {
+            this.framebuffer.g2.font = nativeFont;
         }
 
-        if(framebuffer.g2.fontSize != fontSize) {
-            framebuffer.g2.fontSize = fontSize;
+        if(this.framebuffer.g2.fontSize != fontSize) {
+            this.framebuffer.g2.fontSize = fontSize;
         }
 
-        framebuffer.g2.drawString(text, x, y);
+        this.framebuffer.g2.drawString(text, x, y);
     }
 
     public function drawImage(texture: pongo.display.Texture, x: Float, y: Float) : Void
     {
-        setColor(0xffffffff);
-        prepareGraphics2D();
-
-        framebuffer.g2.drawImage(cast(texture, Texture).nativeTexture, x, y);
+        prepare(0xffffffff);
+        this.framebuffer.g2.drawImage(cast(texture, Texture).nativeTexture, x, y);
+        if(_lastBlendMode != _stateList.blendMode) {
+            _blendModes.get(_stateList.blendMode)(this.framebuffer.g2.pipeline);
+            _lastBlendMode = _stateList.blendMode;
+        }
     }
 
     public function drawSubImage(texture: pongo.display.Texture, x: Float, y: Float, sx: Float, sy: Float, sw: Float, sh: Float) : Void
     {
-        setColor(0xffffffff);
-        prepareGraphics2D();
-        framebuffer.g2.drawSubImage(cast(texture, Texture).nativeTexture, x, y, sx, sy, sw, sh);
+        prepare(0xffffffff);
+        this.framebuffer.g2.drawSubImage(cast(texture, Texture).nativeTexture, x, y, sx, sy, sw, sh);
     }
 
     public inline function translate(x :Float, y :Float) : Void
@@ -186,13 +224,17 @@ class Graphics implements pongo.display.Graphics
         _stateList = _stateList.prev;
     }
 
-    public function prepareGraphics2D() : Void
+    public function prepare(color :Int) : Void
     {
-        framebuffer.g2.transformation.setFrom(_stateList.matrix);
-        framebuffer.g2.opacity = _stateList.opacity;
+        setColor(color);
+        this.framebuffer.g2.transformation.setFrom(_stateList.matrix);
 
-        if(framebuffer.g2.color != _stateList.color) {
-            framebuffer.g2.color = _stateList.color;
+        if(this.framebuffer.g2.opacity != _stateList.opacity) {
+            this.framebuffer.g2.opacity = _stateList.opacity;
+        }
+
+        if(this.framebuffer.g2.color != _stateList.color) {
+            this.framebuffer.g2.color = _stateList.color;
         }
     }
 
@@ -211,8 +253,14 @@ class Graphics implements pongo.display.Graphics
         _stateList.color = color;
     }
 
-    private var _stateList :DrawingState = new DrawingState();
+    public function setBlendMode(blendMode :BlendMode) : Void
+    {
+        _stateList.blendMode = blendMode;
+    }
 
+    private var _stateList :DrawingState = new DrawingState();
+    private var _blendModes :Map<Int, PipelineState -> Void>;
+    private var _lastBlendMode :BlendMode = BlendMode.NORMAL;
 }
 
 private class DrawingState
@@ -220,6 +268,7 @@ private class DrawingState
     public var matrix :FastMatrix3;
     public var opacity :Float;
     public var color :kha.Color;
+    public var blendMode :BlendMode;
 
     public var prev :DrawingState = null;
     public var next :DrawingState = null;
@@ -229,5 +278,6 @@ private class DrawingState
         matrix = FastMatrix3.identity();
         opacity = 1;
         color = Color.Black;
+        blendMode = BlendMode.NORMAL;
     }
 }

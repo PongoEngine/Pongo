@@ -118,12 +118,18 @@ import kha.FramebufferOptions;
     {
         var transform = entity.getComponent(Transform);
         if (transform != null) {
+            if (!transform.visible || transform.opacity <= 0) {
+                return; // Prune traversal, this sprite and all children are invisible
+            }
+
             g.save();
             g.transform(transform.matrix);
-            if(transform.opacity < 1)
+            g.setBlendMode(transform.blendMode);
+            if(transform.opacity < 1) {
                 g.multiplyOpacity(transform.opacity);
+            }
 
-            if(transform.visible && transform.opacity > 0 && transform.sprite != null) {
+            if(transform.sprite != null) {
                 transform.sprite.draw(transform, g);
             }
         }

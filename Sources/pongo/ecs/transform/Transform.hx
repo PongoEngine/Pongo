@@ -24,6 +24,7 @@ package pongo.ecs.transform;
 import kha.math.FastMatrix3;
 import pongo.ecs.Component;
 import pongo.display.Sprite;
+import pongo.display.BlendMode;
 using pongo.math.CMath;
 
 class Transform implements Component
@@ -37,6 +38,7 @@ class Transform implements Component
     var rotation :Float = 0;
     var opacity :Float = 1;
     var visible :Bool = true;
+    var blendMode :BlendMode = BlendMode.NORMAL;
     @:notReactive var matrix :FastMatrix3 = FastMatrix3.identity();
     @:notReactive var sprite :Sprite;
 }
