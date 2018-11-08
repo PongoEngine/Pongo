@@ -191,11 +191,11 @@ class Graphics implements pongo.display.Graphics
         _graphics.transformation.setFrom(_stateList.matrix);
 
         switch [_stateList.pipeline, gPipeline] {
-            case [DEFAULT, COLORED]: handPipeline(_coloredPipeline);
-            case [DEFAULT, TEXT]: handPipeline(_textPipeline);
-            case [DEFAULT, IMAGE]: handPipeline(_imagePipeline);
+            case [DEFAULT, COLORED]: handPipeline(_coloredPipeline, _stateList.blendMode);
+            case [DEFAULT, TEXT]: handPipeline(_textPipeline, _stateList.blendMode);
+            case [DEFAULT, IMAGE]: handPipeline(_imagePipeline, _stateList.blendMode);
             case [CUSTOM(pipelineState, fn), _]: {
-                handPipeline(pipelineState);
+                handPipeline(pipelineState, _stateList.blendMode);
                 if(fn != null) {
                     fn(framebuffer.g4);
                 }
@@ -281,10 +281,11 @@ class Graphics implements pongo.display.Graphics
         }
     }
 
-    private inline function handPipeline(pipelineState :PipelineState) : Void
+    private inline function handPipeline(pipelineState :PipelineState, blendMode :BlendMode) : Void
     {
         if(_graphics.pipeline != pipelineState) {
             _graphics.pipeline = pipelineState;
+            handBlendMode(blendMode);
         }
     }
 
