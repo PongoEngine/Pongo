@@ -50,9 +50,7 @@ class Graphics implements pongo.display.Graphics
         this.width = width;
         this.height = height;
         _graphics = new Graphics2(this.framebuffer);
-        initTextPipeline();
-        initColorPipeline();
-        initImagePipeline();
+        initPipelines();
     }
 
     public function begin() : Void
@@ -137,10 +135,6 @@ class Graphics implements pongo.display.Graphics
     {
         prepare(0xffffffff, IMAGE);
         _graphics.drawImage(cast(texture, Texture).nativeTexture, x, y);
-        if(_lastBlendMode != _stateList.blendMode) {
-            _blendModes.get(_stateList.blendMode)(_graphics.pipeline);
-            _lastBlendMode = _stateList.blendMode;
-        }
     }
 
     public function drawSubImage(texture: pongo.display.Texture, x: Float, y: Float, sx: Float, sy: Float, sw: Float, sh: Float) : Void
@@ -197,10 +191,20 @@ class Graphics implements pongo.display.Graphics
         _graphics.transformation.setFrom(_stateList.matrix);
 
         switch [_stateList.pipeline, gPipeline] {
-            case [DEFAULT, COLORED]: setPipelineState(_coloredPipeline);
-            case [DEFAULT, TEXT]: setPipelineState(_textPipeline);
-            case [DEFAULT, IMAGE]: setPipelineState(_imagePipeline);
-            case [CUSTOM(pipelineState), _]: setPipelineState(pipelineState);
+            case [DEFAULT, COLORED]: handPipeline(_coloredPipeline);
+            case [DEFAULT, TEXT]: handPipeline(_textPipeline);
+            case [DEFAULT, IMAGE]: handPipeline(_imagePipeline);
+            case [CUSTOM(pipelineState, fn), _]: {
+                handPipeline(pipelineState);
+                if(fn != null) {
+                    fn(framebuffer.g4);
+                }
+            }
+        }
+
+        if(_lastBlendMode != _stateList.blendMode) {
+            handBlendMode(_stateList.blendMode);
+            _lastBlendMode = _stateList.blendMode;
         }
 
         if(_graphics.opacity != _stateList.opacity) {
@@ -209,13 +213,6 @@ class Graphics implements pongo.display.Graphics
 
         if(_graphics.color != _stateList.color) {
             _graphics.color = _stateList.color;
-        }
-    }
-
-    private inline function setPipelineState(pipelineState :PipelineState) : Void
-    {
-        if(_graphics.pipeline != pipelineState) {
-            _graphics.pipeline = pipelineState;
         }
     }
 
@@ -244,27 +241,56 @@ class Graphics implements pongo.display.Graphics
         _stateList.pipeline = pipeline;
     }
 
-    private function initTextPipeline() : Void
+    private function initPipelines() : Void
     {
         _textPipeline = Graphics2.createTextPipeline(Graphics2.createTextVertexStructure());
         _textPipeline.compile();
-    }
-
-    private function initImagePipeline() : Void
-    {
         _imagePipeline = Graphics2.createImagePipeline(Graphics2.createImageVertexStructure());
         _imagePipeline.compile();
-    }
-
-    private function initColorPipeline() : Void
-    {
         _coloredPipeline = Graphics2.createColoredPipeline(Graphics2.createColoredVertexStructure());
         _coloredPipeline.compile();
     }
 
+    private inline function handBlendMode(blendMode :BlendMode) : Void
+    {
+        switch blendMode {
+            case NORMAL: {
+                _graphics.pipeline.blendSource = BlendingFactor.BlendOne;
+                _graphics.pipeline.blendDestination = BlendingFactor.InverseSourceAlpha;
+            }
+            case ADD: {
+                _graphics.pipeline.blendSource = BlendingFactor.BlendOne;
+                _graphics.pipeline.blendDestination = BlendingFactor.BlendOne;
+            }
+            case MULTIPLY: {
+                _graphics.pipeline.blendSource = BlendingFactor.DestinationColor;
+                _graphics.pipeline.blendDestination = BlendingFactor.InverseSourceAlpha;
+            }
+            case SCREEN: {
+                _graphics.pipeline.blendSource = BlendingFactor.BlendOne;
+                _graphics.pipeline.blendDestination = BlendingFactor.InverseSourceColor;
+            }
+            case MASK: {
+                _graphics.pipeline.blendSource = BlendingFactor.BlendZero;
+                _graphics.pipeline.blendDestination = BlendingFactor.SourceAlpha;
+            }
+            case COPY: {
+                _graphics.pipeline.blendSource = BlendingFactor.BlendOne;
+                _graphics.pipeline.blendDestination = BlendingFactor.BlendZero;
+            }
+        }
+    }
+
+    private inline function handPipeline(pipelineState :PipelineState) : Void
+    {
+        if(_graphics.pipeline != pipelineState) {
+            _graphics.pipeline = pipelineState;
+        }
+    }
+
     private var _stateList :DrawingState = new DrawingState();
-    private var _blendModes :Map<Int, PipelineState -> Void>;
-    private var _lastBlendMode :BlendMode = BlendMode.EMPTY;
+    private var _lastBlendMode :BlendMode = BlendMode.NORMAL;
+    private var _lastTexture :pongo.display.Texture = null;
     private var _graphics :Graphics2;
 
     private var _imagePipeline :PipelineState;
@@ -288,7 +314,7 @@ private class DrawingState
         matrix = FastMatrix3.identity();
         opacity = 1;
         color = Color.Black;
-        blendMode = BlendMode.EMPTY;
+        blendMode = BlendMode.NORMAL;
     }
 }
 
