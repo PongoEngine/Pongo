@@ -3,9 +3,7 @@ package pongo.display;
 @:enum
 abstract BlendMode(Int) to Int
 {
-    var NORMAL = 1;
-    var LIGHTEST = 2;
-    var SUBTRACT = 3;
+    var EMPTY = -1;
 }
 
 

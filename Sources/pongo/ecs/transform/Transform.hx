@@ -38,7 +38,7 @@ class Transform implements Component
     var rotation :Float = 0;
     var opacity :Float = 1;
     var visible :Bool = true;
-    var blendMode :BlendMode = BlendMode.NORMAL;
+    var blendMode :BlendMode = BlendMode.EMPTY;
     @:notReactive var matrix :FastMatrix3 = FastMatrix3.identity();
     @:notReactive var sprite :Sprite;
 }

@@ -25,6 +25,8 @@ import kha.math.FastMatrix3;
 
 interface Graphics
 {
+    function setPipeline(pipeline :Pipeline) : Void;
+
     function begin() : Void;
 
     function end() : Void;
