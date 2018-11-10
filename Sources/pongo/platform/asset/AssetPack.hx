@@ -26,7 +26,6 @@ import pongo.platform.display.Font;
 import pongo.platform.display.Texture;
 import pongo.platform.sound.Sound;
 import pongo.asset.Manifest;
-import pongo.asset.File;
 
 using pongo.util.Strings;
 
@@ -109,7 +108,7 @@ class AssetPack implements pongo.asset.AssetPack
 
                 case DATA(name, url): kha.Assets.loadBlobFromPath(name, function(blob :kha.Blob) {
                     loadedCount++;
-                    checkLoadCount(loadedCount, targetCount, assetPack.files, name, new File(blob.toString()), assetPack, cb);
+                    checkLoadCount(loadedCount, targetCount, assetPack.files, name, new File(blob), assetPack, cb);
                 });
             }
         }
