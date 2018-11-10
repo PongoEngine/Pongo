@@ -38,7 +38,7 @@ class TextSprite implements Sprite
         this.text = text;
     }
 
-    public function draw(transform :Transform, graphics :Graphics) : Void
+    public function draw(dt :Float, transform :Transform, graphics :Graphics) : Void
     {
         graphics.drawString(text, font, color, fontSize, 0, 0);
     }

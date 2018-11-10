@@ -52,13 +52,23 @@ import kha.FramebufferOptions;
 
     private function new(width :Int, height :Int, window :Window)  :Void
     {
+        var lastRenderTime :Float = -1;
+        
+
         kha.System.notifyOnFrames(function(buffers) {
             if(_graphics == null) {
                 _graphics = new Graphics(buffers[0], width, height);
             }
 
+            var renderDt :Float = 0;
+            var time = kha.System.time;
+            if(lastRenderTime != -1) {
+                renderDt = time - lastRenderTime;
+            }
+            lastRenderTime = time;
+
             _graphics.begin();
-            Pongo.render(this.root, _graphics);
+            Pongo.render(renderDt, this.root, _graphics);
             _graphics.end();
         });
 
@@ -114,7 +124,7 @@ import kha.FramebufferOptions;
         }
     }
 
-    private static function render(entity :Entity, g :Graphics) : Void
+    private static function render(dt :Float, entity :Entity, g :Graphics) : Void
     {
         var transform = entity.getComponent(Transform);
         if (transform != null) {
@@ -130,14 +140,14 @@ import kha.FramebufferOptions;
             }
 
             if(transform.sprite != null) {
-                transform.sprite.draw(transform, g);
+                transform.sprite.draw(dt, transform, g);
             }
         }
 
         var p = entity.firstChild;
         while (p != null) {
             var next = p.next;
-            render(p, g);
+            render(dt, p, g);
             p = next;
         }
 

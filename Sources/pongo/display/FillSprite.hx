@@ -39,7 +39,7 @@ class FillSprite implements Sprite
         this.height = height;
     }
 
-    public function draw(transform :Transform, graphics :Graphics) : Void
+    public function draw(dt :Float, transform :Transform, graphics :Graphics) : Void
     {
         graphics.fillRect(this.color, 0, 0, width, height);
     }
