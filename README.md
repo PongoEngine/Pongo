@@ -1,9 +1,9 @@
 # Pongo  
 _ECS Game Framework built on top of Kha_
 
-**Pongo** is a frankensteined monster of a 2D game framework. It leverages concepts and code from my favorite game frameworks including Flambe, Ash, and Entitas. 
+**Pongo** is a frankensteined monster of a 2D game framework. It leverages concepts and code from game frameworks including Flambe, Ash, and Entitas. 
 
-At the heart of pongo is a Simple ECS for decoupled game logic and a Tree Structure for intuitive sprite rendering. Its the best of both worlds!
+At the heart of pongo is a Simple ECS for decoupled game logic and sprite rendering.
 
 ## Quick overview of the Pongo's ECS
 - Components are pure data.
