@@ -40,8 +40,11 @@ class Main {
 
     private static function onStart(pongo :Pongo) : Void
     {
-        var heroes = pongo.manager.registerGroup([Position, Hero]);
-        pongo.addSystem(new HeroSystem(heroes));
+        var transforms = pongo.manager.registerGroup([Transform]);
+        var heroes = pongo.manager.registerGroup([Position, Hero, Transform]);
+        pongo
+            .addSystem(new TransformSystem(transforms))
+            .addSystem(new HeroSystem(heroes));
 
         pongo.root
             .addComponent(new Transform(new FillSprite(0xff00ff00, 40, 40)))
