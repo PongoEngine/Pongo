@@ -1,5 +1,5 @@
 # Pongo  
-_Reactiveish ECS Game Framework built on top of Kha_
+_Reactive-ish ECS Game Framework built on top of Kha_
 
 **Pongo** is a frankensteined monster of a 2D game framework. It leverages concepts and code from game frameworks including Flambe, Ash, and Entitas. 
 
