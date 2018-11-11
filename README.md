@@ -73,7 +73,7 @@ class HeroSystem implements System
 
     public function update(pongo :Pongo, dt :Float) : Void
     {
-        heroes.changed.iterate(function(entity) {
+        heroes.iterate(function(entity) {
             var hero :Hero = entity.getComponent(Hero);
             var pos :Position = entity.getComponent(Position);
             var transform :Transform = entity.getComponent(Transform);
