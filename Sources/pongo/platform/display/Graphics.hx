@@ -37,6 +37,8 @@ import kha.graphics4.BlendingFactor;
 import pongo.display.BlendMode;
 import pongo.display.Pipeline;
 import kha.graphics4.Graphics2;
+import pongo.math.Rectangle;
+import pongo.math.CMath;
 
 class Graphics implements pongo.display.Graphics
 {
@@ -163,6 +165,20 @@ class Graphics implements pongo.display.Graphics
         _stateList.matrix.setFrom(_stateList.matrix.multmat(matrix));
     }
 
+    public function applyScissor (x :Float, y :Float, width :Float, height :Float) :Void
+    {
+        if (width < 0) {
+            x += width;
+            width = -width;
+        }
+        if (height < 0) {
+            y += height;
+            height = -height;
+        }
+
+        _stateList.applyScissor(x, y, width, height);
+    }
+
     public function save() : Void
     {
         var current = _stateList;
@@ -177,6 +193,7 @@ class Graphics implements pongo.display.Graphics
         state.matrix.setFrom(current.matrix);
         state.opacity = current.opacity;
         state.color = current.color;
+        state.scissor = current.scissor;
         _stateList = state;
     }
 
@@ -213,6 +230,24 @@ class Graphics implements pongo.display.Graphics
 
         if(_graphics.color != _stateList.color) {
             _graphics.color = _stateList.color;
+        }
+
+        if(_lastScissor != _stateList.scissor) {
+            if(_stateList.scissor == null) {
+                _graphics.disableScissor();
+            }
+            else {
+                var _scaleX = _stateList.matrix._00;
+                var _scaleY = _stateList.matrix._11;
+                var _x = _stateList.matrix._20;
+                var _y = _stateList.matrix._21;
+                var x = Std.int(_stateList.scissor.x + _x);
+                var y = Std.int(_stateList.scissor.y + _y);
+                var width = Std.int(_stateList.scissor.width * _scaleX);
+                var height = Std.int(_stateList.scissor.height * _scaleY);
+                _graphics.scissor(x, y, width, height);
+            }
+            _lastScissor = _stateList.scissor;
         }
     }
 
@@ -292,6 +327,7 @@ class Graphics implements pongo.display.Graphics
     private var _stateList :DrawingState = new DrawingState();
     private var _lastBlendMode :BlendMode = BlendMode.NORMAL;
     private var _lastTexture :pongo.display.Texture = null;
+    private var _lastScissor :Rectangle = null;
     private var _graphics :Graphics2;
 
     private var _imagePipeline :PipelineState;
@@ -306,6 +342,7 @@ private class DrawingState
     public var color :kha.Color;
     public var blendMode :BlendMode;
     public var pipeline :Pipeline = Pipeline.DEFAULT;
+    public var scissor :Rectangle = null;
 
     public var prev :DrawingState = null;
     public var next :DrawingState = null;
@@ -316,6 +353,24 @@ private class DrawingState
         opacity = 1;
         color = Color.Black;
         blendMode = BlendMode.NORMAL;
+    }
+
+    public function applyScissor(x :Float, y :Float, width :Float, height :Float)
+    {
+        if (scissor != null) {
+            // Intersection with the previous scissor rectangle
+            var x1 = CMath.max(scissor.x, x);
+            var y1 = CMath.max(scissor.y, y);
+            var x2 = CMath.min(scissor.x + scissor.width, x + width);
+            var y2 = CMath.min(scissor.y + scissor.height, y + height);
+            x = x1;
+            y = y1;
+            width = x2 - x1;
+            height = y2 - y1;
+        } else {
+            scissor = new Rectangle(0,0,0,0);
+        }
+        scissor.setFrom(new Rectangle(Math.round(x), Math.round(y), Math.round(width), Math.round(height)));
     }
 }
 

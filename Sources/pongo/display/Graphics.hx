@@ -70,4 +70,6 @@ interface Graphics
     function setColor(color :Int) : Void;
 
     function setBlendMode(blendMode :BlendMode) : Void;
+
+    function applyScissor (x :Float, y :Float, width :Float, height :Float) :Void;
 }
