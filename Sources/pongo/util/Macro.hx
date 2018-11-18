@@ -54,6 +54,7 @@ class Macro
                             expr: macro {
                                 if($i{"_" + field.name} != $i{field.name}) {
                                     $i{"_" + field.name} = $i{field.name};
+                                    this.hasChanged = true;
                                     if(this.owner != null) {
                                         this.owner.notifyChange();
                                     }
@@ -126,6 +127,13 @@ class Macro
             name: "componentName",
             access: [Access.APublic],
             kind: FieldType.FProp("default", "null", macro $v{Context.getLocalClass().toString()}), 
+            pos: Context.currentPos(),
+        });
+
+        fields.push({
+            name: "hasChanged",
+            access: [Access.APublic],
+            kind: FieldType.FProp("default", "null", macro $v{false}), 
             pos: Context.currentPos(),
         });
 

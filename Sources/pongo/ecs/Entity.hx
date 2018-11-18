@@ -170,6 +170,13 @@ class Entity implements Disposable
         return _components.get(name);
     }
 
+    public function resetChanged() : Void
+    {
+        for(comp in _components) {
+            comp.hasChanged = false;
+        }
+    }
+
     public function removeComponentByClassName(name :String) : Bool
     {
         if(_components.exists(name)) {

@@ -83,6 +83,9 @@ class SourceGroup implements Group
     private function swapQueue() : Void
     {
         for(group in _reactiveGroups) {
+            group.iterate(function(e) {
+                e.resetChanged();
+            });
             group.swapQueue();
         }
     }
