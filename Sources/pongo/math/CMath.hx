@@ -23,6 +23,16 @@ package pongo.math;
 
 class CMath
 {
+
+    public static inline var E = 2.718281828459045;
+    public static inline var LN2 = 0.6931471805599453;
+    public static inline var LN10 = 2.302585092994046;
+    public static inline var LOG2E = 1.4426950408889634;
+    public static inline var LOG10E = 0.43429448190325176;
+    public static inline var PI = 3.141592653589793;
+    public static inline var SQRT1_2 = 0.7071067811865476;
+    public static inline var SQRT2 = 1.4142135623730951;
+    
     /** The lowest integer value in Flash and JS. */
     public static inline var INT_MIN :Int = -2147483648;
 

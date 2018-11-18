@@ -35,7 +35,7 @@ class ImageSprite implements Sprite
         this.texture = texture;
     }
 
-    public function draw(transform :Transform, graphics :Graphics) : Void
+    public function draw(dt :Float, transform :Transform, graphics :Graphics) : Void
     {
         graphics.drawImage(texture, 0, 0);
     }
