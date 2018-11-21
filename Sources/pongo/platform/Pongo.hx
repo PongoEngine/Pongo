@@ -141,6 +141,7 @@ import kha.FramebufferOptions;
 
             if(transform.sprite != null) {
                 transform.sprite.draw(dt, transform, g);
+                g.drawTransform(transform);
             }
         }
 

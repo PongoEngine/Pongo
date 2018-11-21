@@ -39,6 +39,8 @@ import pongo.display.Pipeline;
 import kha.graphics4.Graphics2;
 import pongo.math.Rectangle;
 import pongo.math.CMath;
+import pongo.ecs.transform.Transform;
+using kha.graphics2.GraphicsExtension;
 
 class Graphics implements pongo.display.Graphics
 {
@@ -76,9 +78,7 @@ class Graphics implements pongo.display.Graphics
     public function fillCircle(color :Int, cx: Float, cy: Float, radius: Float, segments: Int = 0) : Void
     {
         prepare(color, COLORED);
-        #if !macro
-        kha.graphics2.GraphicsExtension.fillCircle(_graphics, cx, cy, radius, segments);
-        #end
+        _graphics.fillCircle(cx, cy, radius, segments);
     }
 
     public function drawRect(color :Int, x: Float, y: Float, width: Float, height: Float, strength: Float = 1.0) : Void 
@@ -96,25 +96,19 @@ class Graphics implements pongo.display.Graphics
     public function drawCircle(color :Int, cx: Float, cy: Float, radius: Float, strength: Float = 1, segments: Int = 0) : Void
     {
         prepare(color, COLORED);
-        #if !macro
-        kha.graphics2.GraphicsExtension.drawCircle(_graphics, cx, cy, radius, strength, segments);
-        #end
+        _graphics.drawCircle(cx, cy, radius, strength, segments);
     }
 
     public function drawCubicBezierPath(color :Int, x :Array<Float>, y :Array<Float>, strength:Float = 1.0):Void
     {
         prepare(color, COLORED);
-        #if !macro
-        kha.graphics2.GraphicsExtension.drawCubicBezierPath(_graphics, x, y, 20, strength);
-        #end
+        _graphics.drawCubicBezierPath(x, y, 20, strength);
     }
 
     public function drawPolygon(color :Int, x: Float, y: Float, vertices: Array<kha.math.Vector2>, strength: Float = 1) : Void
     {
         prepare(color, COLORED);
-        #if !macro
-        kha.graphics2.GraphicsExtension.drawPolygon(_graphics, x, y, vertices, strength);
-        #end
+        _graphics.drawPolygon(x, y, vertices, strength);
     }
 
     public function drawString(text :String, font :pongo.display.Font, color :Int, fontSize :Int, x :Float, y :Float) : Void
@@ -143,6 +137,17 @@ class Graphics implements pongo.display.Graphics
     {
         prepare(0xffffffff, IMAGE);
         _graphics.drawSubImage(cast(texture, Texture).nativeTexture, x, y, sx, sy, sw, sh);
+    }
+
+    public function drawTransform(transform :Transform) : Void
+    {
+        prepare(0xffffffff, COLORED);
+        this.fillCircle(0xff000000, transform.anchorX, transform.anchorY, 7);
+        this.fillCircle(0xffffffff, transform.anchorX, transform.anchorY, 5);
+
+        var width = transform.sprite.getNaturalWidth();
+        var height = transform.sprite.getNaturalHeight();
+        this.drawRect(0xffffaacc, 0, 0, width, height, 4);
     }
 
     public inline function translate(x :Float, y :Float) : Void
