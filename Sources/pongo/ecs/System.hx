@@ -23,6 +23,17 @@ package pongo.ecs;
 
 import pongo.Pongo;
 
-interface System {
-    function update(pongo :Pongo, dt :Float) : Void;
+class System {
+    @:allow(pongo.Pongo) public var pongo (default, null):Pongo;
+    public function update(dt :Float) : Void
+    {
+    }
+
+    public function onAdded() : Void
+    {
+    }
+
+    public function onRemoved() : Void
+    {
+    }
 }

@@ -26,14 +26,18 @@ import pongo.ecs.Entity;
 import pongo.ecs.group.SourceGroup;
 import kha.math.FastMatrix3;
 
-class TransformSystem implements System
+class TransformSystem extends System
 {
-    public function new(transforms :SourceGroup) : Void
+    public function new() : Void
     {
-        _transforms = transforms;
     }
 
-    public function update(pongo :Pongo, dt :Float) : Void
+    override public function onAdded() : Void
+    {
+        _transforms = this.pongo.manager.registerGroup([Transform]);
+    }
+
+    override public function update(dt :Float) : Void
     {
         _transforms.changed.iterate(function(e) {
             var transform = e.getComponent(Transform);

@@ -79,7 +79,7 @@ import kha.FramebufferOptions;
         _schedulerID = kha.Scheduler.addTimeTask(update, 0, 1/60);
         _systems = new Map<System, System>();
         this.root = this.createEntity();
-        this.addSystem(new TransformSystem(this.manager.registerGroup([Transform])));
+        this.addSystem(new TransformSystem());
     }
 
     public inline function createEntity() : Entity
@@ -90,12 +90,15 @@ import kha.FramebufferOptions;
     public function addSystem(system :System) : Pongo
     {
         _systems.set(system, system);
+        system.pongo = this;
+        system.onAdded();
         return this;
     }
 
     public function removeSystem(system :System) : Pongo
     {
         _systems.remove(system);
+        system.onRemoved();
         return this;
     }
 
@@ -120,7 +123,7 @@ import kha.FramebufferOptions;
 
         manager.update();
         for(system in _systems) {
-            system.update(this, dt);
+            system.update(dt);
         }
     }
 
