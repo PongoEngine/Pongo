@@ -25,14 +25,13 @@ import pongo.asset.Manifest;
 import pongo.platform.asset.AssetPack;
 import pongo.ecs.System;
 import pongo.ecs.Entity;
-import pongo.ecs.manager.Manager;
+import pongo.ecs.Manager;
 import pongo.platform.input.Keyboard;
 import pongo.platform.input.Mouse;
 import pongo.platform.display.Graphics;
 import pongo.Window;
 import pongo.ecs.transform.Transform;
 import pongo.ecs.transform.TransformSystem;
-import kha.FramebufferOptions;
 
 @:final class Pongo implements pongo.Pongo
 {
@@ -121,7 +120,6 @@ import kha.FramebufferOptions;
         }
         _lastTime = time;
 
-        manager.update();
         for(system in _systems) {
             system.update(dt);
         }

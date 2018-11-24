@@ -39,7 +39,7 @@ class TransformSystem extends System
 
     override public function update(dt :Float) : Void
     {
-        _transforms.changed.iterate(function(e) {
+        _transforms.iterate(function(e) {
             var transform = e.getComponent(Transform);
             transform.matrix
                 .setFrom(FastMatrix3.identity()

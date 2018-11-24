@@ -21,96 +21,45 @@
 
 package pongo.ecs.group;
 
-class SourceGroup implements Group
+@:allow(pongo.ecs.Manager)
+class SourceGroup extends Group
 {
-    public var rules (default, null):Rules;
-    public var changed (default, null) :ReactiveGroup;
-    public var length (get, null):Int;
-
-    public function new(rules :Rules) : Void
+    private function new(rules :Rules) : Void
     {
-        this.rules = rules;
-        _list = new EntityList();
-        _reactiveGroups = [];
-        this.changed = createReactiveGroup(function(e) return true);
+        super(rules);
+        _subGroups = [];
     }
 
-    public function first() : Entity
+    public function createSubGroup(rule :Entity -> Bool) : Group
     {
-        if(_list.head == null) return null;
-        return _list.head.entity;
-    }
-
-    public inline function iterate(fn :Entity -> Void) : Void
-    {
-        var p = _list.head;
-        while(p != null) {
-            fn(p.entity);
-            p = p.next;
-        }
-    }
-
-    public function iterateWithEscape(fn :Entity -> Bool) : Void
-    {
-        var p = _list.head;
-        while(p != null) {
-            if(fn(p.entity)) {
-                return;
-            }
-            p = p.next;
-        }
-    }
-
-    public function createReactiveGroup(rule :Entity -> Bool) : ReactiveGroup
-    {
-        var subGroup = new ReactiveGroup(new Rules(rule));
-        _reactiveGroups.push(subGroup);
+        var subGroup = new Group(new Rules(rule));
+        _subGroups.push(subGroup);
         return subGroup;
     }
 
-    @:allow(pongo.ecs.manager.Manager)
-    private function queueChanged(entity :Entity) : Void
+    private function changed(entity :Entity, remove :Bool) : Void
     {
-        if(entity.isDisposed) {
-            return;
-        }
-        for(group in _reactiveGroups) {
-            group.queueChanged(entity);
+        for(group in _subGroups) {
+            if(remove) group.remove(entity);
+            else group.add(entity);
         }
     }
 
-    @:allow(pongo.ecs.manager.ManagedGroup)
-    private function swapQueue() : Void
+    override private function add(entity :Entity) : Bool
     {
-        for(group in _reactiveGroups) {
-            group.iterate(function(e) {
-                e.resetChanged();
-            });
-            group.swapQueue();
+        for(group in _subGroups) {
+            group.add(entity);
         }
+        return super.add(entity);
     }
 
-    @:allow(pongo.ecs.manager.Manager)
-    private function add(entity :Entity) : Bool
+    override private function remove(entity :Entity) : Bool
     {
-        return _list.add(entity);
-    }
-
-    @:allow(pongo.ecs.manager.Manager)
-    private function remove(entity :Entity) : Bool
-    {
-        for(group in _reactiveGroups) {
+        for(group in _subGroups) {
             group.remove(entity);
         }
-        return _list.remove(entity);
+        return super.remove(entity);
     }
 
-    private function get_length() : Int
-    {
-        return _list.size;
-    }
-
-    private var _list :EntityList;
-    private var _reactiveGroups :Array<ReactiveGroup>;
-    private var _changed :ReactiveGroup = null;
+    private var _subGroups :Array<Group>;
 }

@@ -19,14 +19,18 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.ecs.manager;
+package pongo.ecs;
 
 import pongo.ecs.Entity;
 import pongo.ecs.group.SourceGroup;
 import pongo.ecs.group.Rules;
 using pongo.util.Strings;
 
-class ManagedGroup
+#if macro
+import haxe.macro.Expr;
+#end
+
+class Manager
 {
     public function new() : Void
     {
@@ -34,13 +38,43 @@ class ManagedGroup
         _classGroups = new Map<Int, SourceGroup>();
     }
 
-    public inline function handle(entity :Entity, fn :SourceGroup -> Void) : Void
+    public function notifyAdd(entity :Entity) : Void
     {
         for(key in _classKeys) {
             var group = _classGroups.get(key);
             if(group.rules.satisfy(entity)) {
-                fn(group);
+                group.add(entity);
             }
+        }
+    }
+
+    public function notifyRemove(entity :Entity) : Void
+    {
+        for(key in _classKeys) {
+            var group = _classGroups.get(key);
+            if(group.rules.satisfy(entity)) {
+                group.remove(entity);
+            }
+        }
+    }
+
+    public function notifyChanged(entity :Entity) : Void
+    {
+        for(key in _classKeys) {
+            // var group = _classGroups.get(key);
+            // group.changed(entity, group.rules.satisfy(entity));
+        }
+    }
+
+    macro public function registerGroup(self:Expr, classes :ExprOf<Array<Class<Component>>>) :ExprOf<SourceGroup>
+    {
+        return switch (classes.expr) {
+            case EArrayDecl(vals): {
+                macro $self.createGroupFromClassNames(cast $a{vals.map(function(v) {
+                    return macro $v.COMPONENT_NAME;
+                })});
+            }
+            case _: macro throw "err";
         }
     }
 
@@ -52,15 +86,6 @@ class ManagedGroup
             _classKeys.push(key);
         }
         return _classGroups.get(key);
-    }
-
-    public function update() : Void
-    {
-        var i = 0;
-        while(i < _classKeys.length) {
-            _classGroups.get(_classKeys[i]).swapQueue();
-            i++;
-        }
     }
 
     private var _classKeys :Array<Int>;

@@ -21,14 +21,65 @@
 
 package pongo.ecs.group;
 
-import pongo.ecs.group.Rules;
-
-interface Group
+@:allow(pongo.ecs.group.SourceGroup)
+class Group
 {
     public var rules (default, null):Rules;
     public var length (get, null):Int;
 
-    public function first() : Entity;
-    public function iterate(fn :Entity -> Void) : Void;
-    public function iterateWithEscape(fn :Entity -> Bool) : Void;
+    private function new(rules :Rules) : Void
+    {
+        this.rules = rules;
+        _list = new EntityList();
+    }
+
+    public function first() : Entity
+    {
+        if(_list.head == null) return null;
+        return _list.head.entity;
+    }
+
+    public inline function iterate(fn :Entity -> Void) : Void
+    {
+        var p = _list.head;
+        while(p != null) {
+            fn(p.entity);
+            p = p.next;
+        }
+    }
+
+    public function iterateWithEscape(fn :Entity -> Bool) : Void
+    {
+        var p = _list.head;
+        while(p != null) {
+            if(fn(p.entity)) {
+                return;
+            }
+            p = p.next;
+        }
+    }
+
+    private function add(entity :Entity) : Bool
+    {
+        if(this.rules.satisfy(entity)) {
+            return _list.add(entity);
+        }
+        return false;
+    }
+
+    private function remove(entity :Entity) : Bool
+    {
+        if(this.rules.satisfy(entity)) {
+            return _list.remove(entity);
+        }
+        return false;
+    }
+
+
+    private function get_length() : Int
+    {
+        return _list.size;
+    }
+
+    private var _list :EntityList;
 }

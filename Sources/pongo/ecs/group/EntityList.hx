@@ -23,13 +23,12 @@ package pongo.ecs.group;
 
 import pongo.util.Pool;
 
+@:allow(pongo.ecs.group.Group)
 class EntityList extends EntityNode
 {
     public var head (get, set) :EntityNode;
     public var size (default, null) :Int = 0;
 
-    @:allow(pongo.ecs.group.SwapEntityList)
-    @:allow(pongo.ecs.group.SourceGroup)
     private function new() : Void
     {
         super();
@@ -89,15 +88,6 @@ class EntityList extends EntityNode
         return false;
     }
 
-    public function clear() : Void
-    {
-        var p = this.head;
-        while(p != null) {
-            this.remove(p.entity);
-            p = p.next;
-        }
-    }
-
     private inline function get_head() : EntityNode
     {
         return this.next;
@@ -115,7 +105,7 @@ class EntityList extends EntityNode
 
 @:allow(pongo.ecs.group.EntityList)
 @:allow(pongo.ecs.group.SourceGroup)
-@:allow(pongo.ecs.group.ReactiveGroup)
+@:allow(pongo.ecs.group.Group)
 private class EntityNode
 {
     private var next (default, null) :EntityNode = null;
