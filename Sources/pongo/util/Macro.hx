@@ -23,6 +23,8 @@ package pongo.util;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;
+using haxe.macro.ComplexTypeTools;
+using haxe.macro.TypeTools;
 
 class Macro 
 {
@@ -31,7 +33,8 @@ class Macro
     {
         var fields = Context.getBuildFields();
         var pos = Context.currentPos();
-        
+        var things = Context.getLocalType();
+
         var args = [];
         var states = [];
         var i :Int = 0;
@@ -97,6 +100,9 @@ class Macro
                             states.push(macro $p{["this", field.name]} = $i{field.name});
                         }
                     }
+                    if(isReactive(field.meta) && isNotifiable(type)) {
+                        states.push(macro $i{"_" + field.name}.initialize(this));
+                    }
 
                     field.access = [APublic];
                 }
@@ -154,6 +160,22 @@ class Macro
             if(m.name == ":notReactive") return false;
         }
         return true;
+    }
+
+    static function isNotifiable(ct :ComplexType) : Bool
+    {
+        var type = ct.toType();
+        switch type {
+            case TInst(t,params): {
+                var superClass = t.get().superClass;
+                if(superClass != null) {
+                    return superClass.t.toString() == "pongo.ecs.Notify";
+                }
+            }
+            case _:
+        }
+
+        return false;
     }
 #end
 }
