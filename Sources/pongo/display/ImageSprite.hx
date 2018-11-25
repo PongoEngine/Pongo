@@ -37,16 +37,20 @@ class ImageSprite implements Sprite
 
     public function draw(dt :Float, transform :Transform, graphics :Graphics) : Void
     {
-        graphics.drawImage(texture, 0, 0);
+        if(texture != null) {
+            graphics.drawImage(texture, 0, 0);
+        }
     }
 
     public function getNaturalWidth() : Float
     {
+        if(this.texture == null) return 0;
         return this.texture.width;
     }
 
     public function getNaturalHeight() : Float
     {
+        if(this.texture == null) return 0;
         return this.texture.height;
     }
 }
