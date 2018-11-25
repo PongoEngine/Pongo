@@ -35,7 +35,6 @@ class Entity implements Disposable
     public var firstChild (default, null) :Entity = null;
     public var next (default, null) :Entity = null;
     public var index (default, null):Int;
-    public var isDisposed (default, null):Bool = false;
 
     @:allow(pongo.platform.Pongo)
     private function new(manager :Manager) : Void
@@ -153,7 +152,6 @@ class Entity implements Disposable
 
     public function dispose ()
     {
-        this.isDisposed = true;
         if (parent != null) {
             parent.removeEntity(this);
         }

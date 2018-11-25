@@ -57,7 +57,7 @@ class Manager
         }
     }
 
-    macro public function registerGroup(self:Expr, classes :ExprOf<Array<Class<Component>>>) :ExprOf<SourceGroup>
+    public macro function registerGroup(self:Expr, classes :ExprOf<Array<Class<Component>>>) :ExprOf<SourceGroup>
     {
         return switch (classes.expr) {
             case EArrayDecl(vals): {

@@ -22,8 +22,6 @@
 package pongo.ecs.transform;
 
 import pongo.ecs.System;
-import pongo.ecs.Entity;
-import pongo.ecs.group.SourceGroup;
 import kha.math.FastMatrix3;
 
 class TransformSystem extends System
