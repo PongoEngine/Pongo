@@ -57,7 +57,6 @@ class Macro
                             expr: macro {
                                 if($i{"_" + field.name} != $i{field.name}) {
                                     $i{"_" + field.name} = $i{field.name};
-                                    this.hasChanged = true;
                                     if(this.owner != null) {
                                         this.owner.notifyChange();
                                     }
@@ -100,9 +99,6 @@ class Macro
                             states.push(macro $p{["this", field.name]} = $i{field.name});
                         }
                     }
-                    if(isReactive(field.meta) && isNotifiable(type)) {
-                        states.push(macro $i{"_" + field.name}.initialize(this));
-                    }
 
                     field.access = [APublic];
                 }
@@ -137,13 +133,6 @@ class Macro
         });
 
         fields.push({
-            name: "hasChanged",
-            access: [Access.APublic],
-            kind: FieldType.FProp("default", "null", macro $v{false}), 
-            pos: Context.currentPos(),
-        });
-
-        fields.push({
             name: "owner",
             access: [Access.APublic],
             kind: FieldType.FVar(macro:pongo.ecs.Entity, macro $v{null}), 
@@ -160,22 +149,6 @@ class Macro
             if(m.name == ":notReactive") return false;
         }
         return true;
-    }
-
-    static function isNotifiable(ct :ComplexType) : Bool
-    {
-        var type = ct.toType();
-        switch type {
-            case TInst(t,params): {
-                var superClass = t.get().superClass;
-                if(superClass != null) {
-                    return superClass.t.toString() == "pongo.ecs.Notify";
-                }
-            }
-            case _:
-        }
-
-        return false;
     }
 #end
 }

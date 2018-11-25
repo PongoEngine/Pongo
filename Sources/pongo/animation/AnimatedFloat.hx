@@ -1,9 +1,8 @@
 package pongo.animation;
 
 import pongo.animation.Ease;
-import pongo.ecs.Notify;
 
-class AnimatedFloat extends Notify
+class AnimatedFloat
 {
     public var value (default, null) : Float;
 
@@ -18,7 +17,6 @@ class AnimatedFloat extends Notify
         var val = _tween.update(dt);
         if(val != this.value) {
             this.value = val;
-            this.notify();
         }
     }
 

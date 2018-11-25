@@ -26,7 +26,7 @@ import haxe.macro.Expr;
 #end
 
 import pongo.ecs.Component;
-import pongo.ecs.Manager;
+import pongo.ecs.group.Manager;
 import pongo.util.Disposable;
 
 class Entity implements Disposable
@@ -52,7 +52,7 @@ class Entity implements Disposable
         }
         component.owner = this;
         _components.set(component.componentName, component);
-        _manager.notifyAdd(this);
+        _manager.add(this);
         return this;
     }
 
@@ -113,7 +113,7 @@ class Entity implements Disposable
             entity.next = firstChild;
             firstChild = entity;
         }
-        _manager.notifyAdd(entity);
+        _manager.add(entity);
 
         return this;
     }
@@ -135,7 +135,7 @@ class Entity implements Disposable
                 }
                 p.parent = null;
                 p.next = null;
-                _manager.notifyRemove(entity);
+                _manager.remove(entity);
                 return;
             }
             prev = p;
@@ -162,7 +162,7 @@ class Entity implements Disposable
 
     public function notifyChange() : Void
     {
-        _manager.notifyChanged(this);
+        _manager.changed(this);
     }
 
     public function getComponentFromName(name :String) : Component
@@ -170,18 +170,11 @@ class Entity implements Disposable
         return _components.get(name);
     }
 
-    public function resetChanged() : Void
-    {
-        for(comp in _components) {
-            comp.hasChanged = false;
-        }
-    }
-
     public function removeComponentByClassName(name :String) : Bool
     {
         if(_components.exists(name)) {
+            _manager.remove(this);
             _components.remove(name);
-            _manager.notifyRemove(this);
             return true;
         }
         return false;

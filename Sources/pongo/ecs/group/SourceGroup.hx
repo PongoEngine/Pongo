@@ -21,7 +21,7 @@
 
 package pongo.ecs.group;
 
-@:allow(pongo.ecs.Manager)
+@:allow(pongo.ecs.group.Manager)
 class SourceGroup extends Group
 {
     private function new(rules :Rules) : Void
@@ -37,28 +37,36 @@ class SourceGroup extends Group
         return subGroup;
     }
 
-    private function changed(entity :Entity, remove :Bool) : Void
-    {
-        for(group in _subGroups) {
-            if(remove) group.remove(entity);
-            else group.add(entity);
-        }
-    }
-
     override private function add(entity :Entity) : Bool
     {
-        for(group in _subGroups) {
-            group.add(entity);
+        var hasAdded = super.add(entity);
+        if(hasAdded) {
+            for(group in _subGroups) {
+                group.add(entity);
+            }
         }
-        return super.add(entity);
+        return hasAdded;
     }
 
     override private function remove(entity :Entity) : Bool
     {
-        for(group in _subGroups) {
-            group.remove(entity);
+        var hasRemoved = super.remove(entity);
+        if(hasRemoved) {
+            for(group in _subGroups) {
+                group.remove(entity);
+            }
         }
-        return super.remove(entity);
+        return hasRemoved;
+    }
+
+    override private function changed(entity :Entity) : Void
+    {
+        super.changed(entity);
+        if(_rules.satisfy(entity)) {
+            for(group in _subGroups) {
+                group.changed(entity);
+            }
+        }
     }
 
     private var _subGroups :Array<Group>;

@@ -19,11 +19,9 @@
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-package pongo.ecs;
+package pongo.ecs.group;
 
 import pongo.ecs.Entity;
-import pongo.ecs.group.SourceGroup;
-import pongo.ecs.group.Rules;
 using pongo.util.Strings;
 
 #if macro
@@ -34,35 +32,28 @@ class Manager
 {
     public function new() : Void
     {
-        _classKeys = new Array<Int>();
-        _classGroups = new Map<Int, SourceGroup>();
+        _sourceKeys = new Array<Int>();
+        _sourceGroups = new Map<Int, SourceGroup>();
     }
 
-    public function notifyAdd(entity :Entity) : Void
+    public function add(entity :Entity) : Void
     {
-        for(key in _classKeys) {
-            var group = _classGroups.get(key);
-            if(group.rules.satisfy(entity)) {
-                group.add(entity);
-            }
+        for(key in _sourceKeys) {
+            _sourceGroups.get(key).add(entity);
         }
     }
 
-    public function notifyRemove(entity :Entity) : Void
+    public function remove(entity :Entity) : Void
     {
-        for(key in _classKeys) {
-            var group = _classGroups.get(key);
-            if(group.rules.satisfy(entity)) {
-                group.remove(entity);
-            }
+        for(key in _sourceKeys) {
+            _sourceGroups.get(key).remove(entity);
         }
     }
 
-    public function notifyChanged(entity :Entity) : Void
+    public function changed(entity :Entity) : Void
     {
-        for(key in _classKeys) {
-            // var group = _classGroups.get(key);
-            // group.changed(entity, group.rules.satisfy(entity));
+        for(key in _sourceKeys) {
+            _sourceGroups.get(key).changed(entity);
         }
     }
 
@@ -81,13 +72,13 @@ class Manager
     public function createGroupFromClassNames(classNames :Array<String>) : SourceGroup
     {
         var key = classNames.keyFromStrings();
-        if(!_classGroups.exists(key)) {
-            _classGroups.set(key, new SourceGroup(Rules.fromStrings(classNames)));
-            _classKeys.push(key);
+        if(!_sourceGroups.exists(key)) {
+            _sourceGroups.set(key, new SourceGroup(Rules.fromStrings(classNames)));
+            _sourceKeys.push(key);
         }
-        return _classGroups.get(key);
+        return _sourceGroups.get(key);
     }
 
-    private var _classKeys :Array<Int>;
-    private var _classGroups :Map<Int, SourceGroup>;
+    private var _sourceKeys :Array<Int>;
+    private var _sourceGroups :Map<Int, SourceGroup>;
 }

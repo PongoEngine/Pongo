@@ -25,6 +25,5 @@ package pongo.ecs;
 interface Component
 {
     var componentName (default, null):String;
-    @:allow(pongo.ecs.Entity) var hasChanged (default, null):Bool;
     var owner :Entity;
 }

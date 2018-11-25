@@ -21,16 +21,21 @@
 
 package pongo.ecs.group;
 
+import pongo.util.Signal1;
+
 @:allow(pongo.ecs.group.SourceGroup)
 class Group
 {
-    public var rules (default, null):Rules;
     public var length (get, null):Int;
+    public var onAdded (default, null) : Signal1<Entity>;
+    public var onRemoved (default, null) : Signal1<Entity>;
 
     private function new(rules :Rules) : Void
     {
-        this.rules = rules;
+        _rules = rules;
         _list = new EntityList();
+        onAdded = new Signal1();
+        onRemoved = new Signal1();
     }
 
     public function first() : Entity
@@ -61,20 +66,39 @@ class Group
 
     private function add(entity :Entity) : Bool
     {
-        if(this.rules.satisfy(entity)) {
-            return _list.add(entity);
+        if(_rules.satisfy(entity)) {
+            if(_list.add(entity)) {
+                onAdded.emit(entity);
+                return true;
+            }
         }
         return false;
     }
 
     private function remove(entity :Entity) : Bool
     {
-        if(this.rules.satisfy(entity)) {
-            return _list.remove(entity);
+        if(_rules.satisfy(entity)) {
+            if(_list.remove(entity)) {
+                onRemoved.emit(entity);
+                return true;
+            }
         }
         return false;
     }
 
+    private function changed(entity :Entity) : Void
+    {
+        if(_rules.satisfy(entity)) {
+            if(_list.add(entity)) {
+                onAdded.emit(entity);
+            }
+        }
+        else {
+            if(_list.remove(entity)) {
+                onRemoved.emit(entity);
+            }
+        }
+    }
 
     private function get_length() : Int
     {
@@ -82,4 +106,5 @@ class Group
     }
 
     private var _list :EntityList;
+    private var _rules :Rules;
 }
