@@ -29,6 +29,7 @@ class Group
     public var length (get, null):Int;
     public var onAdded (default, null) : Signal1<Entity>;
     public var onRemoved (default, null) : Signal1<Entity>;
+    public var onUpdated (default, null) : Signal1<Entity>;
 
     private function new(rules :Rules) : Void
     {
@@ -36,6 +37,7 @@ class Group
         _list = new EntityList();
         onAdded = new Signal1();
         onRemoved = new Signal1();
+        onUpdated = new Signal1();
     }
 
     public function first() : Entity
@@ -75,9 +77,9 @@ class Group
         return false;
     }
 
-    private function remove(entity :Entity) : Bool
+    private function remove(entity :Entity, force :Bool = false) : Bool
     {
-        if(_rules.satisfy(entity)) {
+        if(force || _rules.satisfy(entity)) {
             if(_list.remove(entity)) {
                 onRemoved.emit(entity);
                 return true;
@@ -91,6 +93,9 @@ class Group
         if(_rules.satisfy(entity)) {
             if(_list.add(entity)) {
                 onAdded.emit(entity);
+            }
+            else {
+                onUpdated.emit(entity);
             }
         }
         else {

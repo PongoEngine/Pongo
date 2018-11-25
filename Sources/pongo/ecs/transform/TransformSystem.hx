@@ -34,12 +34,19 @@ class TransformSystem extends System
 
     override public function onAdded() : Void
     {
-        _transforms = this.pongo.manager.registerGroup([Transform]);
-    }
+        var transforms = this.pongo.manager.registerGroup([Transform]);
 
-    override public function update(dt :Float) : Void
-    {
-        _transforms.iterate(function(e) {
+        transforms.onAdded.connect(function(e) {
+            var transform = e.getComponent(Transform);
+            transform.matrix
+                .setFrom(FastMatrix3.identity()
+                .multmat(FastMatrix3.translation(transform.x,transform.y))
+                .multmat(FastMatrix3.rotation(transform.rotation))
+                .multmat(FastMatrix3.scale(transform.scaleX, transform.scaleY))
+                .multmat(FastMatrix3.translation(-transform.anchorX, -transform.anchorY)));
+        });
+
+        transforms.onUpdated.connect(function(e) {
             var transform = e.getComponent(Transform);
             transform.matrix
                 .setFrom(FastMatrix3.identity()
@@ -49,6 +56,4 @@ class TransformSystem extends System
                 .multmat(FastMatrix3.translation(-transform.anchorX, -transform.anchorY)));
         });
     }
-
-    private var _transforms :SourceGroup;
 }

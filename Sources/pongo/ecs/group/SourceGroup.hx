@@ -41,19 +41,19 @@ class SourceGroup extends Group
     {
         var hasAdded = super.add(entity);
         if(hasAdded) {
-            for(group in _subGroups) {
-                group.add(entity);
+            for(sub in _subGroups) {
+                sub.add(entity);
             }
         }
         return hasAdded;
     }
 
-    override private function remove(entity :Entity) : Bool
+    override private function remove(entity :Entity, force :Bool = false) : Bool
     {
         var hasRemoved = super.remove(entity);
         if(hasRemoved) {
-            for(group in _subGroups) {
-                group.remove(entity);
+            for(sub in _subGroups) {
+                sub.remove(entity, hasRemoved);
             }
         }
         return hasRemoved;
@@ -63,8 +63,8 @@ class SourceGroup extends Group
     {
         super.changed(entity);
         if(_rules.satisfy(entity)) {
-            for(group in _subGroups) {
-                group.changed(entity);
+            for(sub in _subGroups) {
+                sub.changed(entity);
             }
         }
     }
