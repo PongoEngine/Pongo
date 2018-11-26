@@ -142,7 +142,9 @@ import pongo.ecs.transform.TransformSystem;
 
             if(transform.sprite != null) {
                 transform.sprite.draw(dt, transform, g);
-                // g.drawTransform(transform);
+#if draw_transform
+                g.drawTransform(transform);
+#end
             }
         }
 
