@@ -63,7 +63,8 @@ class Manifest
             return switch (extension.toLowerCase()) {
                 case "gif", "jpg", "jpeg", "png": IMAGE(name, url);
                 case "m4a", "mp3", "ogg", "wav": 
-                    SOUND(name.removeFileExtension() + ".ogg", url);
+                    var audioName = (extension=="wav") ? name.removeFileExtension() + ".ogg" : name;
+                    SOUND(audioName, url);
                 case "ttf": FONT(name, url);
                 case _: DATA(name, url);
             }
