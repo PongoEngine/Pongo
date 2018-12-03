@@ -31,21 +31,21 @@ interface Graphics
 
     function end() : Void;
 
-    function fillRect(color :Int, x :Float, y :Float, width :Float, height :Float) : Void;
+    function fillRect(x :Float, y :Float, width :Float, height :Float) : Void;
 
-    function fillCircle(color :Int, cx: Float, cy: Float, radius: Float, segments: Int = 0) : Void;
+    function fillCircle(cx: Float, cy: Float, radius: Float, segments: Int = 0) : Void;
 
-    function drawRect(color :Int, x: Float, y: Float, width: Float, height: Float, strength: Float = 1.0) : Void;
+    function drawRect(x: Float, y: Float, width: Float, height: Float, strength: Float = 1.0) : Void;
 
-    function drawLine(color :Int, x1: Float, y1: Float, x2: Float, y2: Float, strength: Float = 1.0) : Void;
+    function drawLine(x1: Float, y1: Float, x2: Float, y2: Float, strength: Float = 1.0) : Void;
 
-    function drawCircle(color :Int, cx: Float, cy: Float, radius: Float, strength: Float = 1, segments: Int = 0) : Void;
+    function drawCircle(cx: Float, cy: Float, radius: Float, strength: Float = 1, segments: Int = 0) : Void;
 
-    function drawPolygon(color :Int, x: Float, y: Float, vertices: Array<kha.math.Vector2>, strength: Float = 1) : Void;
+    function drawPolygon(x: Float, y: Float, vertices: Array<kha.math.Vector2>, strength: Float = 1) : Void;
 
-    function drawCubicBezierPath(color :Int, x :Array<Float>, y :Array<Float>, strength:Float = 1.0):Void;
+    function drawCubicBezierPath(x :Array<Float>, y :Array<Float>, strength:Float = 1.0):Void;
 
-    function drawString(text :String, font :Font, color :Int, fontSize :Int, x :Float, y :Float) : Void;
+    function drawString(text :String, font :Font, fontSize :Int, x :Float, y :Float) : Void;
 
     function drawImage(texture: Texture, x: Float, y: Float) : Void;
 

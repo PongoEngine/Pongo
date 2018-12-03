@@ -66,6 +66,18 @@ class Group
         }
     }
 
+    public function firstThat(fn :Entity -> Bool) : Entity
+    {
+        var p = _list.head;
+        while(p != null) {
+            if(fn(p.entity)) {
+                return p.entity;
+            }
+            p = p.next;
+        }
+        return null;
+    }
+
     private function add(entity :Entity) : Bool
     {
         if(_rules.satisfy(entity, "")) {

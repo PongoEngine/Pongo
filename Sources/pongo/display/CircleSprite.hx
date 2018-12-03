@@ -26,34 +26,33 @@ package pongo.display;
 
 import pongo.ecs.transform.Transform;
 
-class FillSprite implements Sprite
+class CircleSprite implements Sprite
 {
     public var color :Int;
-    public var width :Float;
+    public var radius :Float;
     public var height :Float;
 
-    public function new(color :Int, width :Float, height :Float) : Void
+    public function new(color :Int, radius :Float) : Void
     {
         this.color = color;
-        this.width = width;
-        this.height = height;
+        this.radius = radius;
     }
 
     public function draw(dt :Float, transform :Transform, graphics :Graphics) : Void
     {
         graphics.save();
         graphics.setColor(this.color);
-        graphics.fillRect(0, 0, width, height);
+        graphics.fillCircle(0, 0, radius);
         graphics.restore();
     }
 
     public function getNaturalWidth() : Float
     {
-        return this.width;
+        return this.radius*2;
     }
 
     public function getNaturalHeight() : Float
     {
-        return this.height;
+        return this.radius*2;
     }
 }
