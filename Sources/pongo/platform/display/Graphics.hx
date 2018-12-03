@@ -29,10 +29,7 @@ import kha.math.FastMatrix3;
 import kha.Color;
 import kha.Scaler;
 import kha.System;
-import kha.Shaders;
 import kha.graphics4.PipelineState;
-import kha.graphics4.VertexData;
-import kha.graphics4.VertexStructure;
 import kha.graphics4.BlendingFactor;
 import pongo.display.BlendMode;
 import pongo.display.Pipeline;
@@ -41,6 +38,7 @@ import pongo.math.Rectangle;
 import pongo.math.CMath;
 import pongo.ecs.transform.Transform;
 using kha.graphics2.GraphicsExtension;
+import kha.graphics2.ImageScaleQuality;
 
 class Graphics implements pongo.display.Graphics
 {
@@ -54,6 +52,7 @@ class Graphics implements pongo.display.Graphics
         this.width = width;
         this.height = height;
         _graphics = new Graphics2(this.framebuffer);
+        _graphics.imageScaleQuality = ImageScaleQuality.High;
         initPipelines();
     }
 
