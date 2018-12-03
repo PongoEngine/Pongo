@@ -62,7 +62,8 @@ class Manifest
         if (extension != null) {
             return switch (extension.toLowerCase()) {
                 case "gif", "jpg", "jpeg", "png": IMAGE(name, url);
-                case "m4a", "mp3", "ogg", "wav": SOUND(name, url);
+                case "m4a", "mp3", "ogg", "wav": 
+                    SOUND(name.removeFileExtension() + ".ogg", url);
                 case "ttf": FONT(name, url);
                 case _: DATA(name, url);
             }
