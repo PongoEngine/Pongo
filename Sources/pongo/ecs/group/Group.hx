@@ -68,7 +68,7 @@ class Group
 
     private function add(entity :Entity) : Bool
     {
-        if(_rules.satisfy(entity)) {
+        if(_rules.satisfy(entity, "")) {
             if(_list.add(entity)) {
                 onAdded.emit(entity);
                 return true;
@@ -77,9 +77,9 @@ class Group
         return false;
     }
 
-    private function remove(entity :Entity, force :Bool = false) : Bool
+    private function remove(entity :Entity, str :String, force :Bool = false) : Bool
     {
-        if(force || _rules.satisfy(entity)) {
+        if(force || _rules.satisfy(entity, str)) {
             if(_list.remove(entity)) {
                 onRemoved.emit(entity);
                 return true;
@@ -90,7 +90,7 @@ class Group
 
     private function changed(entity :Entity) : Void
     {
-        if(_rules.satisfy(entity)) {
+        if(_rules.satisfy(entity, "")) {
             if(_list.add(entity)) {
                 onAdded.emit(entity);
             }

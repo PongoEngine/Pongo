@@ -134,7 +134,7 @@ class Entity implements Disposable
                 }
                 p.parent = null;
                 p.next = null;
-                _manager.remove(entity);
+                _manager.removeEntity(entity);
                 return;
             }
             prev = p;
@@ -171,7 +171,7 @@ class Entity implements Disposable
     public function removeComponentByClassName(name :String) : Bool
     {
         if(_components.exists(name)) {
-            _manager.remove(this);
+            _manager.removeComponent(this, name);
             _components.remove(name);
             return true;
         }

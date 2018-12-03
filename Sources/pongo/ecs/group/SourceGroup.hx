@@ -48,12 +48,12 @@ class SourceGroup extends Group
         return hasAdded;
     }
 
-    override private function remove(entity :Entity, force :Bool = false) : Bool
+    override private function remove(entity :Entity, str :String, force :Bool = false) : Bool
     {
-        var hasRemoved = super.remove(entity);
+        var hasRemoved = super.remove(entity, str);
         if(hasRemoved) {
             for(sub in _subGroups) {
-                sub.remove(entity, hasRemoved);
+                sub.remove(entity, str, hasRemoved);
             }
         }
         return hasRemoved;
@@ -62,7 +62,7 @@ class SourceGroup extends Group
     override private function changed(entity :Entity) : Void
     {
         super.changed(entity);
-        if(_rules.satisfy(entity)) {
+        if(_rules.satisfy(entity, "")) {
             for(sub in _subGroups) {
                 sub.changed(entity);
             }

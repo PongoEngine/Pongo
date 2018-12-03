@@ -43,10 +43,17 @@ class Manager
         }
     }
 
-    public function remove(entity :Entity) : Void
+    public function removeEntity(entity :Entity) : Void
     {
         for(key in _sourceKeys) {
-            _sourceGroups.get(key).remove(entity);
+            _sourceGroups.get(key).remove(entity, "");
+        }
+    }
+
+    public function removeComponent(entity :Entity, componentName :String) : Void
+    {
+        for(key in _sourceKeys) {
+            _sourceGroups.get(key).remove(entity, componentName);
         }
     }
 

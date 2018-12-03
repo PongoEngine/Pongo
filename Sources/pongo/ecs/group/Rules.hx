@@ -21,27 +21,35 @@
 
 package pongo.ecs.group;
 
-abstract Rules(Entity -> Bool)
+abstract Rules(Entity -> String -> Bool) from Entity -> String -> Bool
 {
     inline public function new(fn :Entity -> Bool) : Void
     {
-        this = fn;
+        this = function(e, _) {
+            return fn(e);
+        };
     }
 
-    inline public function satisfy(e :Entity) : Bool
+    inline public function satisfy(e :Entity, str :String) : Bool
     {
-        return this(e);
+        return this(e, str);
     }
 
     inline public static function fromStrings(arra :Array<String>) : Rules
     {
-        return new Rules(function(e :Entity) {
+        var hasComponentName = false;
+        return function(e :Entity, componentName :String) {
+            hasComponentName = componentName == "";
+            
             for(str in arra) {
+                if(!hasComponentName) {
+                    hasComponentName = str == componentName;
+                }
                 if(!e._components.exists(str)) {
                     return false;
                 }
             }
-            return true;
-        });
+            return true && hasComponentName;
+        };
     }
 }
