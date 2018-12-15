@@ -22,8 +22,6 @@ At the heart of pongo is a Simple ECS for decoupled game logic and sprite render
 ```haxe
 package;
 
-import kha.System;
-
 import pongo.Pongo;
 import pongo.ecs.transform.Transform;
 import pongo.ecs.transform.TransformSystem;
@@ -40,11 +38,9 @@ class Main {
 
     private static function onStart(pongo :Pongo) : Void
     {
-        var transforms = pongo.manager.registerGroup([Transform]);
-        var heroes = pongo.manager.registerGroup([Position, Hero, Transform]);
         pongo
-            .addSystem(new TransformSystem(transforms))
-            .addSystem(new HeroSystem(heroes));
+            .addSystem(new TransformSystem())
+            .addSystem(new HeroSystem());
 
         pongo.root
             .addComponent(new Transform(new FillSprite(0xff00ff00, 40, 40)))
@@ -65,16 +61,20 @@ class Hero implements Component
     var speed :Float;
 }
 
-class HeroSystem implements System
+class HeroSystem extends System
 {
     public var heroes :SourceGroup;
 
-    public function new(heroes :SourceGroup) : Void
+    public function new() : Void
     {
-        this.heroes = heroes;
     }
 
-    public function update(pongo :Pongo, dt :Float) : Void
+    override public function onAdded() : Void
+    {
+        this.heroes = this.pongo.manager.registerGroup([Position, Hero, Transform]);   
+    }
+
+    override public function update(dt :Float) : Void
     {
         heroes.iterate(function(entity) {
             var hero :Hero = entity.getComponent(Hero);
