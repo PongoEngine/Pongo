@@ -33,7 +33,7 @@ import pongo.display.FillSprite;
 class Main {
     public static function main() : Void
     {
-        pongo.platform.Pongo.create("Empty", 800, 400, onStart);
+        pongo.platform.Pongo.create("Example", 800, 400, onStart);
     }
 
     private static function onStart(pongo :Pongo) : Void
