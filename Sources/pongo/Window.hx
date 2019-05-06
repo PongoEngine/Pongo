@@ -31,7 +31,7 @@ interface Window
 	function move(x: Int, y: Int): Void;
 	var x(get, set): Int;
 	var y(get, set): Int;
-	var width(get, set): Int;
-	var height(get, set): Int;
+	var width(default, set): Int;
+	var height(default, set): Int;
 	var onResize(default, null):Signal2<Int, Int>;
 }

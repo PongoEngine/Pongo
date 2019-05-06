@@ -27,13 +27,15 @@ class Window implements pongo.Window
 {
 	public var x(get, set): Int;
 	public var y(get, set): Int;
-	public var width(get, set): Int;
-	public var height(get, set): Int;
+	public var width(default, set): Int;
+	public var height(default, set): Int;
     public var onResize(default, null): Signal2<Int, Int>;
 
-    public function new(nativeWindow :kha.Window) : Void
+    public function new(nativeWindow :kha.Window, width :Int, height :Int) : Void
     {
         _nativeWindow = nativeWindow;
+        _nativeWindow.width = this.width = width;
+        _nativeWindow.height = this.height = height;
         onResize = new Signal2<Int, Int>();
         _nativeWindow.notifyOnResize(function(width :Int, height :Int) {
             onResize.emit(width, height);
@@ -42,6 +44,8 @@ class Window implements pongo.Window
 
     public inline function resize(width: Int, height: Int): Void
     {
+        this.width = width;
+        this.height = height;
         _nativeWindow.resize(width, height);
     }
 
@@ -60,24 +64,14 @@ class Window implements pongo.Window
         _nativeWindow.mode = kha.WindowMode.Fullscreen;
     }
 
-    private inline function get_width() : Int
-    {
-        return _nativeWindow.width;
-    }
-
     private inline function set_width(width :Int) : Int
     {
-        return _nativeWindow.width = width;
-    }
-
-    private inline function get_height() : Int
-    {
-        return _nativeWindow.height;
+        return _nativeWindow.width = this.width = width;
     }
 
     private inline function set_height(height :Int) : Int
     {
-        return _nativeWindow.height = height;
+        return _nativeWindow.height = this.height = height;
     }
 
     private inline function get_x() : Int
