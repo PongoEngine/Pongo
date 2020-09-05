@@ -36,7 +36,6 @@ import pongo.display.Pipeline;
 import kha.graphics4.Graphics2;
 import pongo.math.Rectangle;
 import pongo.math.CMath;
-import pongo.ecs.transform.Transform;
 using kha.graphics2.GraphicsExtension;
 import kha.graphics2.ImageScaleQuality;
 
@@ -138,21 +137,21 @@ class Graphics implements pongo.display.Graphics
         _graphics.drawSubImage(cast(texture, Texture).nativeTexture, x, y, sx, sy, sw, sh);
     }
 
-    public function drawTransform(transform :Transform) : Void
-    {
-        this.save();
-        prepare(COLORED);
-        this.setColor(0xff000000);
-        this.fillCircle(transform.anchorX, transform.anchorY, 7);
-        this.setColor(0xffffffff);
-        this.fillCircle(transform.anchorX, transform.anchorY, 5);
+    // public function drawTransform(transform :Transform) : Void
+    // {
+    //     this.save();
+    //     prepare(COLORED);
+    //     this.setColor(0xff000000);
+    //     this.fillCircle(transform.anchorX, transform.anchorY, 7);
+    //     this.setColor(0xffffffff);
+    //     this.fillCircle(transform.anchorX, transform.anchorY, 5);
 
-        var width = transform.sprite.getNaturalWidth();
-        var height = transform.sprite.getNaturalHeight();
-        this.setColor(0xffffaacc);
-        this.drawRect(0, 0, width, height, 4);
-        this.restore();
-    }
+    //     var width = transform.sprite.getNaturalWidth();
+    //     var height = transform.sprite.getNaturalHeight();
+    //     this.setColor(0xffffaacc);
+    //     this.drawRect(0, 0, width, height, 4);
+    //     this.restore();
+    // }
 
     public inline function translate(x :Float, y :Float) : Void
     {

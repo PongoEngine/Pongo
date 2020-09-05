@@ -21,9 +21,6 @@
 
 package pongo;
 
-import pongo.ecs.Entity;
-import pongo.ecs.System;
-import pongo.ecs.group.Manager;
 import pongo.input.Keyboard;
 import pongo.input.Mouse;
 import pongo.Window;
@@ -32,15 +29,10 @@ import pongo.asset.Manifest;
 
 interface Pongo
 {
-    var root (default, null):Entity;
     var keyboard (default, null) :Keyboard;
     var mouse (default, null) :Mouse;
-    var manager (default, null):Manager;
     var window (default, null):Window;
 
-    function addSystem(system :System) : Pongo;
-    function removeSystem(system :System) : Pongo;
-    function createEntity() : Entity;
     function isWeb() : Bool;
     function loadManifest(manifest :Manifest, cb :AssetPack -> Void) : Void;
 }
