@@ -44,7 +44,7 @@ class EntityManager
         return new Entity(_entityId++);
     }
 
-    public function update() : Void
+    public function update(dt :Float) : Void
     {
         for(system in _systems) {
             for(components in system.entities) {

@@ -42,9 +42,9 @@ class Apollo<T>
         return this;
     }
 
-    public inline function update() : Void
+    public inline function update(dt :Float) : Void
     {
-        EntityManager.instance.update();
+        EntityManager.instance.update(dt);
     }
 
     macro public function addSystem(self :Expr, fn :Expr) : ExprOf<Apollo<T>>

@@ -27,23 +27,27 @@ import pongo.platform.input.Keyboard;
 import pongo.platform.input.Mouse;
 import pongo.platform.display.Graphics;
 import pongo.Window;
+import pongo.ecs.Apollo;
 
-@:final class Pongo implements pongo.Pongo
+@:final class Pongo<T> implements pongo.Pongo<T>
 {
     public var keyboard (default, null) :Keyboard;
     public var mouse (default, null) :Mouse;
     public var window (default, null):Window;
+    public var apollo (default, null):Apollo<T>;
 
-    public static function create(title :String, width :Int, height :Int, cb :Pongo -> Void) : Void
+    public static function create<T>
+        (title :String, width :Int, height :Int, data :T, cb :Pongo<T> -> Void) : Void
     {
         kha.System.start({title: title, width: width, height: height}, function(window :kha.Window) {
-            cb(new Pongo(width, height, new pongo.platform.Window(window, width, height)));
+            cb(new Pongo(width, height, new pongo.platform.Window(window, width, height), data));
         });
     }
 
-    private function new(width :Int, height :Int, window :Window)  :Void
+    private function new(width :Int, height :Int, window :Window, data :T)  :Void
     {
         var lastRenderTime :Float = -1;
+        this.apollo = new Apollo(data);
         
 
         kha.System.notifyOnFrames(function(buffers) {
@@ -88,9 +92,7 @@ import pongo.Window;
         }
         _lastTime = time;
 
-        // for(system in _systems) {
-        //     system.update(dt);
-        // }
+        this.apollo.update(dt);
     }
 
 //     private static function render(dt :Float, entity :Entity, g :Graphics) : Void
