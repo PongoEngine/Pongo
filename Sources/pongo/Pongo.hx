@@ -33,7 +33,7 @@ interface Pongo<T>
     var keyboard (default, null) :Keyboard;
     var mouse (default, null) :Mouse;
     var window (default, null):Window;
-    var apollo (default, null):Apollo<T>;
+    var ecs (default, null):Apollo<T>;
 
     function isWeb() : Bool;
     function loadManifest(manifest :Manifest, cb :AssetPack -> Void) : Void;

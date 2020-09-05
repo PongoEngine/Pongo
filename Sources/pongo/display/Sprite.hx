@@ -21,11 +21,9 @@
 
 package pongo.display;
 
-import pongo.ecs.transform.Transform;
-
 interface Sprite
 {
-    function draw(dt :Float, transform :Transform, graphics :Graphics) : Void;
+    function draw(graphics :Graphics) : Void;
     function getNaturalWidth() : Float;
     function getNaturalHeight() : Float;
 }

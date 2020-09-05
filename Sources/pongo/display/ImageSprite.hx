@@ -24,8 +24,6 @@
 
 package pongo.display;
 
-import pongo.ecs.transform.Transform;
-
 class ImageSprite implements Sprite
 {
     public var texture :Texture;
@@ -35,7 +33,7 @@ class ImageSprite implements Sprite
         this.texture = texture;
     }
 
-    public function draw(dt :Float, transform :Transform, graphics :Graphics) : Void
+    public function draw(graphics :Graphics) : Void
     {
         if(texture != null) {
             graphics.drawImage(texture, 0, 0);

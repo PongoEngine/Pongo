@@ -40,7 +40,7 @@ abstract Entity(Int)
     {
         #if macro
         var name = SystemTools.exprName(expr).createDefString().toExpr();
-        var newComp = ENew({name: "Component", pack: ["apollo"]}, [expr, name]).toExpr();
+        var newComp = ENew({name: "Component", pack: ["pongo","ecs"]}, [expr, name]).toExpr();
         return [newComp].createDefCallField(self, "__addComponent__").toExpr();
         #end
     }

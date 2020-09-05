@@ -21,8 +21,6 @@
 
 package pongo.display;
 
-import pongo.ecs.transform.Transform;
-
 class TextSprite implements Sprite
 {
     public var font :Font;
@@ -38,9 +36,9 @@ class TextSprite implements Sprite
         this.text = text;
     }
 
-    public function draw(dt :Float, transform :Transform, graphics :Graphics) : Void
+    public function draw(graphics :Graphics) : Void
     {
-        graphics.drawString(text, font, color, fontSize, 0, 0);
+        graphics.drawString(text, font, fontSize, 0, 0);
     }
 
     public function getNaturalWidth() : Float

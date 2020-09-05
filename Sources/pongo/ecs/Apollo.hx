@@ -36,10 +36,9 @@ class Apollo<T>
         _data = data;
     }
 
-    public function addEntity(fn :Entity -> Void) : Apollo<T>
+    public inline function createEntity() : Entity
     {
-        fn(EntityManager.instance.createEntity());
-        return this;
+        return EntityManager.instance.createEntity();
     }
 
     public inline function update(dt :Float) : Void

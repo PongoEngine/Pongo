@@ -24,8 +24,6 @@
 
 package pongo.display;
 
-import pongo.ecs.transform.Transform;
-
 class CircleSprite implements Sprite
 {
     public var color :Int;
@@ -38,7 +36,7 @@ class CircleSprite implements Sprite
         this.radius = radius;
     }
 
-    public function draw(dt :Float, transform :Transform, graphics :Graphics) : Void
+    public function draw(graphics :Graphics) : Void
     {
         graphics.save();
         graphics.setColor(this.color);

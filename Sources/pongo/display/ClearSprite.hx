@@ -21,8 +21,6 @@
 
 package pongo.display;
 
-import pongo.ecs.transform.Transform;
-
 class ClearSprite implements Sprite
 {
     public var width :Float;
@@ -34,7 +32,7 @@ class ClearSprite implements Sprite
         this.height = height;
     }
 
-    public function draw(dt :Float, transform :Transform, graphics :Graphics) : Void
+    public function draw(graphics :Graphics) : Void
     {
     }
 

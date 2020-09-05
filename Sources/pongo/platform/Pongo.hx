@@ -34,7 +34,7 @@ import pongo.ecs.Apollo;
     public var keyboard (default, null) :Keyboard;
     public var mouse (default, null) :Mouse;
     public var window (default, null):Window;
-    public var apollo (default, null):Apollo<T>;
+    public var ecs (default, null):Apollo<T>;
 
     public static function create<T>
         (title :String, width :Int, height :Int, data :T, cb :Pongo<T> -> Void) : Void
@@ -47,7 +47,7 @@ import pongo.ecs.Apollo;
     private function new(width :Int, height :Int, window :Window, data :T)  :Void
     {
         var lastRenderTime :Float = -1;
-        this.apollo = new Apollo(data);
+        this.ecs = new Apollo(data);
         
 
         kha.System.notifyOnFrames(function(buffers) {
@@ -92,7 +92,7 @@ import pongo.ecs.Apollo;
         }
         _lastTime = time;
 
-        this.apollo.update(dt);
+        this.ecs.update(dt);
     }
 
 //     private static function render(dt :Float, entity :Entity, g :Graphics) : Void
