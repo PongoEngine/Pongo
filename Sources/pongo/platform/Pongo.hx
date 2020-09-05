@@ -28,6 +28,7 @@ import pongo.platform.input.Mouse;
 import pongo.platform.display.Graphics;
 import pongo.Window;
 import pongo.ecs.Apollo;
+import pongo.display.Sprite;
 
 @:final class Pongo<T> implements pongo.Pongo<T>
 {
@@ -35,6 +36,7 @@ import pongo.ecs.Apollo;
     public var mouse (default, null) :Mouse;
     public var window (default, null):Window;
     public var ecs (default, null):Apollo<T>;
+    public var root (default, null):Sprite;
 
     public static function create<T>
         (title :String, width :Int, height :Int, data :T, cb :Pongo<T> -> Void) : Void
@@ -46,24 +48,16 @@ import pongo.ecs.Apollo;
 
     private function new(width :Int, height :Int, window :Window, data :T)  :Void
     {
-        var lastRenderTime :Float = -1;
         this.ecs = new Apollo(data);
+        this.root = new Sprite();
         
-
         kha.System.notifyOnFrames(function(buffers) {
             if(_graphics == null) {
                 _graphics = new Graphics(buffers[0], width, height);
             }
 
-            var renderDt :Float = 0;
-            var time = kha.System.time;
-            if(lastRenderTime != -1) {
-                renderDt = time - lastRenderTime;
-            }
-            lastRenderTime = time;
-
             _graphics.begin();
-            // Pongo.render(renderDt, this.root, _graphics);
+            Pongo.render(this.root, _graphics);
             _graphics.end();
         });
 
@@ -95,41 +89,32 @@ import pongo.ecs.Apollo;
         this.ecs.update(dt);
     }
 
-//     private static function render(dt :Float, entity :Entity, g :Graphics) : Void
-//     {
-//         var transform = entity.getComponent(Transform);
-//         if (transform != null) {
-//             if (!transform.visible || transform.opacity <= 0) {
-//                 return; // Prune traversal, this sprite and all children are invisible
-//             }
+    private static function render(sprite :Sprite, g :Graphics) : Void
+    {
+        if (!sprite.visible || sprite.opacity <= 0) {
+            return; // Prune traversal, this sprite and all children are invisible
+        }
 
-//             g.save();
-//             g.transform(transform.matrix);
-//             g.setBlendMode(transform.blendMode);
-//             if(transform.opacity < 1) {
-//                 g.multiplyOpacity(transform.opacity);
-//             }
+        g.save();
+        g.transform(sprite.matrix);
+        g.setBlendMode(sprite.blendMode);
+        if(sprite.opacity < 1) {
+            g.multiplyOpacity(sprite.opacity);
+        }
 
-//             if(transform.sprite != null) {
-//                 transform.sprite.draw(dt, transform, g);
-// #if draw_transform
-//                 g.drawTransform(transform);
-// #end
-//             }
-//         }
+        if(sprite != null) {
+            sprite.draw(g);
+        }
 
-//         var p = entity.firstChild;
-//         while (p != null) {
-//             var next = p.next;
-//             render(dt, p, g);
-//             p = next;
-//         }
+        var p = sprite.firstChild;
+        while (p != null) {
+            var next = p.next;
+            render(p, g);
+            p = next;
+        }
 
-//         // If save() was called, unwind it
-//         if (transform != null) {
-//             g.restore();
-//         }
-//     }
+        g.restore();
+    }
 
     private var _graphics :Graphics;
     private var _schedulerID :Int;

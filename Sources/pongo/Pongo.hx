@@ -27,13 +27,15 @@ import pongo.Window;
 import pongo.asset.AssetPack;
 import pongo.asset.Manifest;
 import pongo.ecs.Apollo;
+import pongo.display.Sprite;
 
 interface Pongo<T>
 {
     var keyboard (default, null) :Keyboard;
     var mouse (default, null) :Mouse;
-    var window (default, null):Window;
-    var ecs (default, null):Apollo<T>;
+    var window (default, null) :Window;
+    var ecs (default, null) :Apollo<T>;
+    var root (default, null) :Sprite;
 
     function isWeb() : Bool;
     function loadManifest(manifest :Manifest, cb :AssetPack -> Void) : Void;

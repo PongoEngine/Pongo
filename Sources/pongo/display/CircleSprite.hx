@@ -24,7 +24,7 @@
 
 package pongo.display;
 
-class CircleSprite implements Sprite
+class CircleSprite extends Sprite
 {
     public var color :Int;
     public var radius :Float;
@@ -32,11 +32,12 @@ class CircleSprite implements Sprite
 
     public function new(color :Int, radius :Float) : Void
     {
+        super();
         this.color = color;
         this.radius = radius;
     }
 
-    public function draw(graphics :Graphics) : Void
+    override public function draw(graphics :Graphics) : Void
     {
         graphics.save();
         graphics.setColor(this.color);
@@ -44,12 +45,12 @@ class CircleSprite implements Sprite
         graphics.restore();
     }
 
-    public function getNaturalWidth() : Float
+    override public function getNaturalWidth() : Float
     {
         return this.radius*2;
     }
 
-    public function getNaturalHeight() : Float
+    override public function getNaturalHeight() : Float
     {
         return this.radius*2;
     }

@@ -24,7 +24,7 @@
 
 package pongo.display;
 
-class FillSprite implements Sprite
+class FillSprite extends Sprite
 {
     public var color :Int;
     public var width :Float;
@@ -32,12 +32,13 @@ class FillSprite implements Sprite
 
     public function new(color :Int, width :Float, height :Float) : Void
     {
+        super();
         this.color = color;
         this.width = width;
         this.height = height;
     }
 
-    public function draw(graphics :Graphics) : Void
+    override public function draw(graphics :Graphics) : Void
     {
         graphics.save();
         graphics.setColor(this.color);
@@ -45,12 +46,12 @@ class FillSprite implements Sprite
         graphics.restore();
     }
 
-    public function getNaturalWidth() : Float
+    override public function getNaturalWidth() : Float
     {
         return this.width;
     }
 
-    public function getNaturalHeight() : Float
+    override public function getNaturalHeight() : Float
     {
         return this.height;
     }

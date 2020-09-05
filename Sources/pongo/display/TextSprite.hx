@@ -21,7 +21,7 @@
 
 package pongo.display;
 
-class TextSprite implements Sprite
+class TextSprite extends Sprite
 {
     public var font :Font;
     public var fontSize :Int;
@@ -30,23 +30,24 @@ class TextSprite implements Sprite
 
     public function new(font :Font, fontSize :Int, color :Int, text :String) : Void
     {
+        super();
         this.font = font;
         this.fontSize = fontSize;
         this.color = color;
         this.text = text;
     }
 
-    public function draw(graphics :Graphics) : Void
+    override public function draw(graphics :Graphics) : Void
     {
         graphics.drawString(text, font, fontSize, 0, 0);
     }
 
-    public function getNaturalWidth() : Float
+    override public function getNaturalWidth() : Float
     {
         return this.font.width(this.fontSize, this.text);
     }
 
-    public function getNaturalHeight() : Float
+    override public function getNaturalHeight() : Float
     {
         return this.font.height(this.fontSize);
     }

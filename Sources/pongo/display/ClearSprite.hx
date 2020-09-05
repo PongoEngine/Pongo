@@ -21,27 +21,28 @@
 
 package pongo.display;
 
-class ClearSprite implements Sprite
+class ClearSprite extends Sprite
 {
     public var width :Float;
     public var height :Float;
 
     public function new(width :Float, height :Float) : Void
     {
+        super();
         this.width = width;
         this.height = height;
     }
 
-    public function draw(graphics :Graphics) : Void
+    override public function draw(graphics :Graphics) : Void
     {
     }
 
-    public function getNaturalWidth() : Float
+    override public function getNaturalWidth() : Float
     {
         return this.width;
     }
 
-    public function getNaturalHeight() : Float
+    override public function getNaturalHeight() : Float
     {
         return this.height;
     }

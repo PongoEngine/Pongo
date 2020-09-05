@@ -24,29 +24,30 @@
 
 package pongo.display;
 
-class ImageSprite implements Sprite
+class ImageSprite extends Sprite
 {
     public var texture :Texture;
 
     public function new(texture :Texture) : Void
     {
+        super();
         this.texture = texture;
     }
 
-    public function draw(graphics :Graphics) : Void
+    override public function draw(graphics :Graphics) : Void
     {
         if(texture != null) {
             graphics.drawImage(texture, 0, 0);
         }
     }
 
-    public function getNaturalWidth() : Float
+    override public function getNaturalWidth() : Float
     {
         if(this.texture == null) return 0;
         return this.texture.width;
     }
 
-    public function getNaturalHeight() : Float
+    override public function getNaturalHeight() : Float
     {
         if(this.texture == null) return 0;
         return this.texture.height;
