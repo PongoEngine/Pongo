@@ -48,7 +48,8 @@ class EntityManager
     {
         for(system in _systems) {
             for(components in system.entities) {
-                Reflect.callMethod(system, system.fn, components);
+                var arra :Array<Dynamic> = [dt];
+                Reflect.callMethod(system, system.fn, arra.concat(components));
             }
         }
     }

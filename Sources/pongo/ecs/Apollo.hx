@@ -52,7 +52,9 @@ class Apollo<T>
         return switch fn.expr {
             case EFunction(kind, f): switch kind {
                 case FArrow | FAnonymous:
-                    for(arg in f.args) {
+                    var componentArgs = f.args.slice(1);
+
+                    for(arg in componentArgs) {
                         if(arg.type == null) {
                             Context.error("Argument must have a type", fn.pos);
                         }
@@ -61,7 +63,7 @@ class Apollo<T>
                         }
                     }
 
-                    var components = f.args.map(a -> {
+                    var components = componentArgs.map(a -> {
                         SystemTools.typeName(a.type).createDefString().toExpr();
                     }).createDefArrayDecl().toExpr();
 
