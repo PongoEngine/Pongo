@@ -1,6 +1,5 @@
-
 /*
- * Copyright (c) 2018 Jeremy Meltingtallow
+ * Copyright (c) 2020 Jeremy Meltingtallow
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
