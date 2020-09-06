@@ -54,6 +54,14 @@ class SystemTools
         }
     }
 
+    public static function isDelta(type :ComplexType) : Bool
+    {
+        return switch type {
+            case TPath(p): p.name == "Float";
+            case _: false;
+        }
+    }
+
     public static function exprName(expr :Expr) : String
     {
         return Context.typeof(expr).toString();

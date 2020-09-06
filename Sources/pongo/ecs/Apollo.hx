@@ -52,6 +52,13 @@ class Apollo<T>
         return switch fn.expr {
             case EFunction(kind, f): switch kind {
                 case FArrow | FAnonymous:
+                    if(f.args.length == 0) {
+                        Context.error("System must contain at least on argument.", fn.pos);
+                    }
+                    else if(!SystemTools.isDelta(f.args[0].type)) {
+                        Context.error("The first argument must be of type float for the delta time", fn.pos);
+                    }
+
                     var componentArgs = f.args.slice(1);
 
                     for(arg in componentArgs) {
